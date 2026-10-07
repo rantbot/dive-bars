@@ -25,7 +25,8 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
   opacity: 0; visibility: hidden; transition: opacity 0.9s ease, visibility 0s linear 0.9s; }
 .slide.active { opacity: 1; visibility: visible; transition: opacity 0.9s ease; }
 .slide * { box-sizing: border-box; }
-.slide div { display: flex; flex-direction: column; }
+.slide div:not([style*="display"]) { display: flex; flex-direction: column; }
+.slide div[style*="display:flex"] > p[style*="width:"] { flex-shrink: 0; }
 .slide p, .slide h1, .slide h2, .slide h3 { margin: 0; }
 .slide p { font-size: 32px; line-height: 1.4; }
 .slide h1 { font-size: 96px; line-height: 1.1; }
@@ -195,7 +196,7 @@ VISUAL NOTE: The title card before this slide already names the talk, so this op
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;letter-spacing:12px;text-transform:uppercase;color:#EDE6D8">Range</h2>
 <p style="font-size:32px;font-style:italic;line-height:1.3;color:#A89F8F;width:400px">Documented observations across North America</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">[YEAR] – 2026</p>
-<aside>[0:25 to 0:45 · about 60 words]
+<aside>[0:28 to 0:52 · about 60 words]
 
 These are my documented observations.
 
@@ -224,7 +225,7 @@ SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Bever
 <p style="position:absolute;left:310px;top:880px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;text-align:center;color:#8C2F23">The Law of Accumulation</p>
 <p style="position:absolute;left:310px;top:918px;width:1300px;font-size:30px;font-style:italic;line-height:1.3;text-align:center;color:#2A2119">“The authenticity of a dive bar appears positively correlated with the number of objects whose origin the current bartender cannot explain.”</p>
 <div class="neon-sign" style="position:absolute;left:630px;top:310px;width:330px;height:100px"><div class="neon-halo" style="position:absolute;left:-60px;top:-50px;width:450px;height:200px;background:radial-gradient(closest-side, rgba(255,80,50,0.30), rgba(255,80,50,0))"></div><img class="neon-tube" src="img/plate_neon_crop.png" alt="" style="position:absolute;left:0px;top:0px;width:330px;height:100px"></div>
-<aside>[0:45 to 1:10 · about 80 words]
+<aside>[0:52 to 1:24 · about 80 words]
 
 Let us examine a specimen. Plate three.
 
@@ -242,10 +243,41 @@ VISUAL NOTE: This plate is an original line illustration, so no photo is needed 
 
 SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars" and "brewery-branded mirrors and hardware" (Whiting-Robertsdale Historical Society, "The Tied House System That Left Its Mark on Whiting"). 27 CFR 6.84 lets industry members give retailers point-of-sale materials such as "inside signs," "back bar mats," "clocks, calendars" and menus, provided they carry conspicuous advertising. The Law of Accumulation and the Latin anatomy terms are our own invention, presented as such.</aside>
 </section>
+<section class="slide" id="lineage" data-scene="lastcall" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">04</p>
+<p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">Ancestral species</p>
+<h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Lineage</h2>
+<div style="position:absolute;left:959px;top:330px;width:1px;height:420px;background:#3A352D"></div>
+<div style="position:absolute;left:128px;top:340px;width:760px;display:flex;flex-direction:column;gap:14px;align-items:center">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#A89F8F">The Jim Crow South</p>
+<p style="font-size:60px;font-weight:400;line-height:1.1;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Juke Joint</p>
+<p style="font-size:40px;font-style:italic;text-align:center;color:#C9A15A">Diveus jukeus</p>
+<p style="font-size:32px;line-height:1.35;text-align:center;color:#D9D1C1;width:640px">Where the blues grew up, and where the jukebox got its name.</p>
+</div>
+<div style="position:absolute;left:1032px;top:340px;width:760px;display:flex;flex-direction:column;gap:14px;align-items:center">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#A89F8F">Cattle and oil towns of the Southwest</p>
+<p style="font-size:60px;font-weight:400;line-height:1.1;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Honky-Tonk</p>
+<p style="font-size:40px;font-style:italic;text-align:center;color:#C9A15A">Diveus honkytonkus</p>
+<p style="font-size:32px;line-height:1.35;text-align:center;color:#D9D1C1;width:640px">First recorded in print in 1874. Its name has no known origin.</p>
+</div>
+<p style="position:absolute;left:310px;top:830px;width:1300px;font-size:34px;font-style:italic;line-height:1.3;text-align:center;color:#EDE6D8">“The most important place in America.”</p>
+<p style="position:absolute;left:310px;top:884px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;text-align:center;color:#A89F8F">Zora Neale Hurston, on the juke joint’s place in American music</p>
+<aside>[1:24 to 1:50 · about 65 words]
+
+Every species has ancestors.
+
+In the Jim Crow South, the juke joint was one of the few places Black Americans could gather on their own terms. The blues grew up there. The jukebox took its name from it.
+
+Out west, the cattle and oil towns produced the honky-tonk. The word was in print by 1874, and no one knows where it came from. Country music went electric partly to be heard over the noise.
+
+TONE NOTE: Play the juke joint straight. This is the one moment in the talk where the history carries more weight than the joke.
+
+SOURCES: Mississippi Encyclopedia, "Juke Joints and Honky Tonks": juke joints as spaces where Black Americans could gather without white supervision under Jim Crow, and their tie to the blues; Hurston called the juke joint "the most important place in America" musically. Wikipedia, "Jukebox": the term came into use around 1940 from "juke joint," and manufacturers avoided it for years. Wikipedia, "Honky-tonk": earliest known print use June 28, 1874 (Peoria Journal), origin unknown; honky-tonks grew in oil boom and cattle towns of Texas, Oklahoma and Louisiana; electric instruments adopted early to cut through bar noise. The origin of "juke" itself is uncertain; competing theories exist.</aside>
+</section>
 <section class="slide" id="sp1" data-scene="neighborhood" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_neighborhood.jpg" alt="Bearded regular in a ball cap at the bar with a half-finished lager" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">04</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">05</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <p style="font-size:44px;color:#C9A15A;line-height:1">01</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Neighborhood Dive</h2>
@@ -260,9 +292,9 @@ SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars"
 <div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Status</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Stable, locally vulnerable</p></div>
 </div>
 </div>
-<aside>[1:10 to 1:30 · about 55 words]
+<aside>[1:50 to 2:12 · about 55 words]
 
-Our research has identified four primary species.
+Our research has identified five living species.
 
 We begin with the most widespread. The Neighborhood Dive. Diveus communalis.
 
@@ -273,12 +305,12 @@ PHOTO DIRECTION: A regular at the bar in profile, warm practical light, shallow 
 <section class="slide" id="fo1" data-scene="neighborhood" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:end;gap:16px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/placeholder.jpg" alt="Placeholder for a personal field photo of a favorite neighborhood dive" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:0px;top:560px;width:1920px;height:520px;background:linear-gradient(180deg, rgba(13,12,10,0) 0%, rgba(13,12,10,0.88) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">05</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">06</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 01</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">[Bar Name]</h2>
 <p style="font-size:40px;font-style:italic;line-height:1.2;color:#A89F8F">[City, State]</p>
 <p style="font-size:32px;line-height:1.35;color:#D9D1C1;width:900px">[One sentence describing a very specific behavior or story observed here.]</p>
-<aside>[1:30 to 1:42 · about 35 words]
+<aside>[2:12 to 2:26 · about 35 words]
 
 Field Observation Number One. [BAR NAME], in [CITY].
 
@@ -286,10 +318,40 @@ Here, I observed [ONE SPECIFIC BEHAVIOR OR STORY. Keep it to one sentence. The m
 
 PHOTO DIRECTION: [INSERT PERSONAL FIELD PHOTO]. Your own phone photo of your favorite neighborhood dive, exterior or interior. Imperfect is fine. Treat it as evidence, not art. Replace the placeholder image by selecting it and choosing a new image.</aside>
 </section>
+<section class="slide" id="mcsorleys" data-scene="quiet" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">07</p>
+<div style="position:absolute;left:128px;top:150px;width:780px;display:flex;flex-direction:column;gap:18px">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 02</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">McSorley’s Old Ale House</h2>
+<p style="font-size:40px;font-style:italic;line-height:1.2;color:#A89F8F">New York, New York</p>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<p style="font-size:34px;line-height:1.35;color:#D9D1C1;width:740px">Above the bar hang wishbones, said to have been left by soldiers heading to the First World War. The ones still hanging are said to belong to those who never came back.</p>
+</div>
+<div style="position:absolute;left:1040px;top:180px;width:752px;display:flex;flex-direction:column;gap:0px;border-left:1px solid #3A352D">
+<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1854</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">The year it claims. City records suggest a few years later.</p></div>
+<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1970</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">Women first served, after two lawyers sued and won.</p></div>
+<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1986</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">A ladies’ room is installed.</p></div>
+</div>
+<aside>[2:26 to 2:54 · about 70 words]
+
+Field Observation Number Two. McSorley's Old Ale House, New York.
+
+It claims 1854. City records suggest a few years later.
+
+For more than a century, it served men only, until two lawyers were refused service, sued, and won. Women walked in on August 10th, 1970. A ladies' room followed sixteen years later.
+
+Above the bar hang wishbones, said to have been left by soldiers heading to the First World War. The ones still hanging are said to belong to those who never came back.
+
+(let that sit for a beat)
+
+PHOTO OPTION: If you've been, a phone photo of the wishbones or the sawdust floor would make a great full-bleed background here.
+
+SOURCES: Wikipedia, "McSorley's Old Ale House": claimed founding 1854, evidence second-hand; the site appears vacant 1860 to 1861 and city records date the building no earlier than 1858; women first admitted August 10, 1970 after Seidenberg v. McSorley's Old Ale House (S.D.N.Y. 1970), brought by NOW attorneys Faith Seidenberg and Karen DeCrow; ladies' room installed 1986; wishbones traditionally said to be hung by men leaving for World War I, a story the page notes is disputed (Joseph Mitchell suggested the founder simply saved them).</aside>
+</section>
 <section class="slide" id="sp2" data-scene="working" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_working.jpg" alt="Older man in a cap leaning on the bar beside a bottle of beer in window light" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">06</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">08</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <p style="font-size:44px;color:#C9A15A;line-height:1">02</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Working-Class Dive</h2>
@@ -306,7 +368,7 @@ PHOTO DIRECTION: [INSERT PERSONAL FIELD PHOTO]. Your own phone photo of your fav
 <p style="font-size:30px;font-style:italic;line-height:1.35;color:#D9D1C1">The Sports Dive · The VFW Post · The Bowling-Alley Bar · The College Dive · The Music Dive</p>
 </div>
 </div>
-<aside>[1:42 to 2:02 · about 60 words]
+<aside>[2:54 to 3:18 · about 60 words]
 
 In older industrial towns, we find a hardier relative. The Working-Class Dive. Diveus laboriosus.
 
@@ -321,7 +383,7 @@ PHOTO DIRECTION: An older regular at a quiet bar in daylight or late afternoon, 
 <section class="slide" id="sp3" data-scene="coast" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_destination.jpg" alt="Weathered wooden bar on stilts beside palm trees at sunset on the coast" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">07</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">09</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <p style="font-size:44px;color:#C9A15A;line-height:1">03</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Destination Dive</h2>
@@ -334,7 +396,7 @@ PHOTO DIRECTION: An older regular at a quiet bar in daylight or late afternoon, 
 <div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Adaptations</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Cash only. A resident dog. One inexplicably excellent sandwich.</p></div>
 </div>
 </div>
-<aside>[2:02 to 2:20 · about 50 words]
+<aside>[3:18 to 3:38 · about 50 words]
 
 Some populations have evolved in remarkable geographic isolation. The Destination Dive. Diveus remotus.
 
@@ -349,8 +411,8 @@ PHOTO DIRECTION: A coastal, rural, desert or mountain bar shot wide enough to sh
 <section class="slide" id="dollars" data-scene="coast" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_dollars.jpg" alt="Coastal bar whose ceiling is covered in dollar bills, open to the water at sunset" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:0px;top:0px;width:1240px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0.94) 0%, rgba(13,12,10,0.86) 55%, rgba(13,12,10,0) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">08</p>
-<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 02</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">10</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 03</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">The Currency Ceiling</h2>
 <p style="font-size:36px;font-style:italic;line-height:1.2;color:#A89F8F">Origin disputed. Competing hypotheses include</p>
 <div style="display:flex;flex-direction:column;gap:10px;width:760px;font-family:Inter, Arial, sans-serif">
@@ -361,7 +423,7 @@ PHOTO DIRECTION: A coastal, rural, desert or mountain bar shot wide enough to sh
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <p style="font-size:120px;font-weight:300;line-height:1;color:#E2B866">$13,961</p>
 <p style="font-size:30px;line-height:1.35;color:#D9D1C1;width:760px">pulled from the walls of Siesta Key Oyster Bar in Sarasota, Florida, and sent to Hurricane Dorian relief in the Bahamas, 2019.</p>
-<aside>[2:20 to 2:45 · about 85 words]
+<aside>[3:38 to 4:12 · about 85 words]
 
 Why money? Scientists remain divided.
 
@@ -375,10 +437,40 @@ PHOTO DIRECTION: [INSERT PERSONAL FIELD PHOTO] if you have a dollar-bill bar of 
 
 SOURCES: Miner story, KQED, "150 Years of Slinging Drinks: A Visit to the Iron Door Saloon" (2016), told by a regular, unverified. Fisherman story, NBC News, "Thousands of dollar bills on Florida bar's walls and ceiling donated to Dorian relief" (2019); the general manager says she doesn't know how true it is. Short snorter, Wikipedia, "Short snorter": signed banknotes believed to date to Alaskan bush pilots in 1925, widespread in WWII; a holder who couldn't produce one owed each signer a drink. This is a related signed-currency custom, not a proven origin of bar ceilings. $13,961 to the Bahamas Red Cross, NBC News and CBS Miami, Sept./Oct. 2019. Other verified examples: Forbidden Island tiki bar, Alameda, CA, removed $10,367 in 2019 and donated over $8,000 to local charities (Boing Boing / CBC); Hott Leggz, Fort Lauderdale, gave about $10,000 to laid-off staff in 2020 (Global News).</aside>
 </section>
+<section class="slide" id="biker" data-scene="latenight" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/placeholder.jpg" alt="Placeholder for a personal field photo of a biker bar with motorcycles parked out front" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">11</p>
+<div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<p style="font-size:44px;color:#C9A15A;line-height:1">04</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Biker Bar</h2>
+<p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus motorcyclus</p>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<div style="display:flex;flex-direction:column;gap:14px;font-family:Inter, Arial, sans-serif">
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#C9A15A">Loyalty</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Habitat</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Highway shoulders, county lines</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Identification</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">A precise row of motorcycles out front</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Field rule</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Admire the bikes. Never touch the bikes.</p></div>
+</div>
+</div>
+<aside>[4:12 to 4:32 · about 50 words]
+
+Some species are best observed from a respectful distance.
+
+The Biker Bar. Diveus motorcyclus.
+
+It is easily identified by the precise row of motorcycles out front. Despite its reputation, it is among the most courteous habitats on the continent. Strangers are welcomed. Regulars look out for one another.
+
+Researchers are advised to admire the bikes. Never touch the bikes.
+
+AUDIO: In the web presentation, your own biker bar field recording starts on this slide and carries through the late-night slides.
+
+PHOTO DIRECTION: [INSERT PERSONAL FIELD PHOTO]. The bar you recorded, ideally with the row of bikes out front at golden hour.</aside>
+</section>
 <section class="slide" id="sp4" data-scene="latenight" style="background:#0B0B0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:start;gap:16px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/migration2.jpg" alt="Dark city street map with five golden migration paths converging on one glowing point" style="width:100%;height:100%;object-fit:cover"><div class="fx breathe" style="position:absolute;left:1000px;top:440px;width:300px;height:300px;background:radial-gradient(closest-side, rgba(255,200,120,0.55), rgba(255,170,80,0.15) 45%, rgba(255,170,80,0))"></div></div></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">09</p>
-<p style="font-size:44px;color:#C9A15A;line-height:1">04</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">12</p>
+<p style="font-size:44px;color:#C9A15A;line-height:1">05</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Late-Night Dive</h2>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus nocturnus</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait <span style="color:#C9A15A">Migration</span>   ·   Peak activity <span style="color:#EDE6D8">00:00 – 02:00</span></p>
@@ -389,7 +481,8 @@ SOURCES: Miner story, KQED, "150 Years of Slinging Drinks: A Visit to the Iron D
 <p style="position:absolute;left:1100px;top:888px;width:440px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Hospitality workers</p>
 <p style="position:absolute;left:1000px;top:356px;width:300px;font-size:48px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#E2B866">Dive Bar</p>
 <p style="position:absolute;left:1000px;top:418px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:5px;text-align:center;color:#EDE6D8">1:17 AM</p>
-<aside>[2:45 to 3:05 · about 55 words]
+<p style="position:absolute;left:128px;top:980px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:2px;color:#A89F8F">Behavioral note · “Happy hour” began aboard the USS Arkansas in 1913 · Illegal in Massachusetts since 1984</p>
+<aside>[4:32 to 5:12 · about 100 words]
 
 Our final species is rarely seen in daylight. The Late-Night Dive. Diveus nocturnus.
 
@@ -397,10 +490,16 @@ As midnight approaches, scattered populations begin their nightly migration towa
 
 By 1:17 a.m., they converge. Here, together, they will make increasingly questionable decisions.
 
+The migration has an earlier phase. Happy hour. The term began among sailors aboard the USS Arkansas in 1913, and caught on during Prohibition as a drink before dinner at the speakeasy. In Massachusetts, it has been illegal since 1984.
+
+Boston simply has hours.
+
+HAPPY HOUR SOURCES: Wikipedia, "Happy hour": by June 1913 the crew of USS Arkansas called regular onboard gatherings "happy hours"; the pre-dinner drink custom has roots in Prohibition-era speakeasies. Mondaq, "Are You Happy Now? The Status of Massachusetts Happy Hour Laws" (2019): Massachusetts became the first state to ban happy hours in 1984 (204 CMR 4), after a 1983 drunk-driving death. GBH News (June 10, 2026): the ban is still in place; Gov. Healey has said she would support removing it. The ban is statewide, not only Boston.
+
 VISUAL NOTE: The map is an abstract city, not a real one. If you want it to be your city, a dark-mode screenshot of a real street map works as a replacement. The labels are separate text boxes, so you can move them.</aside>
 </section>
 <section class="slide" id="fauna" data-scene="latenight" data-cue="woo" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">10</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">13</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:56px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Fauna of the American Dive</h2>
 <div style="display:flex;gap:48px">
 <div style="flex:1;display:flex;flex-direction:column;gap:12px">
@@ -428,7 +527,7 @@ VISUAL NOTE: The map is an abstract city, not a real one. If you want it to be y
 <p style="font-size:28px;line-height:1.3;color:#A89F8F">Highly vocal. Travels in packs.</p>
 </div>
 </div>
-<aside>[3:05 to 3:25 · about 55 words]
+<aside>[5:12 to 5:34 · about 55 words]
 
 Every habitat supports its fauna.
 
@@ -442,8 +541,47 @@ And occasionally, a highly vocal migratory population enters the habitat. Homo c
 
 PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light. Real people need their permission. Silhouettes, hands on a bar, or a back-of-head shot also work and keep everyone anonymous. Current images are low-resolution stand-ins from your mockup.</aside>
 </section>
+<section class="slide" id="abroad" data-scene="neighborhood" style="background:#13110E;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">14</p>
+<p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">The genus beyond the border</p>
+<h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Related Populations</h2>
+<div style="position:absolute;left:128px;top:340px;width:1664px;display:flex;gap:40px">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Mexico</p>
+<p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Pulquería</p>
+<p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus pulquerius</p>
+<p style="font-size:30px;line-height:1.35;color:#D9D1C1">Serves pulque, the fermented agave drink the Aztecs held sacred.</p>
+<p style="font-size:30px;line-height:1.35;color:#A89F8F">Mexico City once counted about 1,100. By 2000, about 80 remained.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Brazil</p>
+<p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Boteco</p>
+<p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus botequinus</p>
+<p style="font-size:30px;line-height:1.35;color:#D9D1C1">Born in the warehouses of Rio’s port in the 1800s.</p>
+<p style="font-size:30px;line-height:1.35;color:#A89F8F">Each year, botecos in 25 cities compete on their snacks and on how cold the beer is.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Ireland</p>
+<p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Spirit Grocer</p>
+<p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus mercator</p>
+<p style="font-size:30px;line-height:1.35;color:#D9D1C1">A pub that was also the grocery, the hardware store and, now and then, the undertaker.</p>
+<p style="font-size:30px;line-height:1.35;color:#A89F8F">Some still are.</p>
+</div>
+</div>
+<aside>[5:34 to 6:08 · about 85 words]
+
+The genus does not stop at the border.
+
+In Mexico, the pulquería serves pulque, fermented agave sap the Aztecs considered sacred. Mexico City once counted around eleven hundred. After decades of campaigns by brewers to paint pulque as a poor man's drink, about eighty remained by 2000. [Optional: a nod to your teammates in Mexico.]
+
+In Brazil, the boteco began in the warehouses of Rio's port. Today botecos in 25 cities compete every year over the best snack, and the coldest beer. [Optional: a nod to your teammates in Brazil.]
+
+And in Ireland, the pub was often also the grocery, the hardware store, and occasionally the undertaker.
+
+SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritual role; pulquerías "once estimated at 1,100" (the estimate is undated), about 80 by the start of the 21st century; decline tied to a campaign by beer companies and the government. Rio de Janeiro by Cariocas: botecos began in 19th-century Rio with Portuguese port warehouses; Comida di Buteco, created in 1999 in Belo Horizonte, now has botecos in 25 cities competing, judged on snack, service, hygiene and drink temperature. Wikipedia, "Irish pub": 19th-century spirit grocers combined pubs with grocery or hardware businesses; some publicans were also undertakers, a combination "still common in Ireland." "Diveus mercator" is our invention.</aside>
+</section>
 <section class="slide" id="third" data-scene="neighborhood" style="background:#15130F;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:start;gap:20px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">11</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">15</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">The third place</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.15;color:#EDE6D8;width:1500px">Home is the first place. Work is the second.<br><i>The third is where a neighborhood meets itself.</i></h2>
 <div style="position:absolute;left:128px;top:470px;width:720px;display:flex;flex-direction:column;gap:16px">
@@ -455,7 +593,7 @@ PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light.
 <p style="font-size:32px;line-height:1.3;color:#A89F8F">of Americans with no regular place in their community</p>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;color:#7E7668">Survey Center on American Life, American Community Life Survey, June–July 2020, n = 5,058</p>
-<aside>[3:25 to 3:50 · about 70 words]
+<aside>[6:08 to 6:36 · about 70 words]
 
 The sociologist Ray Oldenburg had a name for places like this. Third places. Home is the first place. Work is the second. The third is where community happens, informally.
 
@@ -472,7 +610,7 @@ SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana P
 <section class="slide" id="falsedive" data-scene="lounge" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 1120px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <div class="kb" style="position:absolute;left:740px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_false.jpg" alt="Suspiciously perfect bar with Edison bulbs and a coupe cocktail glass" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:740px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">12</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">16</p>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#C9A15A">Diveus artificialis</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The False Dive</h2>
 <p style="font-size:32px;line-height:1.3;color:#A89F8F">Not a true species. A mimic.</p>
@@ -486,7 +624,7 @@ SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana P
 <p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">QR-code menu</p>
 <p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Social media manager</p>
 </div>
-<aside>[3:50 to 4:08 · about 55 words]
+<aside>[6:36 to 6:58 · about 55 words]
 
 Not every specimen is what it appears to be.
 
@@ -499,11 +637,11 @@ Attempts to reproduce the American dive bar in captivity have largely failed.
 PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs, a coupe glass, subway tile, merch for sale by the door. Shoot it beautifully. The joke lands better if it looks good. Avoid showing a recognizable venue's name or logo.</aside>
 </section>
 <section class="slide" id="test" data-scene="silence" style="background:#090908;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:36px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">13</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">17</p>
 <h1 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:104px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Did this accumulate?</h1>
 <p style="font-size:56px;font-style:italic;text-align:center;color:#A89F8F">or was it purchased?</p>
 <hr style="width:96px;border-top:2px solid #C9A15A">
-<aside>[4:08 to 4:15 · about 10 words, then silence]
+<aside>[6:58 to 7:05 · about 10 words, then silence]
 
 Fortunately, field researchers rely on one simple diagnostic.
 
@@ -512,7 +650,7 @@ Fortunately, field researchers rely on one simple diagnostic.
 <section class="slide" id="conservation" data-scene="lastcall" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_conservation.jpg" alt="Red neon COLD BEER sign on a weathered brick wall at sunset" style="width:100%;height:100%;object-fit:cover"><div class="fx neon" style="position:absolute;left:245px;top:96px;width:560px;height:680px;background:radial-gradient(closest-side, rgba(255,64,40,0.36), rgba(255,64,40,0))"></div></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">14</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">18</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:24px">
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;color:#EDE6D8">Conservation</h2>
 <p style="font-size:32px;line-height:1.35;color:#D9D1C1">No one has ever counted America’s dive bars. The pressures on neighborhood gathering places are easier to name.</p>
@@ -525,7 +663,7 @@ Fortunately, field researchers rely on one simple diagnostic.
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <p style="font-size:44px;font-style:italic;line-height:1.25;color:#EDE6D8">You can open a bar tomorrow.<br><span style="color:#E2B866">You cannot open a seventy-year-old bar tomorrow.</span></p>
 </div>
-<aside>[4:15 to 4:40 · about 75 words]
+<aside>[7:05 to 7:35 · about 75 words]
 
 A word on conservation.
 
@@ -542,7 +680,7 @@ SOURCES: Gallup, 2025 Consumption Habits survey, 54% of U.S. adults say they dri
 <section class="slide" id="closing" data-scene="exterior" data-build-cue="door" data-build-scene="silence" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:24px">
 <div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_closing.jpg" alt="Lone roadside bar with a red neon BAR sign under an orange sunset sky" style="width:100%;height:100%;object-fit:cover"><div class="fx neon slow" style="position:absolute;left:318px;top:394px;width:400px;height:320px;background:radial-gradient(closest-side, rgba(255,72,48,0.40), rgba(255,72,48,0))"></div></div></div>
 <div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">15</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">19</p>
 <p style="font-size:96px;font-style:italic;font-weight:400;line-height:1.1;color:#EDE6D8">Diveus americanus</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#A89F8F">Conservation status   <span style="color:#E2B866">Threatened</span></p>
 <hr style="width:96px;border-top:2px solid #C9A15A">
@@ -550,7 +688,7 @@ SOURCES: Gallup, 2025 Consumption Habits survey, 54% of U.S. adults say they dri
 <p style="font-family:Inter, Arial, sans-serif;font-size:28px;letter-spacing:10px;text-transform:uppercase;text-align:center;color:#A89F8F">Respect the habitat.</p>
 <p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:88px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;text-align:center;color:#EDE6D8">Don’t sit in Gary’s seat.</p>
 </div>
-<aside>[4:40 to 5:00 · about 50 words]
+<aside>[7:35 to 7:55 · about 50 words]
 
 A great dive bar isn't designed. It evolves.
 
@@ -907,7 +1045,7 @@ const Sound = (() => {
   const soundBtn = document.getElementById('soundBtn'), vol = document.getElementById('vol'), notesBtn = document.getElementById('notesBtn');
   const gate = document.getElementById('gate');
   const SCENE_LABELS = { exterior: 'Exterior, night', quiet: 'Interior, quiet hour · field recording', neighborhood: 'Neighborhood bar · field recording', working: 'The regulars · field recording',
-    coast: 'Coastal bar, dusk', latenight: 'Biker bar, late · field recording', lounge: 'Hospitality-group lounge', lastcall: 'Closing time', silence: 'Silence' };
+    coast: 'Coastal bar, dusk', latenight: 'Biker bar · field recording', lounge: 'Hospitality-group lounge', lastcall: 'Closing time', silence: 'Silence' };
   let i = 0, step = 0, started = false;
 
   const fit = () => { const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080); stage.style.transform = `translate(-50%, -50%) scale(${s})`; };
