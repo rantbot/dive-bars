@@ -103,9 +103,9 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
 .gate .card { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; width: min(1200px, 100%); }
 .gate .eyebrow { font-family: var(--ui); font-size: clamp(10px, 1vw, 13px); letter-spacing: 0.5em; text-transform: uppercase; color: var(--muted); margin-bottom: clamp(22px, 3.5vh, 40px); animation: g-in 2.4s ease 0.5s both; }
 .gate h1 { margin: 0; font-family: var(--display); font-weight: 300; color: var(--ivory); text-transform: uppercase; line-height: 1.02;
-  font-size: clamp(40px, 8.2vw, 132px); letter-spacing: 0.14em; padding-left: 0.14em; text-wrap: balance;
+  font-size: clamp(30px, 8.2vw, 132px); letter-spacing: 0.14em; padding-left: 0.14em; text-wrap: balance;
   animation: g-title 7s cubic-bezier(.16,.7,.2,1) 1.2s both; }
-.gate h1 span { display: block; }
+.gate h1 span { display: block; white-space: nowrap; }
 .gate .rule { width: 160px; height: 1px; background: var(--amber); margin: clamp(26px, 4vh, 44px) 0 clamp(18px, 2.6vh, 28px); transform-origin: center; animation: g-rule 2.2s cubic-bezier(.2,.7,.2,1) 3.6s both; }
 .gate .sub { font-family: var(--display); font-style: italic; font-weight: 400; font-size: clamp(18px, 2.3vw, 34px); color: #D9D1C1; animation: g-in 2.6s ease 4.2s both; }
 .gate .credit { font-family: var(--ui); font-size: clamp(10px, 0.95vw, 12px); letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); margin-top: clamp(30px, 6vh, 64px); animation: g-in 2.4s ease 5.4s both; }
@@ -119,7 +119,7 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
 .gate .keys { font-size: 11px; color: #6E675B; letter-spacing: 0.08em; }
 .gate kbd { font-family: var(--ui); border: 1px solid #3A352D; border-radius: 2px; padding: 0 5px; color: var(--muted); }
 @keyframes g-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes g-title { from { opacity: 0; letter-spacing: 0.42em; filter: blur(6px); } 35% { opacity: 1; filter: blur(0); } to { opacity: 1; letter-spacing: 0.14em; filter: blur(0); } }
+@keyframes g-title { from { opacity: 0; transform: scale(1.07); filter: blur(6px); } 35% { opacity: 1; filter: blur(0); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
 @keyframes g-rule { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .gate *, .gate::before { animation: none !important; } }
 @media (prefers-reduced-motion: reduce) { .slide, .slide.active, .build, .hud, .gate { transition: none; } }
