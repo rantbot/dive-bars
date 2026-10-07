@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="The American Dive Bar: a five-minute nature-documentary lightning talk with live ambient sound.">
+<style>*,*::before,*::after{box-sizing:border-box}html,body{margin:0}body{-webkit-font-smoothing:antialiased}[hidden]{display:none!important}</style>
+<title>The American Dive Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400..600&display=swap">
+<style>
+/* Layout: one 1920x1080 stage scaled to the window, a quiet HUD that hides while presenting. */
+:root {
+  --night: #0D0C0A; --ink: #090908; --ivory: #EDE6D8; --muted: #A89F8F; --amber: #C9A15A; --line: rgba(237,230,216,0.18);
+  --display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; --ui: Inter, 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--ink); color: var(--ivory); font-family: var(--ui); overflow: hidden; }
+#viewport { position: fixed; inset: 0; overflow: hidden; background: var(--ink); cursor: default; }
+#viewport.hide-cursor { cursor: none; }
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center center; background: var(--night); }
+.slide { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; box-sizing: border-box; overflow: hidden;
+  display: flex; flex-direction: column; font-family: var(--display); color: var(--ivory);
+  opacity: 0; visibility: hidden; transition: opacity 0.9s ease, visibility 0s linear 0.9s; }
+.slide.active { opacity: 1; visibility: visible; transition: opacity 0.9s ease; }
+.slide * { box-sizing: border-box; }
+.slide div { display: flex; flex-direction: column; }
+.slide p, .slide h1, .slide h2, .slide h3 { margin: 0; }
+.slide p { font-size: 32px; line-height: 1.4; }
+.slide h1 { font-size: 96px; line-height: 1.1; }
+.slide h2 { font-size: 64px; line-height: 1.15; text-wrap: balance; }
+.slide hr { border: 0; margin: 0; height: 0; }
+.slide img { max-width: none; display: block; }
+.slide aside { display: none; }
+.slide > :not([style*="position:absolute"]) { position: relative; }
+.build { opacity: 0; transition: opacity 0.8s ease; }
+.build.on { opacity: 1; }
+
+
+/* Motion: everything slow, quiet, and off for reduced-motion viewers. */
+.slide { transform: scale(1.012); transition: opacity 0.9s ease, transform 1.6s cubic-bezier(.2,.7,.2,1), visibility 0s linear 0.9s; }
+.slide.active { transform: none; transition: opacity 0.9s ease, transform 1.6s cubic-bezier(.2,.7,.2,1); }
+.kb-in { position: absolute; inset: 0; will-change: transform; }
+.slide.active .kb-in { animation: drift-a 26s cubic-bezier(.25,.6,.3,1) both; }
+.slide.active.alt .kb-in { animation-name: drift-b; }
+@keyframes drift-a { from { transform: scale(1.03) translate(0.6%, 0.4%); } to { transform: scale(1.09) translate(-1.1%, -0.7%); } }
+@keyframes drift-b { from { transform: scale(1.09) translate(-0.8%, 0.5%); } to { transform: scale(1.03) translate(0.5%, -0.3%); } }
+.slide.active .rise { animation: rise 1.15s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.fx { position: absolute; pointer-events: none; mix-blend-mode: screen; }
+.fx.paper { mix-blend-mode: multiply; }
+.fx.neon { animation: flicker 7.3s linear infinite; }
+.fx.neon.slow { animation-duration: 11s; }
+@keyframes flicker { 0%, 100% { opacity: 0.85; } 31% { opacity: 0.8; } 32% { opacity: 0.2; } 33% { opacity: 0.9; } 34% { opacity: 0.3; } 35% { opacity: 0.85; }
+  60% { opacity: 1; } 78% { opacity: 0.85; } 79% { opacity: 0.45; } 80% { opacity: 0.9; } }
+.fx.breathe { animation: breathe 3.8s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { opacity: 0.55; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.12); } }
+.dot { animation: twinkle 4.5s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+.grain { position: absolute; inset: -60px; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 0.9s steps(6) infinite; }
+@keyframes grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-22px, 14px); } 40% { transform: translate(18px, -26px); } 60% { transform: translate(-12px, 30px); } 80% { transform: translate(26px, 8px); } 100% { transform: translate(0, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.active { transform: none; }
+  .slide.active .kb-in, .slide.active .rise, .fx, .dot, .grain { animation: none !important; }
+}
+
+/* HUD */
+.hud { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(180deg, rgba(9,9,8,0) 0%, rgba(9,9,8,0.85) 60%);
+  font-size: 13px; color: var(--muted); transition: opacity 0.4s ease; z-index: 5; }
+.hud.idle { opacity: 0; pointer-events: none; }
+.hud .where { display: flex; gap: 14px; align-items: baseline; min-width: 0; }
+.hud .name { font-family: var(--display); font-size: 17px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ivory); }
+.hud .count { font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+.hud .scene { font-family: var(--display); font-style: italic; font-size: 16px; color: var(--amber); }
+.hud .tools { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.hud button { font: inherit; font-size: 13px; color: var(--ivory); background: transparent; border: 1px solid var(--line); border-radius: 3px; padding: 7px 11px; cursor: pointer; letter-spacing: 0.04em; }
+.hud button:hover { border-color: var(--muted); }
+.hud button:focus-visible, .gate button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.hud button[aria-pressed="true"] { background: rgba(201,161,90,0.16); border-color: var(--amber); color: var(--ivory); }
+.hud input[type=range] { width: 96px; accent-color: var(--amber); }
+.hud label.vol { display: flex; align-items: center; gap: 6px; }
+
+/* Notes */
+.notes { position: fixed; left: 50%; bottom: 64px; transform: translateX(-50%); width: min(760px, calc(100% - 32px)); max-height: 44vh; overflow: auto;
+  background: rgba(13,12,10,0.94); border: 1px solid var(--line); border-radius: 4px; padding: 18px 22px; z-index: 6;
+  font-size: 15px; line-height: 1.6; color: var(--ivory); white-space: pre-wrap; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.notes h4 { margin: 0 0 8px; font-weight: 500; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); }
+
+/* Gate: a documentary title card on solid black. */
+.gate { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; padding: 24px 16px; overflow: hidden;
+  background: #050504; transition: opacity 1.8s ease; cursor: pointer; }
+.gate.gone { opacity: 0; pointer-events: none; }
+.gate::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 55% 38% at 50% 50%, rgba(201,161,90,0.10), rgba(201,161,90,0) 70%), radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);
+  animation: g-in 4s ease 0.6s both; }
+.gate .gate-grain { position: absolute; inset: -60px; pointer-events: none; opacity: 0.08; mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 0.9s steps(6) infinite; }
+.gate .card { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; width: min(1200px, 100%); }
+.gate .eyebrow { font-family: var(--ui); font-size: clamp(10px, 1vw, 13px); letter-spacing: 0.5em; text-transform: uppercase; color: var(--muted); margin-bottom: clamp(22px, 3.5vh, 40px); animation: g-in 2.4s ease 0.5s both; }
+.gate h1 { margin: 0; font-family: var(--display); font-weight: 300; color: var(--ivory); text-transform: uppercase; line-height: 1.02;
+  font-size: clamp(40px, 8.2vw, 132px); letter-spacing: 0.14em; padding-left: 0.14em; text-wrap: balance;
+  animation: g-title 7s cubic-bezier(.16,.7,.2,1) 1.2s both; }
+.gate h1 span { display: block; }
+.gate .rule { width: 160px; height: 1px; background: var(--amber); margin: clamp(26px, 4vh, 44px) 0 clamp(18px, 2.6vh, 28px); transform-origin: center; animation: g-rule 2.2s cubic-bezier(.2,.7,.2,1) 3.6s both; }
+.gate .sub { font-family: var(--display); font-style: italic; font-weight: 400; font-size: clamp(18px, 2.3vw, 34px); color: #D9D1C1; animation: g-in 2.6s ease 4.2s both; }
+.gate .credit { font-family: var(--ui); font-size: clamp(10px, 0.95vw, 12px); letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); margin-top: clamp(30px, 6vh, 64px); animation: g-in 2.4s ease 5.4s both; }
+.gate .start { position: absolute; left: 0; right: 0; bottom: calc(clamp(24px, 6vh, 56px) + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: 14px; padding-inline: 16px; animation: g-in 2s ease 6.6s both; }
+.gate .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.gate button { font: inherit; font-family: var(--ui); font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; padding: 13px 22px; border-radius: 0; cursor: pointer; background: transparent; }
+.gate .go { color: var(--ivory); border: 1px solid rgba(201,161,90,0.7); }
+.gate .go:hover { background: rgba(201,161,90,0.12); }
+.gate .quiet { color: var(--muted); border: 1px solid transparent; }
+.gate .quiet:hover { color: var(--ivory); }
+.gate .keys { font-size: 11px; color: #6E675B; letter-spacing: 0.08em; }
+.gate kbd { font-family: var(--ui); border: 1px solid #3A352D; border-radius: 2px; padding: 0 5px; color: var(--muted); }
+@keyframes g-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes g-title { from { opacity: 0; letter-spacing: 0.42em; filter: blur(6px); } 35% { opacity: 1; filter: blur(0); } to { opacity: 1; letter-spacing: 0.14em; filter: blur(0); } }
+@keyframes g-rule { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .gate *, .gate::before { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .slide, .slide.active, .build, .hud, .gate { transition: none; } }
+</style>
+
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+<section class="slide" id="cover" data-scene="exterior" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:32px">
+<div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_cover.jpg" alt="Weathered roadside bar with a red neon BAR sign at dusk" style="width:100%;height:100%;object-fit:cover"><div class="fx neon" style="position:absolute;left:150px;top:60px;width:440px;height:420px;background:radial-gradient(closest-side, rgba(255,72,48,0.42), rgba(255,72,48,0))"></div></div></div>
+<div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
+<div style="position:absolute;left:820px;top:700px;width:1100px;height:380px;background:linear-gradient(180deg, rgba(13,12,10,0) 0%, rgba(13,12,10,0.7) 100%)"></div>
+<p style="position:absolute;left:128px;top:96px;width:900px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;color:#A89F8F;text-transform:uppercase">Field study · North America · 2026</p>
+<h1 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:132px;font-weight:400;line-height:1.0;letter-spacing:10px;text-transform:uppercase;color:#EDE6D8">The American<br>Dive Bar</h1>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:7px;text-transform:uppercase;color:#C9A15A">An exploration of a fragile ecosystem</p>
+<aside>[0:00 to 0:25 · about 70 words]
+
+Across the American landscape, hidden in strip malls, beneath flickering neon, and along roads less traveled, an extraordinary ecosystem continues to survive.
+
+To the casual observer, it may appear inhospitable.
+
+But look closer.
+
+(pause)
+
+This is the American dive bar.
+
+For [NUMBER] years, I have conducted extensive field research into this habitat. Most of it at night. Much of it involving beer.
+
+PHOTO DIRECTION: Full-height exterior of an old bar at dusk or blue hour. Neon sign lit, sky still holding a little color, wet pavement or a parked truck if you have it. Shoot from across the street, slightly low. Stand-in image is a low-resolution crop from your mockup. Swap it for your own.</aside>
+</section>
+<section class="slide" id="range" data-scene="exterior" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:24px">
+<img src="img/us_map.svg" alt="Map of the United States with documented dive bar observations marked as points of light" style="position:absolute;left:560px;top:140px;width:1300px;height:813px;object-fit:contain">
+<div style="position:absolute;left:1713px;top:421px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1692px;top:449px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1765px;top:356px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1664px;top:476px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1581px;top:456px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1538px;top:430px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1504px;top:409px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1404px;top:434px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1395px;top:400px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1275px;top:348px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1353px;top:538px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1484px;top:511px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1457px;top:540px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1440px;top:606px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1363px;top:644px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1372px;top:801px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1172px;top:796px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1234px;top:812px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1010px;top:498px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:956px;top:636px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:816px;top:666px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:757px;top:571px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:669px;top:617px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:599px;top:482px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:659px;top:253px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:683px;top:195px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1612px;top:939px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1596px;top:712px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1544px;top:611px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:1250px;top:527px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<div style="position:absolute;left:900px;top:302px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">02</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;letter-spacing:12px;text-transform:uppercase;color:#EDE6D8">Range</h2>
+<p style="font-size:32px;font-style:italic;line-height:1.3;color:#A89F8F;width:400px">Documented observations across North America</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">[YEAR] – 2026</p>
+<aside>[0:25 to 0:45 · about 60 words]
+
+These are my documented observations.
+
+A note on methodology. The federal government carefully counts "drinking places." It has no category for a dive. Diveus americanus remains, officially, unrecognized by science.
+
+The word itself was never a compliment. By the late 1860s, American newspapers were calling a disreputable drinking den a "dive," possibly because so many of them sat a flight below the street.
+
+TO DO: The 31 dots are placeholders at major cities. Each one is a separate shape, so drag, delete or duplicate them to match the bars you have actually visited. Replace [YEAR] with the year your field research began.
+
+SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Beverages)," has no dive-bar subcategory. Earliest noun use of "dive" for a disreputable establishment, National Police Gazette, Jan. 12, 1867 (via Barry Popik). OED defines the U.S. sense as a drinking den "often situated in a cellar, basement, or other half-concealed place." The basement origin is likely, not certain, which is why the narration says "possibly."</aside>
+</section>
+<section class="slide" id="anatomy" data-scene="quiet" style="background:#E8DFCC;color:#2A2119;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<img src="img/plate.jpg" alt="Engraved anatomical illustration of a dive bar interior in lateral section, with arrows pointing to its neon sign, lamp, bottles, stools, clock, mounted fish, photo wall and jukebox" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
+<p style="position:absolute;left:96px;top:84px;width:400px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#6B5440">Plate III</p>
+<p style="position:absolute;left:1124px;top:78px;width:700px;font-size:30px;font-style:italic;text-align:right;color:#6B5440">Diveus americanus</p>
+<h2 style="position:absolute;left:128px;top:112px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:500;line-height:1.1;letter-spacing:12px;text-transform:uppercase;text-align:center;color:#2A2119">Anatomy of a Dive</h2>
+<p style="position:absolute;left:128px;top:194px;width:1664px;font-size:30px;font-style:italic;text-align:center;color:#6B5440">Fig. 1. Interior, lateral section. Drawn from life.</p>
+<div style="position:absolute;left:96px;top:324px;width:300px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;text-align:right;color:#2A2119">Neon vestigialis</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;text-align:right;color:#6B5440">Old neon</p></div>
+<div style="position:absolute;left:96px;top:444px;width:300px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;text-align:right;color:#2A2119">Lumen obscurum</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;text-align:right;color:#6B5440">Low ambient light</p></div>
+<div style="position:absolute;left:96px;top:564px;width:300px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;text-align:right;color:#2A2119">Reservoir lagerum</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;text-align:right;color:#6B5440">Domestic lager supply</p></div>
+<div style="position:absolute;left:96px;top:704px;width:300px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;text-align:right;color:#2A2119">Sedes territorialis</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;text-align:right;color:#6B5440">Territorial seating</p></div>
+<div style="position:absolute;left:1524px;top:314px;width:320px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Horologium cerevisiae</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;color:#6B5440">Brewery-issued clock</p></div>
+<div style="position:absolute;left:1524px;top:434px;width:320px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Artefactum inexplicatum</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;color:#6B5440">Unexplained artifact</p></div>
+<div style="position:absolute;left:1524px;top:574px;width:320px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Paries accumulatus</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;color:#6B5440">Accumulated décor</p></div>
+<div style="position:absolute;left:1524px;top:714px;width:320px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Machina musicalis</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;color:#6B5440">Jukebox</p></div>
+<p style="position:absolute;left:310px;top:880px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;text-align:center;color:#8C2F23">The Law of Accumulation</p>
+<p style="position:absolute;left:310px;top:918px;width:1300px;font-size:30px;font-style:italic;line-height:1.3;text-align:center;color:#2A2119">“The authenticity of a dive bar appears positively correlated with the number of objects whose origin the current bartender cannot explain.”</p>
+<div class="fx neon paper" style="position:absolute;left:640px;top:300px;width:310px;height:116px;background:radial-gradient(closest-side, rgba(200,50,30,0.22), rgba(200,50,30,0))"></div>
+<aside>[0:45 to 1:10 · about 80 words]
+
+Let us examine a specimen. Plate three.
+
+Note the low ambient light. The territorial seating. A domestic lager supply. And décor.
+
+Some of it was supplied. Before Prohibition, breweries furnished saloons with branded mirrors and back bars. Today, federal rules still let them give bars signs, clocks and menus for free, as long as the beer's name is on them.
+
+But most of it simply arrived. Which brings us to the Law of Accumulation.
+
+(read the law slowly)
+
+A real dive is not decorated. It accumulates.
+
+VISUAL NOTE: This plate is an original line illustration, so no photo is needed here. The arrows are part of the image. The labels are separate text boxes, so you can rename any part, but if you move one, its arrow stays put.
+
+SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars" and "brewery-branded mirrors and hardware" (Whiting-Robertsdale Historical Society, "The Tied House System That Left Its Mark on Whiting"). 27 CFR 6.84 lets industry members give retailers point-of-sale materials such as "inside signs," "back bar mats," "clocks, calendars" and menus, provided they carry conspicuous advertising. The Law of Accumulation and the Latin anatomy terms are our own invention, presented as such.</aside>
+</section>
+<section class="slide" id="sp1" data-scene="neighborhood" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_neighborhood.jpg" alt="Bearded regular in a ball cap at the bar with a half-finished lager" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">04</p>
+<div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<p style="font-size:44px;color:#C9A15A;line-height:1">01</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Neighborhood Dive</h2>
+<p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus communalis</p>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<div style="display:flex;flex-direction:column;gap:14px;font-family:Inter, Arial, sans-serif">
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#C9A15A">Community</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Range</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Nationwide</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Behavior</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Highly social</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Activity</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Primarily nocturnal</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Diet</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Domestic lager, fried foods</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Status</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Stable, locally vulnerable</p></div>
+</div>
+</div>
+<aside>[1:10 to 1:30 · about 55 words]
+
+Our research has identified four primary species.
+
+We begin with the most widespread. The Neighborhood Dive. Diveus communalis.
+
+Its defining trait is community. Regulars occupy preferred stools. The bartender begins pouring before anyone orders. Over time, the line between customer and staff grows unclear. Some regulars have been observed changing the music. Others, the keg.
+
+PHOTO DIRECTION: A regular at the bar in profile, warm practical light, shallow depth of field, beer in frame. Ask permission, or shoot from behind so the subject is anonymous.</aside>
+</section>
+<section class="slide" id="fo1" data-scene="neighborhood" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:end;gap:16px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/placeholder.jpg" alt="Placeholder for a personal field photo of a favorite neighborhood dive" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:0px;top:560px;width:1920px;height:520px;background:linear-gradient(180deg, rgba(13,12,10,0) 0%, rgba(13,12,10,0.88) 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">05</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 01</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">[Bar Name]</h2>
+<p style="font-size:40px;font-style:italic;line-height:1.2;color:#A89F8F">[City, State]</p>
+<p style="font-size:32px;line-height:1.35;color:#D9D1C1;width:900px">[One sentence describing a very specific behavior or story observed here.]</p>
+<aside>[1:30 to 1:42 · about 35 words]
+
+Field Observation Number One. [BAR NAME], in [CITY].
+
+Here, I observed [ONE SPECIFIC BEHAVIOR OR STORY. Keep it to one sentence. The more specific and mundane, the better. A regular's ritual, a house rule, an object behind the bar.]
+
+PHOTO DIRECTION: [INSERT PERSONAL FIELD PHOTO]. Your own phone photo of your favorite neighborhood dive, exterior or interior. Imperfect is fine. Treat it as evidence, not art. Replace the placeholder image by selecting it and choosing a new image.</aside>
+</section>
+<section class="slide" id="sp2" data-scene="working" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_working.jpg" alt="Older man in a cap leaning on the bar beside a bottle of beer in window light" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">06</p>
+<div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<p style="font-size:44px;color:#C9A15A;line-height:1">02</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Working-Class Dive</h2>
+<p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus laboriosus</p>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<div style="display:flex;flex-direction:column;gap:14px;font-family:Inter, Arial, sans-serif">
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#C9A15A">Routine</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Habitat</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Industrial towns, older districts</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Peak activity</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Shift change</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Behavior</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Same people, same stools, same drinks</p></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;padding:24px 0px 0px 0px;border-top:1px solid #3A352D">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Related species, briefly glimpsed</p>
+<p style="font-size:30px;font-style:italic;line-height:1.35;color:#D9D1C1">The Sports Dive · The VFW Post · The Bowling-Alley Bar · The College Dive · The Music Dive</p>
+</div>
+</div>
+<aside>[1:42 to 2:02 · about 60 words]
+
+In older industrial towns, we find a hardier relative. The Working-Class Dive. Diveus laboriosus.
+
+Its defining trait is routine. Activity peaks at shift change. Same people. Same stools. Same drinks. Same time.
+
+Researchers have observed individual specimens occupying the same stool for decades. Removing the stool could result in severe ecological disruption.
+
+Related species are glimpsed only briefly. The Sports Dive. The VFW post. The bowling-alley bar.
+
+PHOTO DIRECTION: An older regular at a quiet bar in daylight or late afternoon, window light, domestic bottle in frame. Industrial-town feel. Or the empty stool itself, with a worn seat.</aside>
+</section>
+<section class="slide" id="sp3" data-scene="coast" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_destination.jpg" alt="Weathered wooden bar on stilts beside palm trees at sunset on the coast" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">07</p>
+<div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<p style="font-size:44px;color:#C9A15A;line-height:1">03</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Destination Dive</h2>
+<p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus remotus</p>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<div style="display:flex;flex-direction:column;gap:14px;font-family:Inter, Arial, sans-serif">
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#C9A15A">Isolation</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Habitat</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Coasts, back roads, deserts, mountains</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Behavior</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Draws intentional travel</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Adaptations</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Cash only. A resident dog. One inexplicably excellent sandwich.</p></div>
+</div>
+</div>
+<aside>[2:02 to 2:20 · about 50 words]
+
+Some populations have evolved in remarkable geographic isolation. The Destination Dive. Diveus remotus.
+
+Found on coastlines, back roads, and at the ends of things.
+
+Isolation produces strange local adaptations. Cash only. A resident dog. One inexplicably excellent sandwich.
+
+And, in many cases, a ceiling covered in money.
+
+PHOTO DIRECTION: A coastal, rural, desert or mountain bar shot wide enough to show its isolation. Golden hour or sunset. If you have three, consider swapping in a strip of three smaller photos labeled Coastal variant, Rural variant, Mountain or desert variant. Edit the Adaptations line to match a real one you've seen.</aside>
+</section>
+<section class="slide" id="dollars" data-scene="coast" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_dollars.jpg" alt="Coastal bar whose ceiling is covered in dollar bills, open to the water at sunset" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:0px;top:0px;width:1240px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0.94) 0%, rgba(13,12,10,0.86) 55%, rgba(13,12,10,0) 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">08</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 02</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">The Currency Ceiling</h2>
+<p style="font-size:36px;font-style:italic;line-height:1.2;color:#A89F8F">Origin disputed. Competing hypotheses include</p>
+<div style="display:flex;flex-direction:column;gap:10px;width:760px;font-family:Inter, Arial, sans-serif">
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:60px;font-size:24px;color:#C9A15A">I.</p><p style="font-size:26px;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The miner’s insurance policy</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:60px;font-size:24px;color:#C9A15A">II.</p><p style="font-size:26px;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The fisherman’s wager</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:60px;font-size:24px;color:#C9A15A">III.</p><p style="font-size:26px;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The aviator’s short snorter</p></div>
+</div>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<p style="font-size:120px;font-weight:300;line-height:1;color:#E2B866">$13,961</p>
+<p style="font-size:30px;line-height:1.35;color:#D9D1C1;width:760px">pulled from the walls of Siesta Key Oyster Bar in Sarasota, Florida, and sent to Hurricane Dorian relief in the Bahamas, 2019.</p>
+<aside>[2:20 to 2:45 · about 85 words]
+
+Why money? Scientists remain divided.
+
+In California's Gold Country, regulars tell of miners who signed a bill and tacked it to the ceiling, so they would never come back too broke for a first drink. On the Florida coast, the story involves fishermen, betting a dollar on the day's catch. Aviators had a cousin of the custom. Signed bills called short snorters. Fail to produce yours, and you bought the round.
+
+The true origin may be unrecoverable.
+
+The money is not. In 2019, staff at the Siesta Key Oyster Bar pulled every bill off the walls. Thirteen thousand, nine hundred and sixty-one dollars. All of it sent to hurricane relief in the Bahamas.
+
+PHOTO DIRECTION: [INSERT PERSONAL FIELD PHOTO] if you have a dollar-bill bar of your own. Shoot straight up at the ceiling, or across the bar with the bills filling the top of the frame. If you swap in your own bar, rename the observation but keep the Siesta Key figure as the cited example.
+
+SOURCES: Miner story, KQED, "150 Years of Slinging Drinks: A Visit to the Iron Door Saloon" (2016), told by a regular, unverified. Fisherman story, NBC News, "Thousands of dollar bills on Florida bar's walls and ceiling donated to Dorian relief" (2019); the general manager says she doesn't know how true it is. Short snorter, Wikipedia, "Short snorter": signed banknotes believed to date to Alaskan bush pilots in 1925, widespread in WWII; a holder who couldn't produce one owed each signer a drink. This is a related signed-currency custom, not a proven origin of bar ceilings. $13,961 to the Bahamas Red Cross, NBC News and CBS Miami, Sept./Oct. 2019. Other verified examples: Forbidden Island tiki bar, Alameda, CA, removed $10,367 in 2019 and donated over $8,000 to local charities (Boing Boing / CBC); Hott Leggz, Fort Lauderdale, gave about $10,000 to laid-off staff in 2020 (Global News).</aside>
+</section>
+<section class="slide" id="sp4" data-scene="latenight" style="background:#0B0B0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:start;gap:16px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/migration2.jpg" alt="Dark city street map with five golden migration paths converging on one glowing point" style="width:100%;height:100%;object-fit:cover"><div class="fx breathe" style="position:absolute;left:1000px;top:440px;width:300px;height:300px;background:radial-gradient(closest-side, rgba(255,200,120,0.55), rgba(255,170,80,0.15) 45%, rgba(255,170,80,0))"></div></div></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">09</p>
+<p style="font-size:44px;color:#C9A15A;line-height:1">04</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Late-Night Dive</h2>
+<p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus nocturnus</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait <span style="color:#C9A15A">Migration</span>   ·   Peak activity <span style="color:#EDE6D8">00:00 – 02:00</span></p>
+<p style="position:absolute;left:128px;top:548px;width:330px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Restaurants</p>
+<p style="position:absolute;left:128px;top:768px;width:270px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Concerts</p>
+<p style="position:absolute;left:790px;top:888px;width:320px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#EDE6D8">Weddings</p>
+<p style="position:absolute;left:1440px;top:364px;width:350px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Other bars, closed</p>
+<p style="position:absolute;left:1100px;top:888px;width:440px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Hospitality workers</p>
+<p style="position:absolute;left:1000px;top:356px;width:300px;font-size:48px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#E2B866">Dive Bar</p>
+<p style="position:absolute;left:1000px;top:418px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:5px;text-align:center;color:#EDE6D8">1:17 AM</p>
+<aside>[2:45 to 3:05 · about 55 words]
+
+Our final species is rarely seen in daylight. The Late-Night Dive. Diveus nocturnus.
+
+As midnight approaches, scattered populations begin their nightly migration toward a common watering hole. Restaurant staff, finished with their shifts. Concertgoers. Wedding guests. Patrons of lesser bars that have already closed.
+
+By 1:17 a.m., they converge. Here, together, they will make increasingly questionable decisions.
+
+VISUAL NOTE: The map is an abstract city, not a real one. If you want it to be your city, a dark-mode screenshot of a real street map works as a replacement. The labels are separate text boxes, so you can move them.</aside>
+</section>
+<section class="slide" id="fauna" data-scene="latenight" data-cue="woo" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">10</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:56px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Fauna of the American Dive</h2>
+<div style="display:flex;gap:48px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<img src="img/p_regular.jpg" alt="An older regular in a ball cap" style="width:380px;height:400px;object-fit:cover">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Regular</p>
+<p style="font-size:32px;font-style:italic;color:#C9A15A">Homo regularis</p>
+<p style="font-size:28px;line-height:1.3;color:#A89F8F">Territorial. Same stool, same drink.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<img src="img/p_bartender.jpg" alt="A bartender leaning on the bar" style="width:380px;height:400px;object-fit:cover">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Bartender</p>
+<p style="font-size:32px;font-style:italic;color:#C9A15A">Minister potus</p>
+<p style="font-size:28px;line-height:1.3;color:#A89F8F">Apex species. Controls access to resources.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<img src="img/p_tourist.jpg" alt="A young man in a cap looking around the room" style="width:380px;height:400px;object-fit:cover">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Tourist</p>
+<p style="font-size:32px;font-style:italic;color:#C9A15A">Homo peregrinus</p>
+<p style="font-size:28px;line-height:1.3;color:#A89F8F">Identified by looking around too much.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<img src="img/p_bachelorette.jpg" alt="Two women laughing under purple party lights" style="width:380px;height:400px;object-fit:cover">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Bachelorette Party</p>
+<p style="font-size:32px;font-style:italic;color:#C9A15A">Homo celebrans</p>
+<p style="font-size:28px;line-height:1.3;color:#A89F8F">Highly vocal. Travels in packs.</p>
+</div>
+</div>
+<aside>[3:05 to 3:25 · about 55 words]
+
+Every habitat supports its fauna.
+
+The Regular. Homo regularis. Territorial.
+
+The Bartender. Minister potus. The apex species, controlling access to all resources.
+
+The Tourist. Easily identified by looking around too much.
+
+And occasionally, a highly vocal migratory population enters the habitat. Homo celebrans. Native species typically retreat until the disturbance has passed.
+
+PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light. Real people need their permission. Silhouettes, hands on a bar, or a back-of-head shot also work and keep everyone anonymous. Current images are low-resolution stand-ins from your mockup.</aside>
+</section>
+<section class="slide" id="third" data-scene="neighborhood" style="background:#15130F;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:start;gap:20px">
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">11</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">The third place</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.15;color:#EDE6D8;width:1500px">Home is the first place. Work is the second.<br><i>The third is where a neighborhood meets itself.</i></h2>
+<div style="position:absolute;left:128px;top:470px;width:720px;display:flex;flex-direction:column;gap:16px">
+<p style="font-size:240px;font-weight:300;line-height:0.9;color:#E2B866">48%</p>
+<p style="font-size:32px;line-height:1.3;color:#EDE6D8">of Americans with a regular neighborhood spot, where they recognize people, talk with someone they don’t know well at least monthly</p>
+</div>
+<div class="build" style="position:absolute;left:1000px;top:470px;width:720px;display:flex;flex-direction:column;gap:16px">
+<p style="font-size:240px;font-weight:300;line-height:0.9;color:#A89F8F">28%</p>
+<p style="font-size:32px;line-height:1.3;color:#A89F8F">of Americans with no regular place in their community</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;color:#7E7668">Survey Center on American Life, American Community Life Survey, June–July 2020, n = 5,058</p>
+<aside>[3:25 to 3:50 · about 70 words]
+
+The sociologist Ray Oldenburg had a name for places like this. Third places. Home is the first place. Work is the second. The third is where community happens, informally.
+
+In a national survey, Americans with a regular neighborhood spot, where they recognize people, were far more likely to talk with someone they don't know well. Forty-eight percent.
+
+(click) Versus twenty-eight percent of people with no regular place at all.
+
+So the Regular isn't merely drinking a High Life at 4:30 on a Tuesday. He's maintaining social infrastructure.
+
+BUILD: The 28% fades in on click.
+
+SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana Popky, "Public Places and Commercial Spaces: How Neighborhood Amenities Foster Trust and Connection in American Communities," Survey Center on American Life (AEI), Oct. 20, 2021. Survey fielded June 11 to July 1, 2020, n = 5,058, NORC AmeriSpeak panel. Exact measure: talking with someone they don't know well at least once or twice a month. 48% among those with a regular spot where they generally recognize people, 28% among those with no regular place (30% among those with a spot but who don't recognize people). Caveat: "regular spot" includes coffee shops, restaurants, bars and other places, not bars alone. In the same survey, 29% of those with a regular spot named a restaurant or bar. "Third place" comes from Ray Oldenburg, The Great Good Place (1989).</aside>
+</section>
+<section class="slide" id="falsedive" data-scene="lounge" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 1120px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<div class="kb" style="position:absolute;left:740px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_false.jpg" alt="Suspiciously perfect bar with Edison bulbs and a coupe cocktail glass" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:740px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">12</p>
+<p style="font-size:44px;font-style:italic;line-height:1.2;color:#C9A15A">Diveus artificialis</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The False Dive</h2>
+<p style="font-size:32px;line-height:1.3;color:#A89F8F">Not a true species. A mimic.</p>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<div style="display:flex;flex-direction:column;gap:12px;padding:0px 0px 0px 28px;border-left:1px solid #5A5246;font-family:Inter, Arial, sans-serif">
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Edison bulbs</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Commissioned mural</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Custom neon</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Deliberately distressed finish</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">$17 cocktail</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">QR-code menu</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Social media manager</p>
+</div>
+<aside>[3:50 to 4:08 · about 55 words]
+
+Not every specimen is what it appears to be.
+
+Diveus artificialis. The False Dive.
+
+Through a remarkable process known as hospitality-group development, the False Dive has evolved, or rather, been designed, to resemble its wild cousin. Edison bulbs. A commissioned mural. Custom neon. A seventeen-dollar cocktail.
+
+Attempts to reproduce the American dive bar in captivity have largely failed.
+
+PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs, a coupe glass, subway tile, merch for sale by the door. Shoot it beautifully. The joke lands better if it looks good. Avoid showing a recognizable venue's name or logo.</aside>
+</section>
+<section class="slide" id="test" data-scene="silence" style="background:#090908;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:36px">
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">13</p>
+<h1 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:104px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Did this accumulate?</h1>
+<p style="font-size:56px;font-style:italic;text-align:center;color:#A89F8F">or was it purchased?</p>
+<hr style="width:96px;border-top:2px solid #C9A15A">
+<aside>[4:08 to 4:15 · about 10 words, then silence]
+
+Fortunately, field researchers rely on one simple diagnostic.
+
+(Let the slide sit for three full seconds. Say nothing. Let the audience read it.)</aside>
+</section>
+<section class="slide" id="conservation" data-scene="lastcall" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_conservation.jpg" alt="Red neon COLD BEER sign on a weathered brick wall at sunset" style="width:100%;height:100%;object-fit:cover"><div class="fx neon" style="position:absolute;left:245px;top:96px;width:560px;height:680px;background:radial-gradient(closest-side, rgba(255,64,40,0.36), rgba(255,64,40,0))"></div></div></div>
+<div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">14</p>
+<div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:24px">
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;color:#EDE6D8">Conservation</h2>
+<p style="font-size:32px;line-height:1.35;color:#D9D1C1">No one has ever counted America’s dive bars. The pressures on neighborhood gathering places are easier to name.</p>
+<div style="display:flex;flex-direction:column;gap:10px;padding:0px 0px 0px 28px;border-left:1px solid #5A5246;font-family:Inter, Arial, sans-serif">
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Rising rents</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Redevelopment</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Aging owners</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Changing drinking habits</p>
+</div>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<p style="font-size:44px;font-style:italic;line-height:1.25;color:#EDE6D8">You can open a bar tomorrow.<br><span style="color:#E2B866">You cannot open a seventy-year-old bar tomorrow.</span></p>
+</div>
+<aside>[4:15 to 4:40 · about 75 words]
+
+A word on conservation.
+
+No one can tell you how many dive bars remain. No one has ever counted them. But the pressures on neighborhood gathering places are real. Rising rents. Redevelopment. Owners nearing retirement. And fewer drinkers. In 2025, Gallup found just 54 percent of American adults drink at all, the lowest in its records.
+
+You can open a bar tomorrow. You cannot open a seventy-year-old bar tomorrow.
+
+The scratches. The regulars. The bartender who's been there since the eighties. The photographs nobody can identify. Those take time.
+
+PHOTO DIRECTION: An old neighborhood dive with real age on it. Faded paint, an old brewery sign or neon, ideally at dusk. Your own photo of a bar that has since closed would land hardest here.
+
+SOURCES: Gallup, 2025 Consumption Habits survey, 54% of U.S. adults say they drink alcohol, one point below the previous low (1958) in a trend dating to 1939 (reported by NPR via Michigan Public, Aug. 13, 2025). Survey Center on American Life, "Disconnected: The Growing Class Divide in American Civic Life" (Aug. 2024, n = 6,597): about 21% of Americans report no access to any of ten kinds of community gathering places. No federal source tracks dive bar openings or closures; the slide makes no closure claim for that reason. The rents, redevelopment and aging-owner pressures are offered as commonly cited pressures, not measured rates.</aside>
+</section>
+<section class="slide" id="closing" data-scene="exterior" data-build-cue="door" data-build-scene="silence" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:24px">
+<div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_closing.jpg" alt="Lone roadside bar with a red neon BAR sign under an orange sunset sky" style="width:100%;height:100%;object-fit:cover"><div class="fx neon slow" style="position:absolute;left:318px;top:394px;width:400px;height:320px;background:radial-gradient(closest-side, rgba(255,72,48,0.40), rgba(255,72,48,0))"></div></div></div>
+<div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">15</p>
+<p style="font-size:96px;font-style:italic;font-weight:400;line-height:1.1;color:#EDE6D8">Diveus americanus</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#A89F8F">Conservation status   <span style="color:#E2B866">Threatened</span></p>
+<hr style="width:96px;border-top:2px solid #C9A15A">
+<div class="build" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;background:#090908;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:40px;padding:128px">
+<p style="font-family:Inter, Arial, sans-serif;font-size:28px;letter-spacing:10px;text-transform:uppercase;text-align:center;color:#A89F8F">Respect the habitat.</p>
+<p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:88px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;text-align:center;color:#EDE6D8">Don’t sit in Gary’s seat.</p>
+</div>
+<aside>[4:40 to 5:00 · about 50 words]
+
+A great dive bar isn't designed. It evolves.
+
+So should you encounter one of these remarkable establishments in the wild, approach respectfully. Observe the local customs. Order something simple.
+
+And whatever you do...
+
+(click: the screen goes black)
+
+Respect the habitat. Don't sit in Gary's seat.
+
+(End. Don't say thank you until they stop laughing.)
+
+BUILD: The black end card fades in on click, over the photo. "Threatened" is a documentary conceit, not a real conservation designation.
+
+PHOTO DIRECTION: The bookend to your opening shot. A lone bar at dusk, wide, lots of sky, sign lit. If you only have one great exterior, reuse the cover photo here. Returning to the opening image is a classic documentary move.</aside>
+</section>
+    <div class="grain" aria-hidden="true"></div>
+  </div>
+</div>
+
+<div class="hud" id="hud">
+  <div class="where"><span class="name">The American Dive Bar</span><span class="count" id="count">01 / 15</span><span class="scene" id="sceneName"></span></div>
+  <div class="tools">
+    <button id="prev" type="button" aria-label="Previous slide">←</button>
+    <button id="next" type="button" aria-label="Next slide">→</button>
+    <button id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+    <label class="vol" for="vol"><span>Volume</span><input id="vol" type="range" min="0" max="1" step="0.05" value="0.7"></label>
+    <button id="notesBtn" type="button" aria-pressed="false">Notes</button>
+    <button id="fsBtn" type="button">Full screen</button>
+  </div>
+</div>
+<div class="notes" id="notes" hidden><h4 id="notesHead">Speaker notes</h4><div id="notesBody"></div></div>
+
+<div class="gate" id="gate">
+  <div class="gate-grain" aria-hidden="true"></div>
+  <div class="card">
+    <div class="eyebrow">Field Study · North America · 2026</div>
+    <h1><span>The American</span><span>Dive Bar</span></h1>
+    <div class="rule" aria-hidden="true"></div>
+    <div class="sub">An exploration of a fragile ecosystem</div>
+    <div class="credit">Observed and narrated by Ran Craycraft</div>
+  </div>
+  <div class="start">
+    <div class="row">
+      <button class="go" id="begin" type="button">Begin · Sound on</button>
+      <button class="quiet" id="beginQuiet" type="button">Begin silently</button>
+    </div>
+    <div class="keys"><kbd>→</kbd> or a clicker advances · <kbd>N</kbd> notes · <kbd>M</kbd> mute · <kbd>F</kbd> full screen</div>
+  </div>
+</div>
+
+<script>
+// Field audio engine. Every sound is synthesized live with Web Audio; no files.
+const Sound = (() => {
+  let ctx = null, master = null, verb = null, noise = {}, recs = {};
+  let current = null, currentKey = null, volume = 0.7, muted = false;
+  const R = (a, b) => a + Math.random() * (b - a);
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+
+  function makeNoise(kind) {
+    const len = ctx.sampleRate * 6, buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, last = 0, peak = 0;
+      for (let i = 0; i < len; i++) {
+        const w = Math.random() * 2 - 1;
+        let v = w;
+        if (kind === 'pink') {
+          b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759; b2 = 0.969 * b2 + w * 0.153852;
+          b3 = 0.8665 * b3 + w * 0.3104856; b4 = 0.55 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.016898;
+          v = b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362; b6 = w * 0.115926;
+        } else if (kind === 'brown') { last = (last + 0.02 * w) / 1.02; v = last; }
+        d[i] = v; peak = Math.max(peak, Math.abs(v));
+      }
+      for (let i = 0; i < len; i++) d[i] /= peak;
+      // smooth the loop seam
+      for (let i = 0; i < 2000; i++) { const k = i / 2000; d[i] *= k; d[len - 1 - i] *= k; }
+    }
+    return buf;
+  }
+  function makeIR(sec, decay) {
+    const len = Math.floor(ctx.sampleRate * sec), buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay); }
+    return buf;
+  }
+
+  function init() {
+    if (ctx) { ctx.resume(); return; }
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 3; comp.knee.value = 12;
+    master = ctx.createGain(); master.gain.value = muted ? 0 : volume;
+    master.connect(comp); comp.connect(ctx.destination);
+    verb = ctx.createConvolver(); verb.buffer = makeIR(2.2, 3.2);
+    const vg = ctx.createGain(); vg.gain.value = 0.5; verb.connect(vg); vg.connect(master);
+    noise = { white: makeNoise('white'), pink: makeNoise('pink'), brown: makeNoise('brown') };
+    ['chatter', 'bikerbar', 'barloop'].forEach(n => {
+      recs[n] = fetch('snd/' + n + '.mp3').then(r => { if (!r.ok) throw new Error(n); return r.arrayBuffer(); })
+        .then(b => new Promise((ok, bad) => ctx.decodeAudioData(b, ok, bad))).catch(() => null);
+    });
+  }
+
+  // A scene owns its nodes, timers and two faders (dry and reverb send).
+  function Scene(key) {
+    const s = { key, nodes: [], timers: [], alive: true };
+    s.dry = ctx.createGain(); s.dry.gain.value = 0; s.dry.connect(master);
+    s.wet = ctx.createGain(); s.wet.gain.value = 0; s.wet.connect(verb);
+    s.track = n => { s.nodes.push(n); return n; };
+    s.out = (node, dry = 1, wet = 0.3) => {
+      if (dry) { const g = ctx.createGain(); g.gain.value = dry; node.connect(g); g.connect(s.dry); }
+      if (wet) { const g = ctx.createGain(); g.gain.value = wet; node.connect(g); g.connect(s.wet); }
+    };
+    s.every = (minS, maxS, fn, first) => {
+      const go = () => { if (!s.alive) return; fn(); s.timers.push(setTimeout(go, R(minS, maxS) * 1000)); };
+      s.timers.push(setTimeout(go, (first ?? R(minS, maxS)) * 1000));
+    };
+    s.tick = (ms, fn) => { const id = setInterval(() => s.alive && fn(), ms); s.timers.push(id); };
+    s.loop = kind => { const src = ctx.createBufferSource(); src.buffer = noise[kind]; src.loop = true; src.start(0, R(0, 5)); return s.track(src); };
+    s.filter = (type, f, q = 0.7) => { const b = ctx.createBiquadFilter(); b.type = type; b.frequency.value = f; b.Q.value = q; return b; };
+    s.gain = v => { const g = ctx.createGain(); g.gain.value = v; return g; };
+    s.osc = (type, f) => { const o = ctx.createOscillator(); o.type = type; o.frequency.value = f; o.start(); return s.track(o); };
+    s.lfo = (param, rate, depth) => { const o = s.osc('sine', rate), g = s.gain(depth); o.connect(g); g.connect(param); };
+    s.chain = (...ns) => { for (let i = 0; i < ns.length - 1; i++) ns[i].connect(ns[i + 1]); return ns[ns.length - 1]; };
+    s.pan = v => { const p = ctx.createStereoPanner ? ctx.createStereoPanner() : ctx.createGain(); if (p.pan) p.pan.value = v; return p; };
+    s.fadeIn = (secs = 2.5) => { const t = ctx.currentTime; for (const g of [s.dry, s.wet]) { g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(1, t + secs); } };
+    s.stop = (secs = 2.5) => {
+      s.alive = false; s.timers.forEach(id => { clearTimeout(id); clearInterval(id); });
+      const t = ctx.currentTime;
+      for (const g of [s.dry, s.wet]) { g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0, t + secs); }
+      setTimeout(() => { s.nodes.forEach(n => { try { n.stop(); } catch (e) {} }); try { s.dry.disconnect(); s.wet.disconnect(); } catch (e) {} }, secs * 1000 + 600);
+    };
+    return s;
+  }
+
+  // ---------- one-shot voices (scheduled at time t into a destination) ----------
+  function envGain(t, a, peak, d) { const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); return g; }
+  function burst(s, t, kind, type, f, q, a, peak, d, dest, panv = 0) {
+    const src = ctx.createBufferSource(); src.buffer = noise[kind]; const bf = s.filter(type, f, q); const g = envGain(t, a, peak, d); const p = s.pan(panv);
+    src.connect(bf); bf.connect(g); g.connect(p); p.connect(dest); src.start(t, R(0, 2)); src.stop(t + a + d + 0.05);
+  }
+  function tone(s, t, type, f, a, peak, d, dest, f2) {
+    const o = ctx.createOscillator(); o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + a + d * 0.6);
+    const g = envGain(t, a, peak, d); o.connect(g); g.connect(dest); o.start(t); o.stop(t + a + d + 0.05); return o;
+  }
+
+  // ---------- components ----------
+  const C = {};
+  // Field recordings: loop the user's own audio, fading in once it has decoded.
+  C.rec = (s, name, lv, opts = {}) => {
+    const g = s.gain(0.0001); let node = g;
+    if (opts.lp) { const f = s.filter('lowpass', opts.lp); g.connect(f); node = f; }
+    s.out(node, 1, opts.wet ?? 0.15);
+    (recs[name] || Promise.resolve(null)).then(buf => {
+      if (!buf || !s.alive) return;
+      const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; src.connect(g); src.start(0, R(0, buf.duration * 0.8)); s.track(src);
+      const t = ctx.currentTime; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(lv, t + 1.5);
+      if (opts.rise) g.gain.linearRampToValueAtTime(lv * opts.rise, t + 20);
+    });
+  };
+  C.room = (s, lv) => { const n = s.loop('brown'); s.out(s.chain(n, s.filter('lowpass', 380), s.gain(lv)), 1, 0); };
+  C.hum = (s, lv, f = 120) => {
+    const o = s.osc('sawtooth', f), g = s.gain(lv); s.chain(o, s.filter('lowpass', 900), g); s.out(g, 1, 0);
+    const o2 = s.osc('sine', f / 2), g2 = s.gain(lv * 0.8); o2.connect(g2); s.out(g2, 1, 0);
+    s.every(3, 9, () => { // flicker: the tube stutters and ticks
+      const t = ctx.currentTime; for (let i = 0; i < 4; i++) { const tt = t + i * R(0.04, 0.09); g.gain.setValueAtTime(lv * 0.15, tt); g.gain.setValueAtTime(lv * R(0.8, 1.3), tt + 0.03); burst(s, tt, 'white', 'highpass', 3500, 0.7, 0.002, lv * 1.5, 0.02, s.dry); }
+    });
+  };
+  C.traffic = (s, lv) => {
+    const n = s.loop('brown'), g = s.gain(lv); s.chain(n, s.filter('lowpass', 320), g); s.lfo(g.gain, 0.05, lv * 0.35); s.out(g, 1, 0.1);
+    s.every(6, 14, () => { // a car goes by
+      const t = ctx.currentTime, dur = R(4, 7), src = ctx.createBufferSource(); src.buffer = noise.pink;
+      const bf = s.filter('bandpass', 250, 0.9), gg = ctx.createGain(), p = s.pan(-0.9);
+      bf.frequency.setValueAtTime(220, t); bf.frequency.linearRampToValueAtTime(R(650, 900), t + dur / 2); bf.frequency.linearRampToValueAtTime(220, t + dur);
+      gg.gain.setValueAtTime(0.0001, t); gg.gain.exponentialRampToValueAtTime(lv * R(1.2, 2), t + dur / 2); gg.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      if (p.pan) { const dir = Math.random() < 0.5 ? 1 : -1; p.pan.setValueAtTime(-0.9 * dir, t); p.pan.linearRampToValueAtTime(0.9 * dir, t + dur); }
+      src.connect(bf); bf.connect(gg); gg.connect(p); s.out(p, 1, 0.2); src.start(t, R(0, 4)); src.stop(t + dur + 0.1);
+    }, 2);
+  };
+  C.crickets = (s, lv) => s.every(0.5, 1.6, () => {
+    const t = ctx.currentTime, f = R(4100, 4700), p = s.pan(R(-0.8, 0.8)); s.out(p, 1, 0.3);
+    const n = Math.floor(R(2, 5)); for (let i = 0; i < n; i++) tone(s, t + i * 0.055, 'sine', f, 0.004, lv * R(0.5, 1), 0.035, p);
+  });
+  C.clinks = (s, lv, a = 1.5, b = 5) => s.every(a, b, () => {
+    const t = ctx.currentTime, base = R(1900, 3300), p = s.pan(R(-0.7, 0.7)); s.out(p, 1, 0.5);
+    [1, 2.71, 5.2].forEach((m, i) => tone(s, t, 'sine', base * m, 0.002, lv * R(0.4, 1) / (i + 1), R(0.25, 0.7), p));
+    if (Math.random() < 0.5) tone(s, t + R(0.08, 0.2), 'sine', base * 1.07, 0.002, lv * 0.4, 0.3, p); // second glass
+    if (Math.random() < 0.3) { burst(s, t + 0.4, 'brown', 'lowpass', 300, 0.7, 0.003, lv * 2, 0.09, p); } // glass set down
+  });
+
+  // Synthesized voices: buzz source through moving formants, chopped into syllables.
+  const VOWELS = [[730, 1090], [530, 1840], [270, 2290], [570, 840], [300, 870], [660, 1720], [640, 1190], [500, 1500], [440, 1020]];
+  C.babble = (s, n, lv, opts = {}) => {
+    const bus = s.gain(1), lp = s.filter('lowpass', opts.lp || 3200), hp = s.filter('highpass', opts.hp || 140), out = s.gain(lv);
+    s.chain(bus, hp, lp, out); s.out(out, 1, opts.wet ?? 0.9);
+    const bed = s.loop('pink'), bedG = s.gain(lv * 0.18); s.chain(bed, s.filter('bandpass', 550, 0.6), bedG, lp); s.lfo(bedG.gain, 0.08, lv * 0.06);
+    const voices = [];
+    for (let i = 0; i < n; i++) {
+      const female = Math.random() < 0.45, f0 = female ? R(170, 240) : R(95, 140), scale = female ? 1.15 : 1;
+      const src = s.osc('sawtooth', f0), breath = s.loop('white');
+      const bg = s.gain(0.04), f1 = s.filter('bandpass', 500, 7), f2 = s.filter('bandpass', 1500, 9), f3 = s.filter('bandpass', 2600 * scale, 10);
+      const g1 = s.gain(1.0), g2 = s.gain(0.6), g3 = s.gain(0.25), amp = s.gain(0.0001), p = s.pan(R(-0.85, 0.85)), vg = s.gain(R(0.5, 1) * (1 + (opts.near && i < 2 ? 0.8 : 0)));
+      breath.connect(bg); [src, bg].forEach(x => { x.connect(f1); x.connect(f2); x.connect(f3); });
+      f1.connect(g1); f2.connect(g2); f3.connect(g3); [g1, g2, g3].forEach(g => g.connect(amp)); s.chain(amp, vg, p, bus);
+      voices.push({ src, f1, f2, amp, f0, scale, next: ctx.currentTime + R(0, 3), talking: false, pitch: f0, phraseLeft: 0 });
+    }
+    const schedule = v => {
+      const horizon = ctx.currentTime + 0.8;
+      while (v.next < horizon) {
+        if (!v.talking) { v.talking = true; v.phraseLeft = Math.floor(R(4, 18)); v.pitch = v.f0 * R(0.95, 1.1); }
+        const t = v.next, dur = R(0.11, 0.27), vw = pick(VOWELS), peak = R(0.5, 1);
+        v.f1.frequency.setTargetAtTime(vw[0] * v.scale, t, 0.02); v.f2.frequency.setTargetAtTime(vw[1] * v.scale, t, 0.025);
+        v.pitch *= R(0.96, 1.04); if (v.phraseLeft < 3) v.pitch *= 0.97;
+        v.src.frequency.setTargetAtTime(v.pitch, t, 0.03);
+        v.amp.gain.setTargetAtTime(peak, t, 0.018); v.amp.gain.setTargetAtTime(0.06, t + dur * 0.65, 0.025);
+        v.next = t + dur; v.phraseLeft--;
+        if (v.phraseLeft <= 0) { v.talking = false; v.amp.gain.setTargetAtTime(0.0001, v.next, 0.05); v.next += R(0.5, 3.5); }
+      }
+    };
+    s.tick(200, () => voices.forEach(schedule));
+    if (opts.laughs) s.every(opts.laughs[0], opts.laughs[1], () => { // someone laughs
+      const v = pick(voices), t = Math.max(ctx.currentTime + 0.1, v.next); const k = Math.floor(R(4, 7));
+      for (let i = 0; i < k; i++) { const tt = t + i * R(0.14, 0.19); v.f1.frequency.setTargetAtTime(760 * v.scale, tt, 0.01); v.f2.frequency.setTargetAtTime(1250 * v.scale, tt, 0.01);
+        v.src.frequency.setTargetAtTime(v.f0 * (1.5 - i * 0.07), tt, 0.01); v.amp.gain.setTargetAtTime(1.2, tt, 0.01); v.amp.gain.setTargetAtTime(0.05, tt + 0.07, 0.015); }
+      v.next = t + k * 0.18 + R(0.6, 1.5); v.talking = false; v.amp.gain.setTargetAtTime(0.0001, v.next - 0.3, 0.05);
+    });
+  };
+
+  // Music, written for this talk, played by small synth instruments.
+  function music(s, style, lv, muffle) {
+    const bus = s.gain(1), lp = s.filter('lowpass', muffle, 0.5), out = s.gain(lv); s.chain(bus, lp, out); s.out(out, 1, style === 'lounge' ? 0.35 : 0.7);
+    let wow = null; if (style === 'ballad') { wow = s.gain(7); s.chain(s.osc('sine', 0.55), wow); }
+    const T = { jukebox: { bpm: 100, beats: 4, prog: [[43, [55, 59, 62]], [40, [52, 55, 59]], [48, [52, 55, 60]], [50, [54, 57, 62]]], mel: [67, 69, 71, 74, 76] },
+                club: { bpm: 118, beats: 4, prog: [[45, [57, 60, 64]], [41, [57, 60, 65]], [48, [55, 60, 64]], [43, [55, 59, 62]]], mel: [] },
+                lounge: { bpm: 84, beats: 4, prog: [[50, [57, 61, 64, 66]], [47, [57, 62, 64, 66]], [52, [55, 59, 62, 66]], [45, [55, 61, 64, 67]]], mel: [69, 71, 73, 76, 78] },
+                ballad: { bpm: 66, beats: 3, prog: [[48, [55, 60, 64]], [45, [57, 60, 64]], [41, [57, 60, 65]], [43, [55, 59, 62]]], mel: [64, 67, 69, 72, 74] } }[style];
+    const spb = 60 / T.bpm; let bar = 0, next = ctx.currentTime + 0.3;
+    const ep = (m, t, d, v) => { [[1, 'sine', 1], [2, 'sine', 0.25], [1, 'triangle', 0.3]].forEach(([h, ty, a]) => { const o = tone(s, t, ty, mtof(m) * h, 0.006, v * a, d, bus); if (wow) wow.connect(o.detune); }); };
+    const bass = (m, t, d, v) => { const o = tone(s, t, 'triangle', mtof(m), 0.01, v, d, bus); tone(s, t, 'sine', mtof(m), 0.01, v * 0.8, d, bus); if (wow) wow.connect(o.detune); };
+    const kick = (t, v) => tone(s, t, 'sine', 150, 0.002, v, 0.28, bus, 42);
+    const snare = (t, v) => { burst(s, t, 'white', 'bandpass', 1900, 0.8, 0.002, v, 0.16, bus); tone(s, t, 'triangle', 190, 0.002, v * 0.5, 0.08, bus); };
+    const hat = (t, v) => burst(s, t, 'white', 'highpass', 7500, 0.7, 0.001, v, 0.035, bus);
+    const brush = (t, v) => burst(s, t, 'pink', 'bandpass', 4200, 0.6, 0.06, v, 0.18, bus);
+    const pad = (notes, t, d, v) => notes.forEach(m => [-6, 6].forEach(dt => { const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = mtof(m); o.detune.value = dt;
+      const f = s.filter('lowpass', 1100), g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + 0.6); g.gain.linearRampToValueAtTime(0.0001, t + d);
+      o.connect(f); f.connect(g); g.connect(bus); o.start(t); o.stop(t + d + 0.1); }));
+    s.tick(150, () => {
+      while (next < ctx.currentTime + 1.2) {
+        const [root, ch] = T.prog[bar % T.prog.length], t = next, B = T.beats;
+        if (style === 'jukebox') {
+          bass(root, t, spb * 0.9, 0.5); bass(root + 7, t + 2 * spb, spb * 0.9, 0.45);
+          [1, 3].forEach(b => ch.forEach(m => ep(m, t + b * spb, spb * 0.8, 0.13)));
+          for (let b = 0; b < 4; b++) { if (b % 2 === 0) kick(t + b * spb, 0.6); else snare(t + b * spb, 0.25); hat(t + b * spb, 0.08); hat(t + (b + 0.66) * spb, 0.05); }
+          for (let k = 0; k < 3; k++) if (Math.random() < 0.8) ep(pick(T.mel), t + (k * 1.33 + 0.1) * spb, spb * 1.2, 0.16);
+        } else if (style === 'club') {
+          for (let b = 0; b < 4; b++) { kick(t + b * spb, 0.95); hat(t + (b + 0.5) * spb, 0.12); if (b % 2) snare(t + b * spb, 0.3);
+            bass(root, t + b * spb, spb * 0.4, 0.55); bass(root + 12, t + (b + 0.5) * spb, spb * 0.35, 0.45); ch.forEach(m => ep(m, t + (b + 0.5) * spb, spb * 0.3, 0.07)); }
+        } else if (style === 'lounge') {
+          pad(ch, t, spb * 4, 0.035); kick(t, 0.25);
+          const walk = [root, root + 4, root + 7, root + 9]; walk.forEach((m, b) => bass(m, t + b * spb, spb * 0.9, 0.35));
+          for (let b = 0; b < 4; b++) { brush(t + b * spb, 0.05); if (Math.random() < 0.6) ch.forEach(m => ep(m + 12, t + (b + 0.5) * spb, spb * 0.5, 0.05)); }
+          if (Math.random() < 0.7) ep(pick(T.mel), t + spb * R(0, 3), spb * 1.5, 0.08);
+        } else { // ballad, 3/4
+          bass(root, t, spb * 2.5, 0.45); [1, 2].forEach(b => ch.forEach(m => ep(m, t + b * spb, spb * 0.9, 0.1)));
+          ep(pick(T.mel), t, spb * 2, 0.17); if (Math.random() < 0.5) ep(pick(T.mel), t + 2 * spb, spb, 0.12);
+        }
+        next += B * spb; bar++;
+      }
+    });
+    return out;
+  }
+  C.music = music;
+  C.tv = (s, lv) => {
+    const n = s.loop('pink'), g = s.gain(lv * 0.5); s.chain(n, s.filter('bandpass', 1000, 0.5), s.filter('highpass', 350), g); s.out(g, 1, 0.3);
+    s.lfo(g.gain, 0.11, lv * 0.15);
+    s.every(7, 15, () => { const t = ctx.currentTime; g.gain.cancelScheduledValues(t); g.gain.setTargetAtTime(lv * R(1.4, 2.2), t, 0.35); g.gain.setTargetAtTime(lv * 0.5, t + R(1.5, 2.5), 1.2); });
+    C.babble(s, 1, lv * 0.9, { lp: 3000, hp: 450, wet: 0.2 }); // the announcer
+  };
+  C.waves = (s, lv) => {
+    [-0.5, 0.5].forEach((pv, i) => {
+      const n = s.loop(i ? 'pink' : 'brown'), lp = s.filter('lowpass', 400), g = s.gain(lv * 0.2), p = s.pan(pv); s.chain(n, lp, g, p); s.out(p, 1, 0.15);
+      s.every(6, 10, () => { const t = ctx.currentTime; lp.frequency.cancelScheduledValues(t); g.gain.cancelScheduledValues(t);
+        lp.frequency.setTargetAtTime(R(1600, 2600), t, 0.9); lp.frequency.setTargetAtTime(380, t + 2.4, 1.6);
+        g.gain.setTargetAtTime(lv * R(0.8, 1.1), t, 0.8); g.gain.setTargetAtTime(lv * 0.18, t + 2.6, 1.8);
+        burst(s, t + 2.2, 'white', 'bandpass', 3200, 0.5, 0.4, lv * 0.25, 3, p); }, i * 3.5);
+    });
+  };
+  C.wind = (s, lv) => { const n = s.loop('pink'), bp = s.filter('bandpass', 480, 1.4), g = s.gain(lv); s.chain(n, bp, g); s.lfo(bp.frequency, 0.07, 220); s.lfo(g.gain, 0.05, lv * 0.5); s.out(g, 1, 0.1); };
+  C.shaker = (s, lv) => s.every(8, 15, () => {
+    const t = ctx.currentTime + 0.1, p = s.pan(R(-0.4, 0.4)); s.out(p, 1, 0.3);
+    for (let i = 0; i < 26; i++) { const tt = t + i * 0.105; burst(s, tt, 'white', 'bandpass', R(3000, 4500), 1.2, 0.01, lv * (i % 2 ? 0.7 : 1), 0.07, p);
+      if (Math.random() < 0.7) tone(s, tt + 0.02, 'sine', R(4000, 6500), 0.001, lv * 0.3, 0.02, p); }
+  }, 1.5);
+  C.crackle = (s, lv) => { const n = s.loop('white'), g = s.gain(lv * 0.05); s.chain(n, s.filter('highpass', 2500), g); s.out(g, 1, 0);
+    s.tick(90, () => { const t = ctx.currentTime; for (let i = 0; i < 3; i++) if (Math.random() < 0.5) burst(s, t + R(0, 0.09), 'white', 'highpass', 1500, 0.7, 0.0005, lv * R(0.2, 1), 0.004, s.dry); }); };
+
+  // One-shot cues
+  const CUES = {
+    woo(s) { // a bachelorette party arrives
+      const t0 = ctx.currentTime + 0.2;
+      [[0, 1, 330], [0.05, 0.8, 360], [0.11, 0.7, 300], [1.1, 0.8, 380], [1.16, 0.6, 340]].forEach(([dt, a, f]) => {
+        const t = t0 + dt, o = ctx.createOscillator(); o.type = 'sawtooth';
+        o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 2.3, t + 0.4); o.frequency.setTargetAtTime(f * 1.6, t + 0.9, 0.2);
+        const vib = ctx.createOscillator(), vg = ctx.createGain(); vib.frequency.value = 6; vg.gain.value = 18; vib.connect(vg); vg.connect(o.frequency);
+        const f1 = s.filter('bandpass', 350, 6), f2 = s.filter('bandpass', 850, 8), g = ctx.createGain(), p = s.pan(R(-0.6, 0.6));
+        f1.frequency.setValueAtTime(320, t); f1.frequency.linearRampToValueAtTime(520, t + 1); f2.frequency.setValueAtTime(800, t); f2.frequency.linearRampToValueAtTime(1000, t + 1);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5 * a, t + 0.12); g.gain.setValueAtTime(0.5 * a, t + 0.85); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.3);
+        o.connect(f1); o.connect(f2); f1.connect(g); f2.connect(g); g.connect(p); s.out(p, 0.9, 1.2);
+        o.start(t); vib.start(t); o.stop(t + 1.4); vib.stop(t + 1.4);
+      });
+    },
+    door(s) { // the door swings shut
+      const t = ctx.currentTime + 0.05;
+      burst(s, t, 'white', 'highpass', 4000, 0.7, 0.001, 0.5, 0.015, s.dry);
+      tone(s, t + 0.04, 'sine', 95, 0.003, 1.2, 0.45, s.dry, 42);
+      burst(s, t + 0.04, 'brown', 'lowpass', 700, 0.7, 0.003, 1.4, 0.3, s.dry);
+      burst(s, t + 0.04, 'brown', 'lowpass', 900, 0.7, 0.003, 0.8, 0.4, s.wet);
+      burst(s, t + 0.22, 'white', 'bandpass', 2500, 2, 0.001, 0.25, 0.03, s.dry);
+    }
+  };
+
+  // ---------- scenes ----------
+  const SCENES = {
+    exterior(s) { C.traffic(s, 0.22); C.hum(s, 0.03); C.crickets(s, 0.035); },
+    quiet(s) { C.room(s, 0.12); C.hum(s, 0.01, 100); C.rec(s, 'barloop', 0.45, { lp: 2400, wet: 0.25 }); },
+    neighborhood(s) { C.rec(s, 'chatter', 1.0); C.music(s, 'jukebox', 0.06, 900); C.clinks(s, 0.035, 5, 11); },
+    working(s) { C.rec(s, 'barloop', 0.75); C.tv(s, 0.07); },
+    coast(s) { C.waves(s, 0.4); C.wind(s, 0.1); C.babble(s, 2, 0.05, { lp: 1800 }); C.clinks(s, 0.03, 6, 12); },
+    latenight(s) { C.rec(s, 'bikerbar', 0.65, { rise: 1.35, wet: 0.1 }); },
+    lounge(s) { C.music(s, 'lounge', 0.2, 7000); C.shaker(s, 0.12); C.babble(s, 3, 0.07, { lp: 2600 }); C.clinks(s, 0.04, 4, 9); },
+    lastcall(s) { C.room(s, 0.15); C.music(s, 'ballad', 0.15, 1300); C.crackle(s, 0.06); C.clinks(s, 0.03, 8, 16); },
+    silence() {}
+  };
+
+  function setScene(key, secs = 2.5) {
+    if (!ctx || key === currentKey) return;
+    if (current) current.stop(secs);
+    currentKey = key; current = Scene(key);
+    (SCENES[key] || SCENES.silence)(current); current.fadeIn(secs);
+  }
+  function cue(name) { if (ctx && current && CUES[name]) CUES[name](current); }
+  function setVolume(v) { volume = v; if (master) master.gain.setTargetAtTime(muted ? 0 : v, ctx.currentTime, 0.1); }
+  function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : volume, ctx.currentTime, 0.1); }
+  return { init, setScene, cue, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
+})();
+
+</script>
+<script>
+(() => {
+  const stage = document.getElementById('stage'), viewport = document.getElementById('viewport');
+  const slides = [...document.querySelectorAll('.slide')];
+  const hud = document.getElementById('hud'), countEl = document.getElementById('count'), sceneEl = document.getElementById('sceneName');
+  const notes = document.getElementById('notes'), notesBody = document.getElementById('notesBody'), notesHead = document.getElementById('notesHead');
+  const soundBtn = document.getElementById('soundBtn'), vol = document.getElementById('vol'), notesBtn = document.getElementById('notesBtn');
+  const gate = document.getElementById('gate');
+  const SCENE_LABELS = { exterior: 'Exterior, night', quiet: 'Interior, quiet hour · field recording', neighborhood: 'Neighborhood bar · field recording', working: 'The regulars · field recording',
+    coast: 'Coastal bar, dusk', latenight: 'Biker bar, late · field recording', lounge: 'Hospitality-group lounge', lastcall: 'Closing time', silence: 'Silence' };
+  let i = 0, step = 0, started = false;
+
+  const fit = () => { const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080); stage.style.transform = `translate(-50%, -50%) scale(${s})`; };
+  window.addEventListener('resize', fit); fit();
+
+
+  // Motion setup: stagger each slide's text, offset the map points, count up the stats.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  slides.forEach((el, k) => {
+    if (k % 2) el.classList.add('alt');
+    const list = [];
+    const isGroup = d => d.tagName === 'DIV' && !d.classList.contains('build') && (d.querySelector(':scope > h2, :scope > hr') || ([...d.children].length > 1 && [...d.children].every(c => c.tagName === 'DIV')));
+    const walk = node => [...node.children].forEach(c => {
+      if (c.matches('aside, img, .kb, .fx, .build, .dot')) return;
+      if (c.tagName === 'HR') { list.push(c); return; }
+      if (!c.textContent.trim()) return;
+      if (isGroup(c)) walk(c); else list.push(c);
+    });
+    walk(el);
+    list.forEach((c, n) => { c.classList.add('rise'); c.style.setProperty('--d', Math.min(250 + n * 95, 1700) + 'ms'); });
+    el.querySelectorAll('.dot').forEach(d => d.style.animationDelay = (-Math.random() * 4.5).toFixed(2) + 's');
+    el.querySelectorAll('p').forEach(p => { if (/^\d+%$/.test(p.textContent.trim())) p.dataset.count = p.textContent.trim(); });
+  });
+  function countUp(el) {
+    el.querySelectorAll('[data-count]').forEach(p => {
+      const box = p.closest('.build'); if (box && !box.classList.contains('on')) { p.dataset.done = ''; return; }
+      if (p.dataset.done === '1') return; p.dataset.done = '1';
+      const target = parseInt(p.dataset.count, 10); if (reduce) { p.textContent = target + '%'; return; }
+      const t0 = performance.now(), dur = 1500;
+      const f = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); p.textContent = Math.round(target * e) + '%'; if (k < 1 && slides[i] === el) requestAnimationFrame(f); else p.textContent = target + '%'; };
+      p.textContent = '0%'; requestAnimationFrame(f);
+    });
+  }
+
+  const builds = el => [...el.querySelectorAll('.build')];
+  function render(cue = true) {
+    slides.forEach((el, k) => el.classList.toggle('active', k === i));
+    const el = slides[i], b = builds(el);
+    b.forEach((x, k) => x.classList.toggle('on', k < step));
+    slides.forEach((s2, k) => { if (k !== i) s2.querySelectorAll('[data-count]').forEach(p => p.dataset.done = ''); });
+    countUp(el);
+    countEl.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+    const scene = (step > 0 && el.dataset.buildScene) ? el.dataset.buildScene : el.dataset.scene;
+    sceneEl.textContent = Sound.started && !Sound.muted ? '♪ ' + (SCENE_LABELS[scene] || '') : '';
+    if (started) {
+      Sound.setScene(scene);
+      if (cue && step === 0 && el.dataset.cue) setTimeout(() => { if (slides[i] === el) Sound.cue(el.dataset.cue); }, 1400);
+    }
+    const n = el.querySelector('aside');
+    notesHead.textContent = 'Speaker notes · ' + countEl.textContent;
+    notesBody.textContent = n ? n.textContent.trim() : '';
+    try { history.replaceState(null, '', '#s' + (i + 1)); } catch (e) {}
+  }
+  function next() {
+    const el = slides[i], b = builds(el);
+    if (step < b.length) { step++; if (el.dataset.buildCue && started) Sound.cue(el.dataset.buildCue); render(false); return; }
+    if (i < slides.length - 1) { i++; step = 0; render(); }
+  }
+  function prev() {
+    if (step > 0) { step--; render(false); return; }
+    if (i > 0) { i--; step = builds(slides[i]).length; render(false); }
+  }
+  function go(n) { i = Math.max(0, Math.min(slides.length - 1, n)); step = 0; render(); }
+
+  function begin(withSound) {
+    if (started) return; started = true; gate.classList.add('gone');
+    if (withSound) { Sound.init(); Sound.setVolume(+vol.value); }
+    else { soundBtn.setAttribute('aria-pressed', 'false'); soundBtn.textContent = 'Sound off'; }
+    render(); poke();
+  }
+  document.getElementById('begin').addEventListener('click', e => { e.stopPropagation(); begin(true); });
+  gate.addEventListener('click', () => begin(true));
+  document.getElementById('beginQuiet').addEventListener('click', e => { e.stopPropagation(); begin(false); });
+  document.getElementById('prev').addEventListener('click', prev);
+  document.getElementById('next').addEventListener('click', next);
+  function toggleSound() {
+    if (!Sound.started) { Sound.init(); Sound.setVolume(+vol.value); Sound.setMuted(false); render(false); }
+    else Sound.setMuted(!Sound.muted);
+    const on = !Sound.muted; soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.textContent = on ? 'Sound on' : 'Sound off'; render(false);
+  }
+  soundBtn.addEventListener('click', toggleSound);
+  vol.addEventListener('input', () => Sound.setVolume(+vol.value));
+  function toggleNotes() { notes.hidden = !notes.hidden; notesBtn.setAttribute('aria-pressed', String(!notes.hidden)); }
+  notesBtn.addEventListener('click', toggleNotes);
+  function toggleFs() { const d = document; if (!d.fullscreenElement) { d.documentElement.requestFullscreen?.().catch(() => {}); } else { d.exitFullscreen?.().catch(() => {}); } }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+
+  viewport.addEventListener('click', e => { if (!started) return; const r = viewport.getBoundingClientRect(); (e.clientX - r.left < r.width * 0.25) ? prev() : next(); });
+  document.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input')) return;
+    const k = e.key;
+    if (!started) { if (['ArrowRight', ' ', 'Enter', 'PageDown'].includes(k)) { e.preventDefault(); begin(true); } return; }
+    if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp', 'ArrowUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
+    else if (k === 'Home') go(0); else if (k === 'End') go(slides.length - 1);
+    else if (k === 'n' || k === 'N') toggleNotes(); else if (k === 'm' || k === 'M') toggleSound(); else if (k === 'f' || k === 'F') toggleFs();
+    poke();
+  });
+  let idleT = null;
+  function poke() { hud.classList.remove('idle'); viewport.classList.remove('hide-cursor'); clearTimeout(idleT); idleT = setTimeout(() => { if (started) { hud.classList.add('idle'); viewport.classList.add('hide-cursor'); } }, 2600); }
+  document.addEventListener('mousemove', poke); hud.addEventListener('focusin', poke);
+
+  const m = /^#s(\d+)$/.exec(location.hash); if (m) i = Math.max(0, Math.min(slides.length - 1, +m[1] - 1));
+  render(false);
+})();
+</script>
+
+</body>
+</html>
