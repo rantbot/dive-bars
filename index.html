@@ -63,6 +63,7 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
 @keyframes neon-wake { 0% { opacity: 0; } 8% { opacity: 0.75; } 11% { opacity: 0; } 30% { opacity: 0; } 33% { opacity: 0.9; } 36% { opacity: 0.1; } 41% { opacity: 1; } 45% { opacity: 0.25; } 52% { opacity: 1; } 100% { opacity: 1; } }
 .neon-tube { filter: drop-shadow(0 0 2px rgba(255,90,60,0.95)) drop-shadow(0 0 9px rgba(255,60,30,0.75)) drop-shadow(0 0 22px rgba(255,50,20,0.45)); animation: tube 6.4s linear infinite; }
 .neon-halo { animation: tube 6.4s linear infinite; }
+.neon-photo { box-shadow: 0 0 10px rgba(255,150,70,0.45), 0 0 26px rgba(160,200,255,0.25); animation: tube 6.4s linear infinite; }
 @keyframes tube { 0%, 100% { opacity: 1; } 18% { opacity: 1; } 19% { opacity: 0.12; } 20% { opacity: 0.95; } 21% { opacity: 0.2; } 22.5% { opacity: 1; }
   55% { opacity: 0.92; } 56% { opacity: 1; } 81% { opacity: 1; } 81.6% { opacity: 0.08; } 83.5% { opacity: 0.08; } 84% { opacity: 0.85; } 84.5% { opacity: 0.3; } 85.5% { opacity: 1; } }
 .dot { animation: twinkle 4.5s ease-in-out infinite; }
@@ -73,7 +74,7 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
 @keyframes grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-22px, 14px); } 40% { transform: translate(18px, -26px); } 60% { transform: translate(-12px, 30px); } 80% { transform: translate(26px, 8px); } 100% { transform: translate(0, 0); } }
 @media (prefers-reduced-motion: reduce) {
   .slide, .slide.active { transform: none; }
-  .slide.active .kb-in, .slide.active .rise, .fx, .dot, .grain, .neon-tube, .neon-halo { animation: none !important; }
+  .slide.active .kb-in, .slide.active .rise, .fx, .dot, .grain, .neon-tube, .neon-halo, .neon-photo { animation: none !important; }
 }
 
 /* HUD */
@@ -180,8 +181,6 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 @media (prefers-reduced-motion: reduce) { .slide, .slide.active, .build, .hud, .gate { transition: none; } }
 </style>
 
-</head>
-<body>
 <div id="viewport">
   <div id="stage">
 <section class="slide" id="cover" data-scene="exterior" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:28px">
@@ -250,7 +249,7 @@ VISUAL NOTE: The title card before this slide already names the talk, so this op
 <p style="font-size:32px;font-style:italic;line-height:1.3;color:#A89F8F;width:400px">Documented observations across the Americas</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">1999 – 2026</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#C9A15A;width:520px">35 sites · survey ongoing</p>
-<aside>[0:28 to 0:56 · about 72 words]
+<aside>[0:26 to 0:55 · about 75 words]
 
 These are my documented observations. Thirty-five sites, from Vancouver to Guayaquil, and the survey continues.
 
@@ -279,8 +278,8 @@ SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Bever
 <p style="position:absolute;left:310px;top:862px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;text-align:center;color:#8C2F23">The Law of Accumulation</p>
 <p style="position:absolute;left:310px;top:898px;width:1300px;font-size:30px;font-style:italic;line-height:1.3;text-align:center;color:#2A2119">“The authenticity of a dive bar appears positively correlated with the number of objects whose origin the current bartender cannot explain.”</p>
 <p style="position:absolute;left:210px;top:990px;width:1500px;font-family:Inter, Arial, sans-serif;font-size:24px;text-align:center;color:#6B5440">† Since 1935, federal law has barred brewers from giving bars anything of value, unless it advertises the brewer.</p>
-<div class="neon-sign" style="position:absolute;left:630px;top:310px;width:330px;height:100px"><div class="neon-halo" style="position:absolute;left:-60px;top:-50px;width:450px;height:200px;background:radial-gradient(closest-side, rgba(255,80,50,0.30), rgba(255,80,50,0))"></div><img class="neon-tube" src="img/plate_neon_crop.png" alt="" style="position:absolute;left:0px;top:0px;width:330px;height:100px"></div>
-<aside>[0:56 to 1:44 · about 120 words]
+<img class="sign-ink" src="img/lite_ink.png" alt="" style="position:absolute;left:727px;top:291px;width:135px;height:105px"><div class="neon-sign" style="position:absolute;left:727px;top:291px;width:135px;height:105px"><div class="neon-halo" style="position:absolute;left:-70px;top:-60px;width:275px;height:225px;background:radial-gradient(closest-side, rgba(255,140,60,0.32), rgba(255,140,60,0))"></div><img class="neon-photo" src="img/lite_lit.jpg" alt="" style="position:absolute;left:0px;top:0px;width:135px;height:105px;border-radius:8px"></div>
+<aside>[0:55 to 1:59 · about 160 words]
 
 Let us examine a specimen.
 
@@ -298,7 +297,7 @@ But most of it simply arrived. Which brings us to the Law of Accumulation.
 
 A real dive is not decorated. It accumulates.
 
-VISUAL NOTE: This plate is an original line illustration, so no photo is needed here. The arrows are part of the image. The labels are separate text boxes, so you can rename any part, but if you move one, its arrow stays put.
+VISUAL NOTE: This plate is an original line illustration. The neon sign is your own Lite Beer sign photo, drawn in ink until about ten seconds in, then it flickers on. The arrows are part of the image. The labels are separate text boxes, so you can rename any part, but if you move one, its arrow stays put.
 
 SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars" and "brewery-branded mirrors and hardware" (Whiting-Robertsdale Historical Society, "The Tied House System That Left Its Mark on Whiting"). Federal Alcohol Administration Act of 1935, section 205(b) (27 U.S.C. 205): suppliers may not induce retailers with things of value (the "tied house" provision). Brewers Association, "Tied House Laws": temperance campaigners used "tied house" against brewer-controlled saloons, which helped bring Prohibition; federal rules bar suppliers from giving retailers cash, equipment or other goods, with exceptions for advertising materials. 27 CFR 6.102: outside signs must carry conspicuous advertising and cost no more than $400. 27 CFR 6.83: product displays are limited to $300 per brand at a time in one retail establishment. 27 CFR 6.84 lets industry members give retailers point-of-sale materials such as "inside signs," "back bar mats," "clocks, calendars" and menus, provided they carry conspicuous advertising. The Law of Accumulation and the Latin anatomy terms are our own invention, presented as such.</aside>
 </section>
@@ -321,7 +320,7 @@ SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars"
 </div>
 <p style="position:absolute;left:310px;top:830px;width:1300px;font-size:34px;font-style:italic;line-height:1.3;text-align:center;color:#EDE6D8">“The most important place in America.”</p>
 <p style="position:absolute;left:310px;top:884px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;text-align:center;color:#A89F8F">Zora Neale Hurston, on the juke joint’s place in American music</p>
-<aside>[1:44 to 3:08 · about 210 words]
+<aside>[1:59 to 3:09 · about 175 words]
 
 Every species has ancestors. Two of them matter more than the rest.
 
@@ -359,7 +358,7 @@ SOURCES: Wikipedia, "Juke joint": juke joints were primarily operated by African
 <div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Status</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Stable, locally vulnerable</p></div>
 </div>
 </div>
-<aside>[3:08 to 3:30 · about 55 words]
+<aside>[3:09 to 3:31 · about 55 words]
 
 Our research has identified five living species.
 
@@ -378,7 +377,7 @@ PHOTO DIRECTION: A regular at the bar in profile, warm practical light, shallow 
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:80px;font-weight:400;line-height:1.1;color:#EDE6D8">Jimmy’s Corner</h2>
 <p style="font-size:40px;font-style:italic;line-height:1.2;color:#D9D1C1">140 West 44th Street, New York</p>
 <p style="font-size:32px;line-height:1.35;color:#D9D1C1;width:920px">Opened in 1971 by Jimmy Glenn, a Golden Gloves boxer turned trainer and cutman. The walls are his collection of fight posters and photographs.</p>
-<aside>[3:30 to 3:50 · about 50 words]
+<aside>[3:31 to 3:52 · about 50 words]
 
 Field Observation Number One. Jimmy's Corner, a few steps from Times Square.
 
@@ -404,7 +403,7 @@ SOURCES: Wikipedia, "Jimmy's Corner": opened 1971 by Jimmy Glenn at 140 West 44t
 <div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1970</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">Women first served, after two lawyers sued and won.</p></div>
 <div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1986</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">A ladies’ room is installed.</p></div>
 </div>
-<aside>[3:50 to 4:18 · about 70 words]
+<aside>[3:52 to 4:26 · about 85 words]
 
 Field Observation Number Two. McSorley's Old Ale House, New York.
 
@@ -440,7 +439,7 @@ SOURCES: Wikipedia, "McSorley's Old Ale House": claimed founding 1854, evidence 
 <p style="font-size:30px;font-style:italic;line-height:1.35;color:#D9D1C1">The Sports Dive · The VFW Post · The Bowling-Alley Bar · The College Dive · The Music Dive</p>
 </div>
 </div>
-<aside>[4:18 to 4:42 · about 60 words]
+<aside>[4:26 to 4:53 · about 65 words]
 
 In older industrial towns, we find a hardier relative. The Working-Class Dive. Diveus laboriosus.
 
@@ -468,7 +467,7 @@ PHOTO DIRECTION: An older regular at a quiet bar in daylight or late afternoon, 
 <div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Adaptations</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Cash only. A resident dog. One inexplicably excellent sandwich.</p></div>
 </div>
 </div>
-<aside>[4:42 to 5:02 · about 50 words]
+<aside>[4:53 to 5:12 · about 45 words]
 
 Some populations have evolved in remarkable geographic isolation. The Destination Dive. Diveus remotus.
 
@@ -495,7 +494,7 @@ PHOTO DIRECTION: A coastal, rural, desert or mountain bar shot wide enough to sh
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <p style="font-size:120px;font-weight:300;line-height:1;color:#E2B866">$13,961</p>
 <p style="font-size:30px;line-height:1.35;color:#D9D1C1;width:760px">pulled from the walls of Siesta Key Oyster Bar in Sarasota, Florida, and sent to Hurricane Dorian relief in the Bahamas, 2019.</p>
-<aside>[5:02 to 5:36 · about 85 words]
+<aside>[5:12 to 5:57 · about 115 words]
 
 Why money? Scientists remain divided.
 
@@ -525,7 +524,7 @@ SOURCES: Miner story, KQED, "150 Years of Slinging Drinks: A Visit to the Iron D
 <div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Field rule</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Admire the bikes. Never touch the bikes.</p></div>
 </div>
 </div>
-<aside>[5:36 to 5:56 · about 50 words]
+<aside>[5:57 to 6:21 · about 60 words]
 
 Some species are best observed from a respectful distance.
 
@@ -554,7 +553,7 @@ PHOTO DIRECTION: [INSERT PERSONAL FIELD PHOTO]. The bar you recorded, ideally wi
 <p style="position:absolute;left:1000px;top:356px;width:300px;font-size:48px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#E2B866">Dive Bar</p>
 <p style="position:absolute;left:1000px;top:418px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:5px;text-align:center;color:#EDE6D8">1:17 AM</p>
 <p style="position:absolute;left:128px;top:980px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:2px;color:#A89F8F">Behavioral note · “Happy hour” began aboard the USS Arkansas in 1913 · Illegal in Massachusetts since 1984</p>
-<aside>[5:56 to 6:36 · about 100 words]
+<aside>[6:21 to 7:01 · about 100 words]
 
 Our final species is rarely seen in daylight. The Late-Night Dive. Diveus nocturnus.
 
@@ -599,7 +598,7 @@ VISUAL NOTE: The map is an abstract city, not a real one. If you want it to be y
 <p style="font-size:28px;line-height:1.3;color:#A89F8F">Highly vocal. Travels in packs.</p>
 </div>
 </div>
-<aside>[6:36 to 6:58 · about 55 words]
+<aside>[7:01 to 7:22 · about 50 words]
 
 Every habitat supports its fauna.
 
@@ -613,8 +612,53 @@ And occasionally, a highly vocal migratory population enters the habitat. Homo c
 
 PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light. Real people need their permission. Silhouettes, hands on a bar, or a back-of-head shot also work and keep everyone anonymous. Current images are low-resolution stand-ins from your mockup.</aside>
 </section>
-<section class="slide" id="abroad" data-scene="neighborhood" style="background:#13110E;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<section class="slide" id="local" data-scene="neighborhood" style="background:#13110E;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">14</p>
+<p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">Regional behavior</p>
+<h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Local Adaptations</h2>
+<div style="position:absolute;left:128px;top:340px;width:1664px;display:flex;gap:40px">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Chicago</p>
+<p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Tied House</p>
+<p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus domesticus</p>
+<p style="font-size:30px;line-height:1.35;color:#D9D1C1">A saloon on the ground floor. The family who ran it lived upstairs.</p>
+<p style="font-size:30px;line-height:1.35;color:#A89F8F">Local ritual: a shot of Malört with an Old Style.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Wisconsin</p>
+<p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">Shake of the Day</p>
+<p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus aleator</p>
+<p style="font-size:30px;line-height:1.35;color:#D9D1C1">Five dice in a leather cup. Beat the bartender and your drink is free.</p>
+<p style="font-size:30px;line-height:1.35;color:#A89F8F">In 2016, three Milwaukee bars banned the dice. The ban lasted two days.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Miami</p>
+<p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">Jimbo’s Place</p>
+<p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus honestus</p>
+<p style="font-size:30px;line-height:1.35;color:#D9D1C1">A shrimper’s bait shack on Virginia Key, 1954 to 2012.</p>
+<p style="font-size:30px;line-height:1.35;color:#A89F8F">The honor system: money through the slot, beer from the cooler.</p>
+</div>
+</div>
+<aside>[7:22 to 8:22 · about 150 words]
+
+Every population adapts to its environment.
+
+In Chicago, remember the tied houses? Between 1897 and 1905, Schlitz alone built fifty-seven saloons here. Beer on the ground floor, apartments upstairs, often the family who ran the place. Many still stand. Look for the brewery's belted globe on the brick. The local ritual is the Chicago Handshake. A shot of Malört, which tastes like a punishment, and an Old Style to recover.
+
+In Wisconsin, the dice cup lives on the bar. Shake of the Day: beat the bartender, and the next one's free. When three Milwaukee bars tried to ban the dice in 2016, the ban lasted two days.
+
+And in Miami, on Virginia Key, there was Jimbo's. A shrimper's bait shack from 1954 until 2012. When I was there, you paid through a slot in a lockbox and pulled your own beer from the cooler.
+
+That's not a business model. That's trust.
+
+PHOTO DIRECTION: No photos needed. If you have your own shot of Jimbo's, a Chicago corner tavern with apartments above, or a dice cup on a Wisconsin bar, any one of them could replace a card.
+
+FOLKLORE FLAG: The Jimbo's honor-system lockbox is your own eyewitness memory. None of the news coverage I found describes how payment worked, so it is told as your field note, not as a sourced fact. "Tastes like a punishment" is your opinion, offered as such.
+
+SOURCES: Chicago Commission on Chicago Landmarks, "Five Brewery Tied Houses and One Brewery Stable" and "1393 W. Lake St. Schlitz Brewery Tied House" (2021): brewery ownership of Chicago saloons began in 1892; Schlitz built 57 tied houses in the city from 1897 to 1905; buildings followed a "store and flat" form with apartments above; upper-floor apartments "often housed the saloonkeeper and his family"; the belted-globe emblem derives from Richard Bock's Schlitz display at the 1893 World's Columbian Exposition; over forty brewery tied houses survive. WBEZ Curious City, "Why is Malört popular in Chicago?" (July 6, 2023): Carl Jeppson sold Swedish-style bitters in the 1920s marketed as a tonic; the Chicago Handshake is "the iconic pairing of a Malört shot with an Old Style beer," common at dive bars. Malört.com brand history: production returned to Chicago in 2019 under CH Distillery. Punch, "How Bar Dice Became a Wisconsin Institution" (2018): Shake of the Day is played against the bartender for the drink being ordered or a growing pot; bar historian Jim Draeger dates the game's popularity to at least the end of Prohibition. OnMilwaukee (Jan. 29, 2016): three bars' management discontinued bar dice on a Monday and reversed the ban by Wednesday. NBC Miami (March 15, 2012) and CBS Miami (March 20, 2012): James "Jimbo" Luznar opened Jimbo's on Virginia Key in 1954; the city closed it in March 2012. The Latin names are our invention.</aside>
+</section>
+<section class="slide" id="abroad" data-scene="neighborhood" style="background:#13110E;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">15</p>
 <p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">The genus beyond the border</p>
 <h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Related Populations</h2>
 <div style="position:absolute;left:128px;top:340px;width:1664px;display:flex;gap:40px">
@@ -640,7 +684,7 @@ PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light.
 <p style="font-size:30px;line-height:1.35;color:#A89F8F">Some still are.</p>
 </div>
 </div>
-<aside>[6:58 to 7:32 · about 85 words]
+<aside>[8:22 to 8:58 · about 90 words]
 
 The genus does not stop at the border.
 
@@ -653,7 +697,7 @@ And in Ireland, the pub was often also the grocery, the hardware store, and occa
 SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritual role; pulquerías "once estimated at 1,100" (the estimate is undated), about 80 by the start of the 21st century; decline tied to a campaign by beer companies and the government. Rio de Janeiro by Cariocas: botecos began in 19th-century Rio with Portuguese port warehouses; Comida di Buteco, created in 1999 in Belo Horizonte, now has botecos in 25 cities competing, judged on snack, service, hygiene and drink temperature. Wikipedia, "Irish pub": 19th-century spirit grocers combined pubs with grocery or hardware businesses; some publicans were also undertakers, a combination "still common in Ireland." "Diveus mercator" is our invention.</aside>
 </section>
 <section class="slide" id="third" data-scene="neighborhood" style="background:#15130F;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:start;gap:20px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">15</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">16</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">The third place</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.15;color:#EDE6D8;width:1500px">Home is the first place. Work is the second.<br><i>The third is where a neighborhood meets itself.</i></h2>
 <div style="position:absolute;left:128px;top:470px;width:720px;display:flex;flex-direction:column;gap:16px">
@@ -665,7 +709,7 @@ SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritua
 <p style="font-size:32px;line-height:1.3;color:#A89F8F">of Americans with no regular place in their community</p>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;color:#7E7668">Survey Center on American Life, American Community Life Survey, June–July 2020, n = 5,058</p>
-<aside>[7:32 to 8:00 · about 70 words]
+<aside>[8:58 to 9:32 · about 85 words]
 
 The sociologist Ray Oldenburg had a name for places like this. Third places. Home is the first place. Work is the second. The third is where community happens, informally.
 
@@ -682,7 +726,7 @@ SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana P
 <section class="slide" id="falsedive" data-scene="lounge" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 1120px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <div class="kb" style="position:absolute;left:740px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_false.jpg" alt="Suspiciously perfect bar with Edison bulbs and a coupe cocktail glass" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:740px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">16</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">17</p>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#C9A15A">Diveus artificialis</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The False Dive</h2>
 <p style="font-size:32px;line-height:1.3;color:#A89F8F">Not a true species. A mimic.</p>
@@ -696,7 +740,7 @@ SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana P
 <p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">QR-code menu</p>
 <p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Social media manager</p>
 </div>
-<aside>[8:00 to 8:22 · about 55 words]
+<aside>[9:32 to 9:55 · about 60 words]
 
 Not every specimen is what it appears to be.
 
@@ -709,11 +753,11 @@ Attempts to reproduce the American dive bar in captivity have largely failed.
 PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs, a coupe glass, subway tile, merch for sale by the door. Shoot it beautifully. The joke lands better if it looks good. Avoid showing a recognizable venue's name or logo.</aside>
 </section>
 <section class="slide" id="test" data-scene="silence" style="background:#090908;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:36px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">17</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">18</p>
 <h1 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:104px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Did this accumulate?</h1>
 <p style="font-size:56px;font-style:italic;text-align:center;color:#A89F8F">or was it purchased?</p>
 <hr style="width:96px;border-top:2px solid #C9A15A">
-<aside>[8:22 to 8:29 · about 10 words, then silence]
+<aside>[9:55 to 9:58 · about 10 words]
 
 Fortunately, field researchers rely on one simple diagnostic.
 
@@ -722,7 +766,7 @@ Fortunately, field researchers rely on one simple diagnostic.
 <section class="slide" id="conservation" data-scene="lastcall" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_conservation.jpg" alt="Red neon COLD BEER sign on a weathered brick wall at sunset" style="width:100%;height:100%;object-fit:cover"><div class="fx neon" style="position:absolute;left:245px;top:96px;width:560px;height:680px;background:radial-gradient(closest-side, rgba(255,64,40,0.36), rgba(255,64,40,0))"></div></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">18</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">19</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:24px">
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;color:#EDE6D8">Conservation</h2>
 <p style="font-size:32px;line-height:1.35;color:#D9D1C1">No one has ever counted America’s dive bars. The pressures on neighborhood gathering places are easier to name.</p>
@@ -735,7 +779,7 @@ Fortunately, field researchers rely on one simple diagnostic.
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <p style="font-size:44px;font-style:italic;line-height:1.25;color:#EDE6D8">You can open a bar tomorrow.<br><span style="color:#E2B866">You cannot open a seventy-year-old bar tomorrow.</span></p>
 </div>
-<aside>[8:29 to 9:07 · about 95 words]
+<aside>[9:58 to 10:41 · about 110 words]
 
 A word on conservation.
 
@@ -754,7 +798,7 @@ SOURCES: Gallup, 2025 Consumption Habits survey, 54% of U.S. adults say they dri
 <section class="slide" id="closing" data-scene="exterior" data-build-cue="door" data-build-scene="silence" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:24px">
 <div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_closing.jpg" alt="Lone roadside bar with a red neon BAR sign under an orange sunset sky" style="width:100%;height:100%;object-fit:cover"><div class="fx neon slow" style="position:absolute;left:318px;top:394px;width:400px;height:320px;background:radial-gradient(closest-side, rgba(255,72,48,0.40), rgba(255,72,48,0))"></div></div></div>
 <div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">19</p>
+<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">20</p>
 <p style="font-size:96px;font-style:italic;font-weight:400;line-height:1.1;color:#EDE6D8">Diveus americanus</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#A89F8F">Conservation status   <span style="color:#E2B866">Threatened</span></p>
 <hr style="width:96px;border-top:2px solid #C9A15A">
@@ -762,7 +806,7 @@ SOURCES: Gallup, 2025 Consumption Habits survey, 54% of U.S. adults say they dri
 <p style="font-family:Inter, Arial, sans-serif;font-size:28px;letter-spacing:10px;text-transform:uppercase;text-align:center;color:#A89F8F">Respect the habitat.</p>
 <p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:88px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;text-align:center;color:#EDE6D8">Don’t sit in Gary’s seat.</p>
 </div>
-<aside>[9:07 to 9:27 · about 50 words]
+<aside>[10:41 to 10:57 · about 40 words]
 
 A great dive bar isn't designed. It evolves.
 
