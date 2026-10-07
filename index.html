@@ -97,6 +97,44 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
   font-size: 15px; line-height: 1.6; color: var(--ivory); white-space: pre-wrap; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
 .notes h4 { margin: 0 0 8px; font-weight: 500; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); }
 
+/* Presenter view: a private control window with notes, next slide and a timer. */
+#pv { display: none; }
+body.presenter #viewport, body.presenter .hud, body.presenter .notes, body.presenter .gate { display: none !important; }
+body.presenter { overflow: auto; }
+body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 18px 24px;
+  padding: 18px 20px calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--ivory); font-family: var(--ui); }
+.pv-bar { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.pv-bar .who { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.pv-bar .t { font-family: var(--display); font-size: 20px; letter-spacing: 0.12em; text-transform: uppercase; }
+.pv-link { font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
+.pv-link.on { color: var(--amber); }
+.pv-clock { display: flex; align-items: baseline; gap: 14px; font-variant-numeric: tabular-nums; }
+.pv-clock .el { font-size: 40px; font-weight: 500; letter-spacing: 0.02em; }
+.pv-clock .el.over { color: #E0775A; }
+.pv-clock .of { font-size: 13px; color: var(--muted); letter-spacing: 0.08em; }
+.pv-tools { display: flex; gap: 8px; flex-wrap: wrap; }
+.pv-tools button { font: inherit; font-size: 13px; letter-spacing: 0.06em; color: var(--ivory); background: transparent; border: 1px solid var(--line); border-radius: 3px; padding: 9px 14px; cursor: pointer; }
+.pv-tools button.big { border-color: var(--amber); }
+.pv-tools button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.pv-left { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; }
+.pv-label { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+.pv-box { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--night); border: 1px solid var(--line); }
+.pv-box.next { width: 62%; opacity: 0.85; }
+.pv-box > #stage, .pv-box > .pv-stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center center; }
+.pv-notes { min-width: 0; min-height: 0; overflow: auto; padding: 6px 4px 40px; }
+.pv-notes .timing { font-size: 13px; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 14px; }
+.pv-notes .say { font-size: clamp(20px, 1.9vw, 27px); line-height: 1.55; white-space: pre-wrap; max-width: 34em; }
+.pv-notes .say .cue { display: inline-block; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); border: 1px solid rgba(201,161,90,0.5); padding: 2px 8px; margin: 0 4px; vertical-align: middle; }
+.pv-notes details { margin-top: 26px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.pv-notes summary { cursor: pointer; letter-spacing: 0.14em; text-transform: uppercase; font-size: 11px; }
+.pv-notes details div { white-space: pre-wrap; margin-top: 10px; }
+@media (max-width: 860px) { body.presenter #pv { grid-template-columns: 1fr; grid-template-rows: auto auto auto; position: static; min-height: 100%; } }
+
+/* Shown after a refresh, until a click or key restarts the sound. */
+.resume { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 9;
+  font-family: var(--ui); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory);
+  background: rgba(9,9,8,0.82); border: 1px solid rgba(201,161,90,0.6); padding: 11px 18px; pointer-events: none; }
+
 /* Gate: a documentary title card on solid black. */
 .gate { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; padding: 24px 16px; overflow: hidden;
   background: #050504; transition: opacity 1.8s ease; cursor: pointer; }
@@ -156,7 +194,7 @@ But look closer.
 
 This is the American dive bar.
 
-For [NUMBER] years, I have conducted extensive field research into this habitat. Most of it at night. Much of it involving beer.
+Since 1999, which is to say the 1900s, I have conducted extensive field research into this habitat. Most of it at night. Much of it involving beer.
 
 VISUAL NOTE: The title card before this slide already names the talk, so this opening shot works like a documentary's first scene. Change the time or field log number to match a real night if you like.</aside>
 </section>
@@ -200,7 +238,7 @@ VISUAL NOTE: The title card before this slide already names the talk, so this op
 <p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">02</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;letter-spacing:12px;text-transform:uppercase;color:#EDE6D8">Range</h2>
 <p style="font-size:32px;font-style:italic;line-height:1.3;color:#A89F8F;width:400px">Documented observations across the Americas</p>
-<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">[YEAR] – 2026</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">1999 – 2026</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#C9A15A;width:520px">35 sites · survey ongoing</p>
 <aside>[0:28 to 0:52 · about 72 words]
 
@@ -210,7 +248,7 @@ A note on methodology. The federal government carefully counts "drinking places.
 
 The word itself was never a compliment. By the late 1860s, American newspapers were calling a disreputable drinking den a "dive," possibly because so many of them sat a flight below the street.
 
-TO DO: The dots mark 35 cities you named: Seattle, Vancouver, Portland, Ontario (placed at Toronto), Montreal, New York, Atlantic City, Las Vegas, Fort Lauderdale, Tampa, Marathon, Islamorada, Miami, Austin, Cincinnati, Cleveland, Detroit, Great Falls, Boise, Victor, Redondo Beach, San Francisco, Louisville, Beckley, Huntington, Denver, Colorado Springs, Madison, Mineral Point, Los Angeles, Mexico City, Mérida, Cancún, Guayaquil and Cabo San Lucas. Each dot is its own shape, so add more as the survey continues. Replace [YEAR] with the year your field research began.
+TO DO: The dots mark 35 cities you named: Seattle, Vancouver, Portland, Ontario (placed at Toronto), Montreal, New York, Atlantic City, Las Vegas, Fort Lauderdale, Tampa, Marathon, Islamorada, Miami, Austin, Cincinnati, Cleveland, Detroit, Great Falls, Boise, Victor, Redondo Beach, San Francisco, Louisville, Beckley, Huntington, Denver, Colorado Springs, Madison, Mineral Point, Los Angeles, Mexico City, Mérida, Cancún, Guayaquil and Cabo San Lucas. Each dot is its own shape, so add more as the survey continues.
 
 SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Beverages)," has no dive-bar subcategory. Earliest noun use of "dive" for a disreputable establishment, National Police Gazette, Jan. 12, 1867 (via Barry Popik). OED defines the U.S. sense as a drinking den "often situated in a cellar, basement, or other half-concealed place." The basement origin is likely, not certain, which is why the narration says "possibly."</aside>
 </section>
@@ -731,8 +769,23 @@ PHOTO DIRECTION: The bookend to your opening shot. A lone bar at dusk, wide, lot
     <button id="soundBtn" type="button" aria-pressed="true">Sound on</button>
     <label class="vol" for="vol"><span>Volume</span><input id="vol" type="range" min="0" max="1" step="0.05" value="0.7"></label>
     <button id="notesBtn" type="button" aria-pressed="false">Notes</button>
+    <button id="pvBtn" type="button">Presenter view</button>
     <button id="fsBtn" type="button">Full screen</button>
   </div>
+</div>
+<div id="pv" aria-label="Presenter view">
+  <div class="pv-bar">
+    <div class="who"><span class="t">The American Dive Bar · Presenter</span><span class="pv-link" id="pvLink">Looking for the audience screen…</span></div>
+    <div class="pv-clock"><span class="el" id="pvEl">0:00</span><span class="of" id="pvOf">of 5:00 · slide 01 / 19</span></div>
+    <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvReset" type="button">Reset timer</button></div>
+  </div>
+  <div class="pv-left">
+    <div class="pv-label"><span>On screen now</span><span id="pvScene"></span></div>
+    <div class="pv-box" id="pvCur"></div>
+    <div class="pv-label"><span id="pvNextLabel">Up next</span></div>
+    <div class="pv-box next" id="pvNextBox"><div class="pv-stage" id="pvNextStage"></div></div>
+  </div>
+  <div class="pv-notes"><div class="timing" id="pvTiming"></div><div class="say" id="pvSay"></div><details id="pvMore"><summary>Production notes and sources</summary><div id="pvMoreBody"></div></details></div>
 </div>
 <div class="notes" id="notes" hidden><h4 id="notesHead">Speaker notes</h4><div id="notesBody"></div></div>
 
@@ -750,7 +803,7 @@ PHOTO DIRECTION: The bookend to your opening shot. A lone bar at dusk, wide, lot
       <button class="go" id="begin" type="button">Begin · Sound on</button>
       <button class="quiet" id="beginQuiet" type="button">Begin silently</button>
     </div>
-    <div class="keys"><kbd>→</kbd> or a clicker advances · <kbd>N</kbd> notes · <kbd>M</kbd> mute · <kbd>F</kbd> full screen</div>
+    <div class="keys"><kbd>→</kbd> or a clicker advances · <kbd>P</kbd> presenter view · <kbd>M</kbd> mute · <kbd>F</kbd> full screen</div>
   </div>
 </div>
 
@@ -1060,8 +1113,26 @@ const Sound = (() => {
   const SCENE_LABELS = { exterior: 'Exterior, night', quiet: 'Interior, quiet hour · field recording', neighborhood: 'Neighborhood bar · field recording', working: 'The regulars · field recording',
     coast: 'Coastal bar, dusk', latenight: 'Biker bar · field recording', lounge: 'Hospitality-group lounge', lastcall: 'Closing time', silence: 'Silence' };
   let i = 0, step = 0, started = false;
+  // A fresh visit starts at the title card. A refresh of this tab returns to the same slide.
+  let resumed = false;
+  try {
+    const nav = performance.getEntriesByType('navigation')[0];
+    const saved = JSON.parse(sessionStorage.getItem('dive-bar-pos') || 'null');
+    if (nav && nav.type === 'reload' && saved) { i = saved.i | 0; step = saved.step | 0; resumed = true; }
+  } catch (e) {}
+  const presenter = location.hash === '#presenter';
+  let ch = null, applying = false; try { ch = new BroadcastChannel('dive-bar-deck'); } catch (e) {}
+  const pvCur = document.getElementById('pvCur'), pvNextStage = document.getElementById('pvNextStage'), pvNextBox = document.getElementById('pvNextBox');
+  if (presenter) { document.body.classList.add('presenter'); started = true; pvCur.appendChild(stage); document.title = 'Presenter · The American Dive Bar'; }
 
-  const fit = () => { const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080); stage.style.transform = `translate(-50%, -50%) scale(${s})`; };
+  const fit = () => {
+    if (presenter) {
+      stage.style.transform = `translate(-50%, -50%) scale(${pvCur.clientWidth / 1920})`;
+      pvNextStage.style.transform = `translate(-50%, -50%) scale(${pvNextBox.clientWidth / 1920})`;
+      return;
+    }
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080); stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  };
   window.addEventListener('resize', fit); fit();
 
 
@@ -1103,7 +1174,7 @@ const Sound = (() => {
     countEl.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
     const scene = (step > 0 && el.dataset.buildScene) ? el.dataset.buildScene : el.dataset.scene;
     sceneEl.textContent = Sound.started && !Sound.muted ? '♪ ' + (SCENE_LABELS[scene] || '') : '';
-    if (started) {
+    if (started && !presenter) {
       Sound.setScene(scene);
       if (cue && step === 0 && el.dataset.cue) setTimeout(() => { if (slides[i] === el) Sound.cue(el.dataset.cue); }, 1400);
     }
@@ -1112,8 +1183,76 @@ const Sound = (() => {
     }));
     const n = el.querySelector('aside');
     notesHead.textContent = 'Speaker notes · ' + countEl.textContent;
-    notesBody.textContent = n ? n.textContent.trim() : '';
+    notesBody.textContent = n ? script(n.textContent.trim()) : '';
+    if (presenter) renderPresenter(n ? n.textContent.trim() : '', scene);
+    if (ch && !applying) ch.postMessage({ type: 'nav', from: presenter ? 'presenter' : 'audience', i, step });
+    try { sessionStorage.setItem('dive-bar-pos', JSON.stringify({ i, step })); } catch (e) {}
   }
+
+  // Only the words to be read aloud: no timing line, production notes, sources or bracketed reminders.
+  function script(text) {
+    const lines = text.split('\n');
+    if (/^\[.*\]$/.test((lines[0] || '').trim())) lines.shift();
+    const cut = lines.findIndex(l => /^[A-Z][A-Z ]{2,}[A-Z]:/.test(l.trim()));
+    return (cut < 0 ? lines : lines.slice(0, cut))
+      .map(l => l.replace(/\s*\[[^\]]*\]/g, '').replace(/\s+$/, ''))
+      .filter((l, k, a) => l.trim() || (k > 0 && a[k - 1].trim()))
+      .join('\n').trim();
+  }
+  // ---- presenter window ----
+  const pvSay = document.getElementById('pvSay'), pvTiming = document.getElementById('pvTiming'), pvMoreBody = document.getElementById('pvMoreBody');
+  const pvEl = document.getElementById('pvEl'), pvOf = document.getElementById('pvOf'), pvLink = document.getElementById('pvLink');
+  let t0 = null;
+  function renderPresenter(text, scene) {
+    const say = script(text);
+    pvTiming.textContent = ''; pvTiming.hidden = true;
+    pvSay.innerHTML = '';
+    say.split(/(\([^)]*\))/).forEach(part => {
+      if (/^\(.*\)$/.test(part)) { const c = document.createElement('span'); c.className = 'cue'; c.textContent = part.slice(1, -1); pvSay.appendChild(c); }
+      else if (part) pvSay.appendChild(document.createTextNode(part));
+    });
+    document.getElementById('pvMore').hidden = true;
+    document.getElementById('pvScene').textContent = SCENE_LABELS[scene] ? '♪ ' + SCENE_LABELS[scene] : '';
+    const b = builds(slides[i]); let previewIdx = i + 1, label = 'Up next';
+    pvNextStage.innerHTML = '';
+    if (step < b.length) { previewIdx = i; label = 'Next click reveals more on this slide'; }
+    else if (i >= slides.length - 1) { label = 'End of the talk'; previewIdx = -1; }
+    document.getElementById('pvNextLabel').textContent = label;
+    if (previewIdx >= 0) {
+      const c = slides[previewIdx].cloneNode(true); c.removeAttribute('id'); c.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
+      c.classList.add('active'); c.querySelectorAll('.rise').forEach(x => x.classList.remove('rise'));
+      if (previewIdx === i) c.querySelectorAll('.build').forEach((x, k) => x.classList.toggle('on', k <= step));
+      c.querySelectorAll('video').forEach(v => { v.removeAttribute('src'); v.load(); });
+      c.querySelectorAll('aside').forEach(a => a.remove());
+      pvNextStage.appendChild(c);
+    }
+    if (i > 0 && t0 === null) t0 = Date.now();
+    tick();
+  }
+  function tick() {
+    if (!presenter) return;
+    const secs = t0 === null ? 0 : Math.floor((Date.now() - t0) / 1000);
+    pvEl.textContent = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
+    pvEl.classList.toggle('over', secs > 300);
+    pvOf.textContent = 'of 5:00 · slide ' + String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+  }
+  if (presenter) {
+    setInterval(tick, 500);
+    document.getElementById('pvNext').addEventListener('click', e => { e.currentTarget.blur(); next(); });
+    document.getElementById('pvPrev').addEventListener('click', e => { e.currentTarget.blur(); prev(); });
+    document.getElementById('pvReset').addEventListener('click', e => { e.currentTarget.blur(); t0 = i > 0 ? Date.now() : null; tick(); });
+  }
+  if (ch) ch.onmessage = e => {
+    const m = e.data || {};
+    if (presenter && m.from === 'audience') { pvLink.textContent = '● Audience screen connected. Share that tab, keep this one private.'; pvLink.classList.add('on'); }
+    if (m.type === 'hello') { if (!presenter) ch.postMessage({ type: 'nav', from: 'audience', i, step }); return; }
+    if (m.type !== 'nav' || (m.from === 'presenter') === presenter) return;
+    const pi = i, ps = step; if (m.i === pi && m.step === ps) return;
+    i = Math.max(0, Math.min(slides.length - 1, m.i)); step = m.step; applying = true;
+    if (i === pi && step === ps + 1) { const el = slides[i]; if (el.dataset.buildCue && started && !presenter) Sound.cue(el.dataset.buildCue); render(false); }
+    else render(i !== pi && step === 0);
+    applying = false;
+  };
   function next() {
     const el = slides[i], b = builds(el);
     if (step < b.length) { step++; if (el.dataset.buildCue && started) Sound.cue(el.dataset.buildCue); render(false); return; }
@@ -1126,7 +1265,7 @@ const Sound = (() => {
   function go(n) { i = Math.max(0, Math.min(slides.length - 1, n)); step = 0; render(); }
 
   function begin(withSound) {
-    if (started) return; started = true; gate.classList.add('gone');
+    if (started) return; started = true; gate.classList.add('gone'); document.querySelector('.resume')?.remove();
     if (withSound) { Sound.init(); Sound.setVolume(+vol.value); }
     else { soundBtn.setAttribute('aria-pressed', 'false'); soundBtn.textContent = 'Sound off'; }
     render(); poke();
@@ -1150,24 +1289,40 @@ const Sound = (() => {
   notesBtn.addEventListener('click', toggleNotes);
   function toggleFs() { const d = document; if (!d.fullscreenElement) { d.documentElement.requestFullscreen?.().catch(() => {}); } else { d.exitFullscreen?.().catch(() => {}); } }
   document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  function openPresenter() {
+    const w = window.open(location.href.split('#')[0] + '#presenter', 'dive-bar-presenter', 'popup,width=1280,height=820');
+    if (!w) { notes.hidden = false; notesHead.textContent = 'Presenter view'; notesBody.textContent = 'Your browser blocked the new window. Open this same page in a second tab or window, add #presenter to the end of the address, and press Enter. That window will control this one.'; }
+  }
+  document.getElementById('pvBtn').addEventListener('click', openPresenter);
 
   viewport.addEventListener('click', e => { if (!started) return; const r = viewport.getBoundingClientRect(); (e.clientX - r.left < r.width * 0.25) ? prev() : next(); });
   window.addEventListener('keydown', e => {
     const k = e.key;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', ' '].includes(k) && document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
-    if (!started) { if (['ArrowRight', ' ', 'Enter', 'PageDown'].includes(k)) { e.preventDefault(); begin(true); } return; }
+    if (!started) { if (['ArrowRight', ' ', 'Enter', 'PageDown'].includes(k)) { e.preventDefault(); begin(true); } else if (k === 'p' || k === 'P') openPresenter(); return; }
     if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); next(); }
     else if (['ArrowLeft', 'PageUp', 'ArrowUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
     else if (k === 'Home') go(0); else if (k === 'End') go(slides.length - 1);
-    else if (k === 'n' || k === 'N') toggleNotes(); else if (k === 'm' || k === 'M') toggleSound(); else if (k === 'f' || k === 'F') toggleFs();
+    else if (k === 'n' || k === 'N') toggleNotes(); else if (k === 'm' || k === 'M') toggleSound(); else if (k === 'f' || k === 'F') toggleFs(); else if ((k === 'p' || k === 'P') && !presenter) openPresenter();
     poke();
   }, true);
   let idleT = null;
   function poke() { hud.classList.remove('idle'); viewport.classList.remove('hide-cursor'); clearTimeout(idleT); idleT = setTimeout(() => { if (started) { hud.classList.add('idle'); viewport.classList.add('hide-cursor'); } }, 2600); }
   document.addEventListener('mousemove', poke); hud.addEventListener('focusin', poke);
 
-  render(false);
+  if (presenter) { window.addEventListener('resize', fit); }
+  if (resumed && !presenter) {
+    gate.classList.add('gone'); gate.style.transition = 'none';
+    const pill = document.createElement('div'); pill.className = 'resume'; pill.textContent = 'Click or press any key to resume with sound';
+    document.body.appendChild(pill);
+    const go1 = e => { if (started) return; if (e) { e.preventDefault(); e.stopPropagation(); } pill.remove(); begin(true); };
+    window.addEventListener('keydown', go1, { capture: true, once: true });
+    viewport.addEventListener('click', go1, { capture: true, once: true });
+  }
+  applying = presenter; render(false); applying = false;
+  fit();
+  if (ch && presenter) ch.postMessage({ type: 'hello', from: 'presenter' });
 })();
 </script>
 
