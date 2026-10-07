@@ -1229,7 +1229,7 @@ const Sound = (() => {
   try {
     const nav = performance.getEntriesByType('navigation')[0];
     const saved = JSON.parse(sessionStorage.getItem('dive-bar-pos') || 'null');
-    if (nav && nav.type === 'reload' && saved) { i = saved.i | 0; step = saved.step | 0; resumed = true; }
+    if (nav && nav.type === 'reload' && saved && saved.started && ((saved.i | 0) > 0 || (saved.step | 0) > 0)) { i = saved.i | 0; step = saved.step | 0; resumed = true; }
   } catch (e) {}
   const presenter = location.hash === '#presenter';
   let ch = null, applying = false; try { ch = new BroadcastChannel('dive-bar-deck'); } catch (e) {}
@@ -1297,7 +1297,7 @@ const Sound = (() => {
     notesBody.textContent = n ? script(n.textContent.trim()) : '';
     if (presenter) renderPresenter(n ? n.textContent.trim() : '', scene);
     if (ch && !applying) ch.postMessage({ type: 'nav', from: presenter ? 'presenter' : 'audience', i, step });
-    try { sessionStorage.setItem('dive-bar-pos', JSON.stringify({ i, step })); } catch (e) {}
+    if (started && !presenter) try { sessionStorage.setItem('dive-bar-pos', JSON.stringify({ i, step, started: true })); } catch (e) {}
   }
 
   // Only the words to be read aloud: no timing line, production notes, sources or bracketed reminders.
@@ -1376,6 +1376,7 @@ const Sound = (() => {
       if (typeof m.vol === 'number') { vol.value = m.vol; Sound.setVolume(m.vol); }
       sendSound(); render(false); return;
     }
+    if (m.type === 'title' && (m.from === 'presenter') !== presenter) { applying = true; if (m.on !== titleOn) showTitle(m.on); applying = false; return; }
     if (m.type !== 'nav' || (m.from === 'presenter') === presenter) return;
     const pi = i, ps = step; if (m.i === pi && m.step === ps) return;
     i = Math.max(0, Math.min(slides.length - 1, m.i)); step = m.step; applying = true;
@@ -1383,26 +1384,38 @@ const Sound = (() => {
     else render(i !== pi && step === 0);
     applying = false;
   };
+  // Going back from slide 1 brings the title card back up. Forward from the title card returns to slide 1.
+  let titleOn = false;
+  function showTitle(on) {
+    titleOn = on;
+    if (!presenter) { gate.style.transition = ''; gate.classList.toggle('gone', !on); }
+    if (ch && !applying) ch.postMessage({ type: 'title', from: presenter ? 'presenter' : 'audience', on });
+    if (presenter) document.getElementById('pvScene').textContent = on ? 'Title card on screen' : '';
+    if (!on) render();
+  }
   function next() {
+    if (titleOn) { showTitle(false); return; }
     const el = slides[i], b = builds(el);
     if (step < b.length) { step++; if (el.dataset.buildCue && started) Sound.cue(el.dataset.buildCue); render(false); return; }
     if (i < slides.length - 1) { i++; step = 0; render(); }
   }
   function prev() {
+    if (titleOn) return;
+    if (i === 0 && step === 0) { showTitle(true); return; }
     if (step > 0) { step--; render(false); return; }
     if (i > 0) { i--; step = builds(slides[i]).length; render(false); }
   }
   function go(n) { i = Math.max(0, Math.min(slides.length - 1, n)); step = 0; render(); }
 
   function begin(withSound) {
-    if (started) return; started = true; gate.classList.add('gone'); document.querySelector('.resume')?.remove();
+    if (started) { if (titleOn) next(); return; } started = true; gate.classList.add('gone'); document.querySelector('.resume')?.remove();
     if (withSound) { Sound.init(); Sound.setVolume(+vol.value); }
     else { soundBtn.setAttribute('aria-pressed', 'false'); soundBtn.textContent = 'Sound off'; }
     render(); poke();
     if (!presenter) { openPresenter(); sendSound(); }
   }
   document.getElementById('begin').addEventListener('click', e => { e.stopPropagation(); begin(true); });
-  gate.addEventListener('click', () => begin(true));
+  gate.addEventListener('click', () => { if (started && titleOn) next(); else begin(true); });
   document.getElementById('prev').addEventListener('click', prev);
   document.getElementById('next').addEventListener('click', next);
   function toggleSound() {
