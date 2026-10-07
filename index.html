@@ -823,8 +823,7 @@ PHOTO DIRECTION: The bookend to your opening shot. A lone bar at dusk, wide, lot
   </div>
   <div class="start">
     <div class="row">
-      <button class="go" id="begin" type="button">Begin · Sound on</button>
-      <button class="quiet" id="beginQuiet" type="button">Begin silently</button>
+      <button class="go" id="begin" type="button">Begin</button>
     </div>
     <div class="keys"><kbd>→</kbd> or a clicker advances · Your notes and controls open in a separate window when you begin.</div>
   </div>
@@ -1322,7 +1321,6 @@ const Sound = (() => {
   }
   document.getElementById('begin').addEventListener('click', e => { e.stopPropagation(); begin(true); });
   gate.addEventListener('click', () => begin(true));
-  document.getElementById('beginQuiet').addEventListener('click', e => { e.stopPropagation(); begin(false); });
   document.getElementById('prev').addEventListener('click', prev);
   document.getElementById('next').addEventListener('click', next);
   function toggleSound() {

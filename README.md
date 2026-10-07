@@ -4,7 +4,7 @@ A five-minute lightning talk in the style of a prestige nature documentary, abou
 
 ## Presenting
 
-1. Open the site and click **Begin · Sound on**. Your notes window opens at the same moment. If your browser blocks it, allow pop-ups for the site and press **P**.
+1. Open the site and click **Begin**. Your notes window opens at the same moment. If your browser blocks it, allow pop-ups for the site and press **P**.
 2. In your video call, share only the presentation tab. It shows no controls, just the slides.
 3. Run everything from the notes window: Back and Next, sound on or off, volume and the talk timer. Arrow keys and clickers work in either window, and the two stay in sync.
 
