@@ -905,7 +905,7 @@ PHOTO DIRECTION: The bookend to your opening shot. A lone bar at dusk, wide, lot
   <div class="pv-bar">
     <div class="who"><span class="t">The American Dive Bar · Presenter</span><span class="pv-link" id="pvLink">Looking for the audience screen…</span></div>
     <div class="pv-clock"><span class="el" id="pvEl">0:00</span><span class="of" id="pvOf">of 5:00 · slide 01 / 19</span></div>
-    <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvReset" type="button">Reset timer</button></div>
+    <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvReset" type="button">Reset timer</button><button id="pvFs" type="button">Full screen</button></div>
   </div>
   <div class="pv-left">
     <div class="pv-label"><span>On screen now</span><span id="pvScene"></span></div>
@@ -1374,6 +1374,7 @@ const Sound = (() => {
     setInterval(tick, 500);
     document.getElementById('pvNext').addEventListener('click', e => { e.currentTarget.blur(); next(); });
     document.getElementById('pvPrev').addEventListener('click', e => { e.currentTarget.blur(); prev(); });
+    document.getElementById('pvFs').addEventListener('click', e => { e.currentTarget.blur(); ch && ch.postMessage({ type: 'fsCmd', from: 'presenter' }); });
     document.getElementById('pvReset').addEventListener('click', e => { e.currentTarget.blur(); t0 = i > 0 ? Date.now() : null; tick(); });
   }
   function sendSound() { if (ch && !presenter) ch.postMessage({ type: 'sound', from: 'audience', started: Sound.started, muted: Sound.muted, vol: Sound.volume }); }
@@ -1399,6 +1400,8 @@ const Sound = (() => {
       if (typeof m.vol === 'number') { vol.value = m.vol; Sound.setVolume(m.vol); }
       sendSound(); render(false); return;
     }
+    if (m.type === 'fsCmd' && !presenter) { fullFromPresenter(); return; }
+    if (m.type === 'fs' && presenter) { document.getElementById('pvFs').textContent = m.on ? 'Exit full screen' : 'Full screen'; return; }
     if (m.type === 'title' && (m.from === 'presenter') !== presenter) { applying = true; if (m.on !== titleOn) showTitle(m.on); applying = false; return; }
     if (m.type !== 'nav' || (m.from === 'presenter') === presenter) return;
     const pi = i, ps = step; if (m.i === pi && m.step === ps) return;
@@ -1459,6 +1462,22 @@ const Sound = (() => {
     const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t);
     setTimeout(() => t.remove(), ms || 9000);
   }
+  // Full screen, driven from the notes window. Browsers only allow it after a click or key press on the shared
+  // screen itself, so if the request is refused, a prompt asks for one click there.
+  function fullFromPresenter() {
+    const d = document;
+    if (d.fullscreenElement) { d.exitFullscreen?.().catch(() => {}); return; }
+    const ask = () => {
+      if (document.querySelector('.fs-ask')) return;
+      const pill = d.createElement('div'); pill.className = 'resume fs-ask'; pill.textContent = 'Click anywhere to go full screen';
+      d.body.appendChild(pill);
+      const go2 = e => { if (e) { e.preventDefault(); e.stopPropagation(); } pill.remove(); d.documentElement.requestFullscreen?.().catch(() => {}); };
+      window.addEventListener('click', go2, { capture: true, once: true });
+    };
+    if (!d.documentElement.requestFullscreen) return;
+    d.documentElement.requestFullscreen().catch(ask);
+  }
+  document.addEventListener('fullscreenchange', () => { if (ch && !presenter) ch.postMessage({ type: 'fs', from: 'audience', on: !!document.fullscreenElement }); });
   function openPresenter() {
     if (presenter) return;
     const w = window.open(location.href.split('#')[0] + '#presenter', 'dive-bar-presenter', 'popup,width=1280,height=820');
@@ -1475,7 +1494,7 @@ const Sound = (() => {
     if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); next(); }
     else if (['ArrowLeft', 'PageUp', 'ArrowUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
     else if (k === 'Home') go(0); else if (k === 'End') go(slides.length - 1);
-    else if (k === 'n' || k === 'N') { if (presenter) return; openPresenter(); } else if (k === 'm' || k === 'M') toggleSound(); else if (k === 'f' || k === 'F') toggleFs(); else if ((k === 'p' || k === 'P') && !presenter) openPresenter();
+    else if (k === 'n' || k === 'N') { if (presenter) return; openPresenter(); } else if (k === 'm' || k === 'M') toggleSound(); else if (k === 'f' || k === 'F') { if (presenter) { ch && ch.postMessage({ type: 'fsCmd', from: 'presenter' }); } else toggleFs(); } else if ((k === 'p' || k === 'P') && !presenter) openPresenter();
     poke();
   }, true);
   let idleT = null;
