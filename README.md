@@ -4,23 +4,9 @@ A five-minute lightning talk in the style of a prestige nature documentary, abou
 
 ## Presenting
 
-Open `index.html` (or the GitHub Pages site), click **Begin · Sound on**, then advance with the arrow keys or a presentation clicker.
-
-| Key | Action |
-| --- | --- |
-| → / Space / Page Down | Next slide or build |
-| ← / Page Up | Previous |
-| P | Presenter view (opens a private window with your notes, the next slide and a timer) |
-| N | Speaker notes on the main screen |
-| M | Mute |
-| F | Full screen |
-
-## Presenting while screen sharing
-
-1. Open the site and click **Begin · Sound on**.
-2. Press **P**. A presenter window opens with your notes, a preview of the next slide and a timer.
-3. In your video call, share only the first tab. Keep the presenter window to yourself.
-4. Advance from either window. They stay in sync.
+1. Open the site and click **Begin · Sound on**. Your notes window opens at the same moment. If your browser blocks it, allow pop-ups for the site and press **P**.
+2. In your video call, share only the presentation tab. It shows no controls, just the slides.
+3. Run everything from the notes window: Back and Next, sound on or off, volume and the talk timer. Arrow keys and clickers work in either window, and the two stay in sync.
 
 Refreshing a tab keeps you on the same slide. Opening the site fresh starts at the title card.
 

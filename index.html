@@ -99,6 +99,11 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
   font-size: 15px; line-height: 1.6; color: var(--ivory); white-space: pre-wrap; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
 .notes h4 { margin: 0 0 8px; font-weight: 500; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); }
 
+/* The shared screen carries no controls. Everything lives in the presenter window. */
+body:not(.presenter) .hud, body:not(.presenter) .notes { display: none !important; }
+.toast { position: fixed; left: 50%; top: calc(24px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 11; max-width: min(620px, calc(100% - 32px));
+  font-family: var(--ui); font-size: 14px; line-height: 1.5; color: var(--ivory); background: rgba(13,12,10,0.95); border: 1px solid rgba(201,161,90,0.7); padding: 12px 18px; text-align: center; }
+
 /* Presenter view: a private control window with notes, next slide and a timer. */
 #pv { display: none; }
 body.presenter #viewport, body.presenter .hud, body.presenter .notes, body.presenter .gate { display: none !important; }
@@ -117,6 +122,9 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 .pv-tools { display: flex; gap: 8px; flex-wrap: wrap; }
 .pv-tools button { font: inherit; font-size: 13px; letter-spacing: 0.06em; color: var(--ivory); background: transparent; border: 1px solid var(--line); border-radius: 3px; padding: 9px 14px; cursor: pointer; }
 .pv-tools button.big { border-color: var(--amber); }
+.pv-tools button[aria-pressed="false"] { color: var(--muted); }
+.pv-vol { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); letter-spacing: 0.06em; }
+.pv-vol input { width: 110px; accent-color: var(--amber); }
 .pv-tools button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 .pv-left { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; }
 .pv-label { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
@@ -792,7 +800,7 @@ PHOTO DIRECTION: The bookend to your opening shot. A lone bar at dusk, wide, lot
   <div class="pv-bar">
     <div class="who"><span class="t">The American Dive Bar · Presenter</span><span class="pv-link" id="pvLink">Looking for the audience screen…</span></div>
     <div class="pv-clock"><span class="el" id="pvEl">0:00</span><span class="of" id="pvOf">of 5:00 · slide 01 / 19</span></div>
-    <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvReset" type="button">Reset timer</button></div>
+    <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvReset" type="button">Reset timer</button></div>
   </div>
   <div class="pv-left">
     <div class="pv-label"><span>On screen now</span><span id="pvScene"></span></div>
@@ -818,7 +826,7 @@ PHOTO DIRECTION: The bookend to your opening shot. A lone bar at dusk, wide, lot
       <button class="go" id="begin" type="button">Begin · Sound on</button>
       <button class="quiet" id="beginQuiet" type="button">Begin silently</button>
     </div>
-    <div class="keys"><kbd>→</kbd> or a clicker advances · <kbd>P</kbd> presenter view · <kbd>M</kbd> mute · <kbd>F</kbd> full screen</div>
+    <div class="keys"><kbd>→</kbd> or a clicker advances · Your notes and controls open in a separate window when you begin.</div>
   </div>
 </div>
 
@@ -1264,10 +1272,29 @@ const Sound = (() => {
     document.getElementById('pvPrev').addEventListener('click', e => { e.currentTarget.blur(); prev(); });
     document.getElementById('pvReset').addEventListener('click', e => { e.currentTarget.blur(); t0 = i > 0 ? Date.now() : null; tick(); });
   }
+  function sendSound() { if (ch && !presenter) ch.postMessage({ type: 'sound', from: 'audience', started: Sound.started, muted: Sound.muted, vol: Sound.volume }); }
+  const pvSound = document.getElementById('pvSound'), pvVol = document.getElementById('pvVol');
+  function showSound(m) {
+    if (!presenter) return;
+    const on = m.started && !m.muted;
+    pvSound.setAttribute('aria-pressed', String(on)); pvSound.textContent = !m.started ? 'Sound off (click the shared screen once to enable)' : on ? 'Sound on' : 'Sound off';
+    if (typeof m.vol === 'number') pvVol.value = m.vol;
+  }
+  if (presenter) {
+    pvSound.addEventListener('click', e => { e.currentTarget.blur(); ch && ch.postMessage({ type: 'soundCmd', from: 'presenter', toggle: true }); });
+    pvVol.addEventListener('input', () => ch && ch.postMessage({ type: 'soundCmd', from: 'presenter', vol: +pvVol.value }));
+    pvVol.addEventListener('change', () => pvVol.blur());
+  }
   if (ch) ch.onmessage = e => {
     const m = e.data || {};
     if (presenter && m.from === 'audience') { pvLink.textContent = '● Audience screen connected. Share that tab, keep this one private.'; pvLink.classList.add('on'); }
-    if (m.type === 'hello') { if (!presenter) ch.postMessage({ type: 'nav', from: 'audience', i, step }); return; }
+    if (m.type === 'hello') { if (!presenter) { ch.postMessage({ type: 'nav', from: 'audience', i, step }); sendSound(); } return; }
+    if (m.type === 'sound') { showSound(m); return; }
+    if (m.type === 'soundCmd' && !presenter) {
+      if (m.toggle) { if (Sound.started) Sound.setMuted(!Sound.muted); else if (started) toast('Click this screen once to turn the sound on.', 5000); }
+      if (typeof m.vol === 'number') { vol.value = m.vol; Sound.setVolume(m.vol); }
+      sendSound(); render(false); return;
+    }
     if (m.type !== 'nav' || (m.from === 'presenter') === presenter) return;
     const pi = i, ps = step; if (m.i === pi && m.step === ps) return;
     i = Math.max(0, Math.min(slides.length - 1, m.i)); step = m.step; applying = true;
@@ -1291,6 +1318,7 @@ const Sound = (() => {
     if (withSound) { Sound.init(); Sound.setVolume(+vol.value); }
     else { soundBtn.setAttribute('aria-pressed', 'false'); soundBtn.textContent = 'Sound off'; }
     render(); poke();
+    if (!presenter) { openPresenter(); sendSound(); }
   }
   document.getElementById('begin').addEventListener('click', e => { e.stopPropagation(); begin(true); });
   gate.addEventListener('click', () => begin(true));
@@ -1300,7 +1328,7 @@ const Sound = (() => {
   function toggleSound() {
     if (!Sound.started) { Sound.init(); Sound.setVolume(+vol.value); Sound.setMuted(false); render(false); }
     else Sound.setMuted(!Sound.muted);
-    const on = !Sound.muted; soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.textContent = on ? 'Sound on' : 'Sound off'; render(false);
+    const on = !Sound.muted; soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.textContent = on ? 'Sound on' : 'Sound off'; render(false); sendSound();
   }
   soundBtn.addEventListener('click', toggleSound);
   vol.addEventListener('input', () => Sound.setVolume(+vol.value));
@@ -1311,13 +1339,18 @@ const Sound = (() => {
   notesBtn.addEventListener('click', toggleNotes);
   function toggleFs() { const d = document; if (!d.fullscreenElement) { d.documentElement.requestFullscreen?.().catch(() => {}); } else { d.exitFullscreen?.().catch(() => {}); } }
   document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  function toast(msg, ms) {
+    const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t);
+    setTimeout(() => t.remove(), ms || 9000);
+  }
   function openPresenter() {
+    if (presenter) return;
     const w = window.open(location.href.split('#')[0] + '#presenter', 'dive-bar-presenter', 'popup,width=1280,height=820');
-    if (!w) { notes.hidden = false; notesHead.textContent = 'Presenter view'; notesBody.textContent = 'Your browser blocked the new window. Open this same page in a second tab or window, add #presenter to the end of the address, and press Enter. That window will control this one.'; }
+    if (!w) toast('Your browser blocked the notes window. Allow pop-ups for this site, then press P. Or open this page in another window with #presenter at the end of the address.');
   }
   document.getElementById('pvBtn').addEventListener('click', openPresenter);
 
-  viewport.addEventListener('click', e => { if (!started) return; const r = viewport.getBoundingClientRect(); (e.clientX - r.left < r.width * 0.25) ? prev() : next(); });
+  viewport.addEventListener('click', e => { if (!started) return; if (!Sound.started) { Sound.init(); Sound.setVolume(+vol.value); Sound.setMuted(false); render(false); sendSound(); return; } const r = viewport.getBoundingClientRect(); (e.clientX - r.left < r.width * 0.25) ? prev() : next(); });
   window.addEventListener('keydown', e => {
     const k = e.key;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -1326,7 +1359,7 @@ const Sound = (() => {
     if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); next(); }
     else if (['ArrowLeft', 'PageUp', 'ArrowUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
     else if (k === 'Home') go(0); else if (k === 'End') go(slides.length - 1);
-    else if (k === 'n' || k === 'N') toggleNotes(); else if (k === 'm' || k === 'M') toggleSound(); else if (k === 'f' || k === 'F') toggleFs(); else if ((k === 'p' || k === 'P') && !presenter) openPresenter();
+    else if (k === 'n' || k === 'N') { if (presenter) return; openPresenter(); } else if (k === 'm' || k === 'M') toggleSound(); else if (k === 'f' || k === 'F') toggleFs(); else if ((k === 'p' || k === 'P') && !presenter) openPresenter();
     poke();
   }, true);
   let idleT = null;
