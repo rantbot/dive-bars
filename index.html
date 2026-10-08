@@ -109,7 +109,7 @@ body:not(.presenter) .hud, body:not(.presenter) .notes { display: none !importan
 #pv { display: none; }
 body.presenter #viewport, body.presenter .hud, body.presenter .notes, body.presenter .gate { display: none !important; }
 body.presenter { overflow: auto; }
-body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 18px 24px;
+body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr); grid-template-rows: auto minmax(0, 1fr); gap: 18px 24px;
   padding: 18px 20px calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--ivory); font-family: var(--ui); }
 .pv-bar { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .pv-bar .who { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -132,9 +132,16 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 .pv-box { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--night); border: 1px solid var(--line); }
 .pv-box.next { width: 62%; opacity: 0.85; }
 .pv-box > #stage, .pv-box > .pv-stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center center; }
-.pv-notes { min-width: 0; min-height: 0; overflow: auto; padding: 6px 4px 40px; }
+.pv-notes { min-width: 0; min-height: 0; overflow: auto; padding: 6px 4px 0; scroll-behavior: smooth; }
+.pv-more { position: sticky; bottom: 0; height: 84px; margin-top: -40px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(10,10,9,0) 0%, rgba(10,10,9,0.92) 55%, #0A0A09 100%); transition: opacity .25s; }
+.pv-more button { pointer-events: auto; font-family: var(--ui); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory); background: rgba(201,161,90,0.18);
+  border: 1px solid var(--amber); padding: 7px 16px; cursor: pointer; }
+.pv-more.done { opacity: 0; }
+.pv-more.done button { pointer-events: none; }
 .pv-notes .timing { font-size: 13px; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 14px; }
-.pv-notes .say { font-size: clamp(20px, 1.9vw, 27px); line-height: 1.55; white-space: pre-wrap; max-width: 34em; }
+.pv-notes .say { font-size: clamp(17px, 1.5vw, 23px); line-height: 1.5; white-space: pre-line; max-width: 42em; }
+.pv-notes .say .gap { display: block; height: 0.55em; }
 .pv-notes .say .cue.reveal { font-family: var(--ui); cursor: pointer; background: rgba(201,161,90,0.16); color: var(--ivory); border-color: var(--amber); padding: 6px 14px; font-size: 13px; }
 .pv-notes .say .cue.reveal:hover { background: rgba(201,161,90,0.3); }
 .pv-notes .say .cue.reveal:disabled { cursor: default; background: transparent; color: var(--muted); border-color: rgba(201,161,90,0.3); }
@@ -751,7 +758,7 @@ BUILD: The 28% fades in on click.
 SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana Popky, "Public Places and Commercial Spaces: How Neighborhood Amenities Foster Trust and Connection in American Communities," Survey Center on American Life (AEI), Oct. 20, 2021. Survey fielded June 11 to July 1, 2020, n = 5,058, NORC AmeriSpeak panel. Exact measure: talking with someone they don't know well at least once or twice a month. 48% among those with a regular spot where they generally recognize people, 28% among those with no regular place (30% among those with a spot but who don't recognize people). Caveat: "regular spot" includes coffee shops, restaurants, bars and other places, not bars alone. In the same survey, 29% of those with a regular spot named a restaurant or bar. "Third place" comes from Ray Oldenburg, The Great Good Place (1989).</aside>
 </section>
 <section class="slide" id="falsedive" data-scene="lounge" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 1120px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:20px">
-<div class="kb" style="position:absolute;left:740px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_false.jpg" alt="Suspiciously perfect bar with Edison bulbs and a coupe cocktail glass" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div class="kb" style="position:absolute;left:740px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_faux.jpg" alt="A perfect martini with two olives on a polished bar under Edison bulbs" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:740px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
 <p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">17</p>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#C9A15A">Diveus artificialis</p>
@@ -777,7 +784,7 @@ Through a remarkable process known as hospitality-group development, the False D
 
 Attempts to reproduce the American dive bar in captivity have largely failed.
 
-PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs, a coupe glass, subway tile, merch for sale by the door. Shoot it beautifully. The joke lands better if it looks good. Avoid showing a recognizable venue's name or logo.</aside>
+PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs, a coupe glass, subway tile, merch for sale by the door. Shoot it beautifully. The joke lands better if it looks good. Avoid showing a recognizable venue's name or logo. The current image is your martini-under-Edison-bulbs shot.</aside>
 </section>
 <section class="slide" id="test" data-scene="silence" style="background:#090908;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:36px">
 <p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">18</p>
@@ -917,7 +924,7 @@ PHOTO DIRECTION: The bookend to your opening shot. A lone bar at dusk, wide, lot
     <div class="pv-label"><span id="pvNextLabel">Up next</span></div>
     <div class="pv-box next" id="pvNextBox"><div class="pv-stage" id="pvNextStage"></div></div>
   </div>
-  <div class="pv-notes"><div class="timing" id="pvTiming"></div><div class="say" id="pvSay"></div><details id="pvMore"><summary>Production notes and sources</summary><div id="pvMoreBody"></div></details></div>
+  <div class="pv-notes"><div class="timing" id="pvTiming"></div><div class="say" id="pvSay"></div><details id="pvMore"><summary>Production notes and sources</summary><div id="pvMoreBody"></div></details><div class="pv-more" id="pvFold"><button type="button" id="pvFoldBtn">More below ↓</button></div></div>
 </div>
 <div class="notes" id="notes" hidden><h4 id="notesHead">Speaker notes</h4><div id="notesBody"></div></div>
 
@@ -1341,6 +1348,10 @@ const Sound = (() => {
   const pvSay = document.getElementById('pvSay'), pvTiming = document.getElementById('pvTiming'), pvMoreBody = document.getElementById('pvMoreBody');
   const pvEl = document.getElementById('pvEl'), pvOf = document.getElementById('pvOf'), pvLink = document.getElementById('pvLink');
   let t0 = null;
+  const pvNotesEl = document.querySelector('.pv-notes'), pvFold = document.getElementById('pvFold'); let lastPvI = -1;
+  function updateFold() { pvFold.classList.toggle('done', pvNotesEl.scrollTop + pvNotesEl.clientHeight >= pvNotesEl.scrollHeight - 6); }
+  pvNotesEl.addEventListener('scroll', updateFold); window.addEventListener('resize', updateFold);
+  document.getElementById('pvFoldBtn').addEventListener('click', e => { e.currentTarget.blur(); pvNotesEl.scrollBy({ top: pvNotesEl.clientHeight * 0.7 }); });
   function renderPresenter(text, scene) {
     const say = script(text);
     pvTiming.textContent = ''; pvTiming.hidden = true;
@@ -1355,9 +1366,11 @@ const Sound = (() => {
           c.disabled = !pending || step !== ci; c.addEventListener('click', e => { e.currentTarget.blur(); next(); }); pvSay.appendChild(c);
         } else { const c = document.createElement('span'); c.className = 'cue'; c.textContent = t; pvSay.appendChild(c); }
       }
-      else if (part) pvSay.appendChild(document.createTextNode(part));
+      else if (part) part.split(/\n{2,}/).forEach((seg, k) => { if (k) { const g = document.createElement('span'); g.className = 'gap'; pvSay.appendChild(g); } if (seg) pvSay.appendChild(document.createTextNode(seg.replace(/^\n+|\n+$/g, ''))); });
     });
     document.getElementById('pvMore').hidden = true;
+    if (lastPvI !== i) { pvNotesEl.style.scrollBehavior = 'auto'; pvNotesEl.scrollTop = 0; pvNotesEl.style.scrollBehavior = ''; lastPvI = i; }
+    requestAnimationFrame(updateFold);
     document.getElementById('pvScene').textContent = SCENE_LABELS[scene] ? '♪ ' + SCENE_LABELS[scene] : '';
     const b = builds(slides[i]); let previewIdx = i + 1, label = 'Up next';
     pvNextStage.innerHTML = '';
