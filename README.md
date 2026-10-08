@@ -17,3 +17,8 @@ Refreshing a tab keeps you on the same slide. Opening the site fresh starts at t
 - `img/` holds the photographs and illustrations. Most photos are low-resolution stand-ins to be replaced with real field photos.
 
 Fonts load from Google Fonts. The audio files load with `fetch`, so open the page through a web server (GitHub Pages works) rather than straight from disk.
+
+## Two versions
+
+- **index.html** is the five-minute lightning talk (16 slides).
+- **full.html** is the full twelve-minute version with every slide, kept for the website.
