@@ -109,49 +109,72 @@ body:not(.presenter) .hud, body:not(.presenter) .notes { display: none !importan
 
 /* Presenter view: a private control window with notes, next slide and a timer. */
 #pv { display: none; }
+#pvVoice, #pvReset { display: none !important; }
 body.presenter #viewport, body.presenter .hud, body.presenter .notes, body.presenter .gate { display: none !important; }
 body.presenter { overflow: auto; }
-body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr); grid-template-rows: auto minmax(0, 1fr); gap: 18px 24px;
-  padding: 18px 20px calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--ivory); font-family: var(--ui); }
-.pv-bar { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
-.pv-bar .who { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.pv-bar .t { font-family: var(--display); font-size: 20px; letter-spacing: 0.12em; text-transform: uppercase; }
-.pv-link { font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
-.pv-link.on { color: var(--amber); }
-.pv-clock { display: flex; align-items: baseline; gap: 14px; font-variant-numeric: tabular-nums; }
-.pv-clock .el { font-size: 40px; font-weight: 500; letter-spacing: 0.02em; }
+body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-columns: minmax(300px, 0.8fr) minmax(0, 1.5fr); grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 0 32px; padding: 0 32px; background: #0B0A09; color: var(--ivory); font-family: var(--ui); }
+.pv-top { grid-column: 1 / -1; display: flex; align-items: center; gap: 24px; padding: 18px 0 16px; border-bottom: 1px solid #221F1A; }
+.pv-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.pv-mark { font-family: var(--display); font-size: 17px; letter-spacing: 0.16em; text-transform: uppercase; color: #CFC6B4; white-space: nowrap; }
+.pv-link { font-size: 12px; color: #7D7466; }
+.pv-link.on { color: #9DB38A; }
+.pv-link.on::before { content: "● "; }
+.pv-clock { display: flex; flex-direction: column; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.pv-time { display: flex; align-items: baseline; gap: 8px; }
+.pv-clock .el { font-size: 34px; font-weight: 500; line-height: 1; }
 .pv-clock .el.over { color: #E0775A; }
-.pv-clock .of { font-size: 13px; color: var(--muted); letter-spacing: 0.08em; }
-.pv-tools { display: flex; gap: 8px; flex-wrap: wrap; }
-.pv-tools button { font: inherit; font-size: 13px; letter-spacing: 0.06em; color: var(--ivory); background: transparent; border: 1px solid var(--line); border-radius: 3px; padding: 9px 14px; cursor: pointer; }
-.pv-tools button.big { border-color: var(--amber); }
-.pv-tools button[aria-pressed="false"] { color: var(--muted); }
-.pv-vol { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); letter-spacing: 0.06em; }
-.pv-vol input { width: 110px; accent-color: var(--amber); }
-.pv-tools button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-.pv-left { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; }
-.pv-label { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
-.pv-box { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--night); border: 1px solid var(--line); }
-.pv-box.next { width: 62%; opacity: 0.85; }
+.pv-clock .of { font-size: 14px; color: #7D7466; }
+.pv-prog { width: 180px; height: 3px; background: #24211C; border-radius: 2px; overflow: hidden; }
+.pv-prog i { display: block; height: 100%; width: 0; background: var(--amber); transition: width .5s linear; }
+.pv-prog i.over { background: #E0775A; }
+.pv-util { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.pv-util .u { font: inherit; font-size: 13px; color: #B9B09F; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.pv-util .u:hover { background: #1A1815; color: var(--ivory); }
+.pv-util .u[aria-pressed="false"] { color: #E0775A; }
+.pv-util input[type=range] { width: 84px; accent-color: var(--amber); margin-right: 8px; }
+.pv-left { grid-row: 3; display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; padding-top: 22px; overflow: hidden; }
+.pv-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #7D7466; display: flex; justify-content: space-between; gap: 12px; }
+.pv-label #pvScene { letter-spacing: 0.06em; text-transform: none; color: #6B6457; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-box { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--night); border-radius: 8px; box-shadow: 0 0 0 1px #2A2620; flex-shrink: 0; }
+.pv-box.next { opacity: 0.72; margin-bottom: 6px; }
 .pv-box > #stage, .pv-box > .pv-stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center center; }
-.pv-notes { min-width: 0; min-height: 0; overflow: auto; padding: 6px 4px 0; scroll-behavior: smooth; }
-.pv-more { position: sticky; bottom: 0; height: 84px; margin-top: -40px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px; pointer-events: none;
-  background: linear-gradient(180deg, rgba(10,10,9,0) 0%, rgba(10,10,9,0.92) 55%, #0A0A09 100%); transition: opacity .25s; }
-.pv-more button { pointer-events: auto; font-family: var(--ui); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory); background: rgba(201,161,90,0.18);
-  border: 1px solid var(--amber); padding: 7px 16px; cursor: pointer; }
+.pv-label + .pv-box { margin-bottom: 14px; }
+.pv-right { grid-row: 3; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding-top: 22px; }
+.pv-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 14px; }
+.pv-where { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+.pv-where .n { font-size: 13px; color: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+.pv-where .t { font-family: var(--display); font-size: 26px; color: #E6DECF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-notes { position: relative; min-width: 0; min-height: 0; flex: 1; overflow: auto; padding: 0 4px 0 0; scroll-behavior: smooth; }
+.pv-notes .say { font-size: clamp(20px, 1.75vw, 30px); line-height: 1.55; white-space: pre-line; max-width: 34em; color: #F1EADD; }
+.pv-notes .say .gap { display: block; height: 0.7em; }
+.pv-notes .say .cue { display: inline-block; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber); border: 1px solid rgba(201,161,90,0.45); border-radius: 999px; padding: 3px 10px; margin: 0 6px 0 0; vertical-align: 0.3em; }
+.pv-notes .say .cue.reveal { font-family: var(--ui); cursor: pointer; background: rgba(201,161,90,0.14); color: #F1EADD; border-color: var(--amber); padding: 5px 12px; }
+.pv-notes .say .cue.reveal:hover { background: rgba(201,161,90,0.28); }
+.pv-notes .say .cue.reveal:disabled { cursor: default; background: transparent; color: #6B6457; border-color: #2E2A24; }
+.pv-more { position: sticky; bottom: 0; height: 90px; margin-top: -40px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(11,10,9,0) 0%, rgba(11,10,9,0.94) 60%, #0B0A09 100%); transition: opacity .25s; }
+.pv-more button { pointer-events: auto; font-family: var(--ui); font-size: 12px; letter-spacing: 0.08em; color: #E6DECF; background: #1A1815; border: 1px solid #3A352D; border-radius: 999px; padding: 7px 16px; cursor: pointer; }
 .pv-more.done { opacity: 0; }
 .pv-more.done button { pointer-events: none; }
-.pv-notes .timing { font-size: 13px; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 14px; }
-.pv-notes .say { font-size: clamp(17px, 1.5vw, 23px); line-height: 1.5; white-space: pre-line; max-width: 42em; }
-.pv-notes .say .gap { display: block; height: 0.55em; }
-.pv-notes .say .cue.reveal { font-family: var(--ui); cursor: pointer; background: rgba(201,161,90,0.16); color: var(--ivory); border-color: var(--amber); padding: 6px 14px; font-size: 13px; }
-.pv-notes .say .cue.reveal:hover { background: rgba(201,161,90,0.3); }
-.pv-notes .say .cue.reveal:disabled { cursor: default; background: transparent; color: var(--muted); border-color: rgba(201,161,90,0.3); }
-.pv-notes .say .cue { display: inline-block; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); border: 1px solid rgba(201,161,90,0.5); padding: 2px 8px; margin: 0 4px; vertical-align: middle; }
-.pv-notes details { margin-top: 26px; color: var(--muted); font-size: 14px; line-height: 1.6; }
-.pv-notes summary { cursor: pointer; letter-spacing: 0.14em; text-transform: uppercase; font-size: 11px; }
-.pv-notes details div { white-space: pre-wrap; margin-top: 10px; }
-@media (max-width: 860px) { body.presenter #pv { grid-template-columns: 1fr; grid-template-rows: auto auto auto; position: static; min-height: 100%; } }
+.pv-nav { grid-column: 1 / -1; grid-row: 4; display: flex; align-items: center; gap: 20px; padding: 16px 0 calc(18px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid #221F1A; }
+.pv-nav .nav { font: inherit; cursor: pointer; border-radius: 12px; }
+.pv-nav .back { width: 72px; height: 64px; font-size: 22px; color: #CFC6B4; background: #151311; border: 1px solid #2A2620; }
+.pv-nav .back:hover { background: #1C1A16; }
+.pv-nav .go { min-width: 300px; height: 64px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; padding: 0 24px; text-align: left; color: #1A1408; background: var(--amber); border: 0; }
+.pv-nav .go:hover { background: #D4AE69; }
+.pv-nav .go .m { font-size: 19px; font-weight: 600; }
+.pv-nav .go .s { font-size: 12px; color: rgba(26,20,8,0.7); max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-nav .go .s:empty { display: none; }
+.pv-dots { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.pv-dots button { width: 26px; height: 26px; border-radius: 999px; border: 0; padding: 0; cursor: pointer; background: transparent; position: relative; }
+.pv-dots button::before { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 999px; background: #3A352D; transition: transform .2s, background .2s; }
+.pv-dots button.done::before { background: #6B5E46; }
+.pv-dots button.cur::before { background: var(--amber); transform: scale(1.6); }
+.pv-dots button.title::before { border-radius: 2px; }
+.pv-dots button:hover::before { background: #B9B09F; }
+.pv-top button:focus-visible, .pv-nav button:focus-visible, .pv-edit button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+@media (max-width: 960px) { body.presenter #pv { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto auto; position: static; min-height: 100%; } .pv-left, .pv-right { grid-row: auto; } .pv-nav { grid-row: auto; } .pv-dots { display: none; } }
 
 /* Shown after a refresh, until a click or key restarts the sound. */
 .pv-title { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 5; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center;
@@ -162,14 +185,14 @@ body.presenter.on-title .pv-title { display: flex; }
 .pv-title .r { width: 160px; height: 1px; background: var(--amber); margin: 44px 0 28px; }
 .pv-title .s { font-style: italic; font-size: 40px; color: #D9D1C1; }
 .pv-title .c { font-family: var(--ui); font-size: 18px; letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); margin-top: 60px; }
-body.on-title .pv-edit { display: none !important; }
-.pv-edit { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; font-family: var(--ui); }
-.pv-edit button { font-family: var(--ui); font-size: 12px; letter-spacing: 0.08em; color: var(--muted); background: transparent; border: 1px solid #3A352D; padding: 5px 10px; cursor: pointer; }
+body.on-title .pv-edit { visibility: hidden; }
+.pv-edit { display: flex; gap: 6px; align-items: center; font-family: var(--ui); }
+.pv-edit button { font-family: var(--ui); font-size: 12px; color: #9C9384; background: transparent; border: 1px solid #2E2A24; border-radius: 999px; padding: 5px 12px; cursor: pointer; }
 .pv-edit button:hover { color: var(--ivory); border-color: var(--amber); }
 .pv-edit #pvEdit.on { color: #1a1408; background: var(--amber); border-color: var(--amber); }
-.pv-edit span { font-size: 12px; color: var(--muted); }
+.pv-edit span { font-size: 12px; color: #6B6457; margin-right: 6px; }
 .pv-notes .say.editing { outline: 1px dashed rgba(201,161,90,0.6); outline-offset: 8px; white-space: pre-wrap; caret-color: var(--amber); }
-.pv-arm { grid-column: 1 / -1; font-family: var(--ui); font-size: 15px; letter-spacing: 0.04em; color: #1a1408; background: #E2B866; padding: 12px 18px; }
+.pv-arm { grid-column: 1 / -1; grid-row: 2; margin-top: 14px; border-radius: 8px; font-family: var(--ui); font-size: 15px; letter-spacing: 0.04em; color: #1a1408; background: #E2B866; padding: 12px 18px; }
 .fs-ask { z-index: 12 !important; }
 .resume { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 9;
   font-family: var(--ui); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory);
@@ -446,13 +469,13 @@ PHOTO DIRECTION: Your photo of a neighborhood bar on a snowy afternoon.</aside>
 <div style="position:absolute;left:0px;top:0px;width:1100px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0.82) 0%, rgba(13,12,10,0.55) 60%, rgba(13,12,10,0) 100%)"></div>
 <div style="position:absolute;left:0px;top:520px;width:1920px;height:560px;background:linear-gradient(180deg, rgba(13,12,10,0) 0%, rgba(13,12,10,0.85) 100%)"></div>
 <p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">06</p>
-<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 01</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 01 · The Neighborhood Dive</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:80px;font-weight:400;line-height:1.1;color:#EDE6D8">Jimmy’s Corner</h2>
 <p style="font-size:40px;font-style:italic;line-height:1.2;color:#D9D1C1">140 West 44th Street, New York</p>
 <p style="font-size:32px;line-height:1.35;color:#D9D1C1;width:920px">Opened in 1971 by Jimmy Glenn, a Golden Gloves boxer turned trainer and cutman. The walls are his collection of fight posters and photographs.</p>
 <aside>[3:41 to 4:02 · about 50 words]
 
-Field Observation Number One. Jimmy's Corner, a few steps from Times Square.
+Field Observation Number One. A Neighborhood Dive, surviving a few steps from Times Square. Jimmy's Corner.
 
 Jimmy Glenn opened it in 1971. He'd been a Golden Gloves boxer, then a trainer and a cutman, the person in the corner who stops the bleeding between rounds. The walls are his collection. Fight posters, photographs, a ring bell.
 
@@ -467,7 +490,7 @@ SOURCES: Wikipedia, "Jimmy's Corner": opened 1971 by Jimmy Glenn at 140 West 44t
 <div style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;background:linear-gradient(180deg, rgba(13,12,10,0.9) 0%, rgba(13,12,10,0.84) 58%, rgba(13,12,10,0.3) 100%)"></div>
 <p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">07</p>
 <div style="position:absolute;left:128px;top:150px;width:780px;display:flex;flex-direction:column;gap:18px">
-<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 02</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Field observation № 02 · The Neighborhood Dive</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">McSorley’s Old Ale House</h2>
 <p style="font-size:40px;font-style:italic;line-height:1.2;color:#A89F8F">New York, New York</p>
 <hr style="width:80px;border-top:2px solid #C9A15A">
@@ -480,7 +503,7 @@ SOURCES: Wikipedia, "Jimmy's Corner": opened 1971 by Jimmy Glenn at 140 West 44t
 </div>
 <aside>[4:02 to 4:36 · about 85 words]
 
-Field Observation Number Two. McSorley's Old Ale House, New York.
+Field Observation Number Two. The Neighborhood Dive in its oldest form. McSorley's Old Ale House, New York.
 
 It claims 1854. City records suggest a few years later.
 
@@ -947,19 +970,34 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
   </div>
 </div>
 <div id="pv" aria-label="Presenter view">
-  <div class="pv-bar">
-    <div class="who"><span class="t">The American Dive Bar · Presenter</span><span class="pv-link" id="pvLink">Looking for the audience screen…</span></div>
-    <div class="pv-clock"><span class="el" id="pvEl">0:00</span><span class="of" id="pvOf">of 5:00 · slide 01 / 19</span></div>
-    <div class="pv-tools"><button id="pvStart" type="button" title="Back to the title card, ready to play the narration again">⏮ Start over</button><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvVoice" type="button" hidden>▶ Play or stop narration</button><button id="pvReset" type="button">Reset timer</button><button id="pvFs" type="button">Full screen</button></div>
-  </div>
+  <header class="pv-top">
+    <div class="pv-id"><span class="pv-mark">The American Dive Bar</span><span class="pv-link" id="pvLink">Looking for the presentation window…</span></div>
+    <div class="pv-clock"><div class="pv-time"><span class="el" id="pvEl">0:00</span><span class="of" id="pvOf">/ 5:00</span></div><div class="pv-prog" aria-hidden="true"><i id="pvProg"></i></div></div>
+    <div class="pv-util">
+      <button id="pvSound" class="u" type="button" aria-pressed="true">Sound on</button>
+      <input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7" aria-label="Volume">
+      <button id="pvFs" class="u" type="button">Full screen</button>
+      <button id="pvStart" class="u" type="button" title="Back to the title card and reset the timer">Start over</button>
+      <button id="pvVoice" type="button" hidden></button><button id="pvReset" type="button" hidden></button>
+    </div>
+  </header>
   <div class="pv-arm" id="pvArm" hidden>The presentation window is not connected yet. Click it once to turn on sound, then click it again for full screen.</div>
-  <div class="pv-left">
-    <div class="pv-label"><span>On screen now</span><span id="pvScene"></span></div>
+  <section class="pv-left">
+    <div class="pv-label"><span>Now</span><span id="pvScene"></span></div>
     <div class="pv-box" id="pvCur"></div>
-    <div class="pv-label"><span id="pvNextLabel">Up next</span></div>
+    <div class="pv-label"><span id="pvNextLabel">Next</span></div>
     <div class="pv-box next" id="pvNextBox"><div class="pv-stage" id="pvNextStage"></div></div>
-  </div>
-  <div class="pv-notes"><div class="timing" id="pvTiming"></div><div class="pv-edit" id="pvEditBar"><button type="button" id="pvEdit">✎ Edit script</button><button type="button" id="pvEditReset" hidden>Undo my edits on this slide</button><button type="button" id="pvEditCopy" hidden>Copy all my edits</button><span id="pvEditNote"></span></div><div class="say" id="pvSay"></div><details id="pvMore"><summary>Production notes and sources</summary><div id="pvMoreBody"></div></details><div class="pv-more" id="pvFold"><button type="button" id="pvFoldBtn">More below ↓</button></div></div>
+  </section>
+  <section class="pv-right">
+    <div class="pv-head"><div class="pv-where"><span class="n" id="pvSlideN">01</span><span class="t" id="pvSlideT"></span></div>
+      <div class="pv-edit" id="pvEditBar"><span id="pvEditNote"></span><button type="button" id="pvEditReset" hidden>Undo edits</button><button type="button" id="pvEditCopy" hidden>Copy edits</button><button type="button" id="pvEdit">Edit</button></div></div>
+    <div class="pv-notes"><div class="timing" id="pvTiming" hidden></div><div class="say" id="pvSay"></div><details id="pvMore" hidden><summary>Notes</summary><div id="pvMoreBody"></div></details><div class="pv-more" id="pvFold"><button type="button" id="pvFoldBtn">More below ↓</button></div></div>
+  </section>
+  <footer class="pv-nav">
+    <button id="pvPrev" class="nav back" type="button">←</button>
+    <div class="pv-dots" id="pvDots"></div>
+    <button id="pvNext" class="nav go" type="button"><span class="m">Next</span><span class="s"></span></button>
+  </footer>
 </div>
 <div class="notes" id="notes" hidden><h4 id="notesHead">Speaker notes</h4><div id="notesBody"></div></div>
 
@@ -1423,13 +1461,19 @@ const Sound = (() => {
   const getEdit = id => { try { return localStorage.getItem(EDIT_KEY(id)); } catch (e) { return null; } };
   const setEdit = (id, v) => { try { v == null ? localStorage.removeItem(EDIT_KEY(id)) : localStorage.setItem(EDIT_KEY(id), v); } catch (e) {} };
   let editing = false;
+  const TITLES = { cover: 'Habitat', test: 'The diagnostic', closing: 'The close', third: 'Third places' };
+  function slideTitle(k) { const el = slides[k]; if (!el) return ''; if (TITLES[el.id]) return TITLES[el.id]; const h = el.querySelector('h1, h2'); return h ? h.textContent.replace(/\s+/g, ' ').trim().replace(/^./, c => c.toUpperCase()).replace(/\b([A-Z])([A-Z’']+)\b/g, (w, a, r) => a + r.toLowerCase()) : el.id; }
+  function setNext(main, sub) { const bt = document.getElementById('pvNext'); bt.querySelector('.m').textContent = main; bt.querySelector('.s').textContent = sub; }
+  function markDots() {
+    document.querySelectorAll('#pvDots button').forEach(d => { const n = +d.dataset.n; d.classList.toggle('cur', titleOn ? n < 0 : n === i); d.classList.toggle('done', !titleOn && n < i); });
+  }
   function renderPresenter(text, scene) {
     const own = getEdit(slides[i].id);
     const say = own != null ? own : script(text);
     if (presenter) {
       document.getElementById('pvEditReset').hidden = own == null;
       document.getElementById('pvEditCopy').hidden = !slides.some(x => getEdit(x.id) != null);
-      document.getElementById('pvEditNote').textContent = own != null ? 'Showing your edited script' : '';
+      document.getElementById('pvEditNote').textContent = own != null ? 'Your edited script' : '';
     }
     if (editing) { pvSay.textContent = say; return; }
     pvTiming.textContent = ''; pvTiming.hidden = true;
@@ -1453,9 +1497,13 @@ const Sound = (() => {
     document.getElementById('pvScene').textContent = SCENE_LABELS[scene] ? '♪ ' + SCENE_LABELS[scene] : '';
     const b = builds(slides[i]); let previewIdx = i + 1, label = 'Up next';
     pvNextStage.innerHTML = '';
-    document.getElementById('pvNext').textContent = step < b.length ? 'Reveal →' : 'Next →';
-    if (step < b.length) { previewIdx = i; label = 'Next click reveals more on this slide'; }
-    else if (i >= slides.length - 1) { label = 'End of the talk'; previewIdx = -1; }
+    label = 'Next';
+    if (step < b.length) { previewIdx = i; label = 'Next · reveal on this slide'; setNext('Reveal', (step + 1) + ' of ' + b.length + ' on this slide'); }
+    else if (i >= slides.length - 1) { label = 'End of the talk'; previewIdx = -1; setNext('End', ''); }
+    else setNext('Next', slideTitle(i + 1));
+    document.getElementById('pvSlideN').textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+    document.getElementById('pvSlideT').textContent = slideTitle(i);
+    markDots();
     document.getElementById('pvNextLabel').textContent = label;
     if (previewIdx >= 0) {
       const c = slides[previewIdx].cloneNode(true); c.removeAttribute('id'); c.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
@@ -1473,9 +1521,17 @@ const Sound = (() => {
     const secs = t0 === null ? 0 : Math.floor((Date.now() - t0) / 1000);
     pvEl.textContent = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
     pvEl.classList.toggle('over', secs > 300);
-    pvOf.textContent = 'of 5:00 · slide ' + String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+    pvOf.textContent = '/ 5:00';
+    const pg = document.getElementById('pvProg'); pg.style.width = Math.min(100, secs / 3) + '%'; pg.classList.toggle('over', secs > 300);
   }
   if (presenter) {
+    const dots = document.getElementById('pvDots');
+    for (let n = -1; n < slides.length; n++) {
+      const d = document.createElement('button'); d.type = 'button'; d.dataset.n = n; if (n < 0) d.className = 'title';
+      d.title = n < 0 ? 'Title card' : (n + 1) + '. ' + slideTitle(n);
+      d.addEventListener('click', e => { e.currentTarget.blur(); ch && ch.postMessage({ type: 'goto', from: 'presenter', n }); });
+      dots.appendChild(d);
+    }
     setInterval(tick, 500);
     document.getElementById('pvNext').addEventListener('click', e => { e.currentTarget.blur(); next(); });
     document.getElementById('pvPrev').addEventListener('click', e => { e.currentTarget.blur(); prev(); });
@@ -1489,7 +1545,7 @@ const Sound = (() => {
   function showSound(m) {
     if (!presenter) return;
     const on = m.started && !m.muted;
-    pvSound.setAttribute('aria-pressed', String(on)); pvSound.textContent = !m.started ? 'Sound off (click the shared screen once to enable)' : on ? 'Sound on' : 'Sound off';
+    pvSound.setAttribute('aria-pressed', String(on)); pvSound.textContent = !m.started ? 'Sound off' : on ? 'Sound on' : 'Sound off';
     if (typeof m.vol === 'number') pvVol.value = m.vol;
     document.getElementById('pvArm').hidden = !!m.started;
   }
@@ -1503,7 +1559,7 @@ const Sound = (() => {
     const m = e.data || {};
     if (!presenter && m.from === 'presenter' && !pvSeen) { pvSeen = true; if (!started) document.querySelector('.gate .k1').textContent = 'Notes window connected · click anywhere to go full screen with sound'; }
     if (m.type === 'ping' && presenter) { ch.postMessage({ type: 'hello', from: 'presenter' }); return; }
-    if (presenter && m.from === 'audience') { pvLink.textContent = '● Audience screen connected. Share that tab, keep this one private.'; pvLink.classList.add('on'); }
+    if (presenter && m.from === 'audience') { pvLink.textContent = 'Presentation connected · share that window, not this one'; pvLink.classList.add('on'); }
     if (m.type === 'hello') { if (!presenter) { ch.postMessage({ type: 'nav', from: 'audience', i, step }); ch.postMessage({ type: 'title', from: 'audience', on: titleOn, voiced: titleVoiced }); sendSound(); } return; }
     if (m.type === 'sound') { showSound(m); return; }
     if (m.type === 'soundCmd' && !presenter) {
@@ -1516,6 +1572,13 @@ const Sound = (() => {
     if (m.type === 'fsNeedsClick' && presenter) { const b = document.getElementById('pvArm'); b.textContent = 'The browser needs one click on the presentation window itself to go full screen. Click it once.'; b.hidden = false; setTimeout(() => { b.hidden = true; }, 6000); return; }
     if (m.type === 'fs' && presenter) { document.getElementById('pvFs').textContent = m.on ? 'Exit full screen' : 'Full screen'; return; }
     if (m.type === 'restart' && !presenter) { restart(); return; }
+    if (m.type === 'goto' && !presenter) {
+      if (!started) { sendSound(); return; }
+      if (m.n < 0) { if (!titleOn) showTitle(true); return; }
+      i = Math.max(0, Math.min(slides.length - 1, m.n)); step = 0;
+      if (titleOn) showTitle(false); else render();
+      return;
+    }
     if (m.type === 'titleNext' && !presenter) { if (titleOn) next(); return; }
     if (m.type === 'title' && (m.from === 'presenter') !== presenter) {
       applying = true; if (typeof m.voiced === 'boolean') titleVoiced = m.voiced;
@@ -1544,21 +1607,20 @@ const Sound = (() => {
   let titleVoiced = false;
   const voiceUrl = () => titleOn ? gate.dataset.voice : slides[i].dataset.voice;
   function presenterTitle() {
-    if (editing) { editing = false; pvSay.contentEditable = 'false'; pvSay.classList.remove('editing'); const eb = document.getElementById('pvEdit'); eb.classList.remove('on'); eb.textContent = '✎ Edit script'; }
-    document.getElementById('pvScene').textContent = 'Title card on screen';
+    if (editing) { editing = false; pvSay.contentEditable = 'false'; pvSay.classList.remove('editing'); const eb = document.getElementById('pvEdit'); eb.classList.remove('on'); eb.textContent = 'Edit'; }
+    document.getElementById('pvScene').textContent = '';
+    document.getElementById('pvSlideN').textContent = '00';
+    document.getElementById('pvSlideT').textContent = 'Title card';
     pvSay.innerHTML = '';
-    const c = document.createElement('span'); c.className = 'cue'; c.textContent = 'narrator · about 20 seconds'; pvSay.appendChild(c);
-    pvSay.appendChild(document.createTextNode(titleVoiced
-      ? '\nThe narration has played. Press Next to bring up slide 1, then begin with "Since 1999, which is to say the 1900s."'
-      : '\nPress Next to start the narration over the title card. When it ends, press Next again for slide 1.'));
-    document.getElementById('pvNext').textContent = titleVoiced ? 'Slide 1 →' : '▶ Start narration';
-    document.getElementById('pvNextLabel').textContent = titleVoiced ? 'Up next: slide 1' : 'Up next: narration, then slide 1';
-    document.getElementById('pvVoice').hidden = false;
+    pvSay.appendChild(document.createTextNode(titleVoiced ? 'Wait for “This is the American dive bar.”' : 'The narrator opens the talk. About 20 seconds.'));
+    setNext(titleVoiced ? 'Begin' : '▶ Start narration', titleVoiced ? slideTitle(0) : '');
+    document.getElementById('pvNextLabel').textContent = 'Next';
     document.body.classList.add('on-title');
     pvNextStage.innerHTML = '';
     const pc = slides[0].cloneNode(true); pc.removeAttribute('id'); pc.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
     pc.classList.add('active'); pc.classList.remove('leaving'); pc.querySelectorAll('.rise').forEach(x => x.classList.remove('rise')); pc.querySelectorAll('aside').forEach(a => a.remove());
     pvNextStage.appendChild(pc);
+    markDots();
   }
   // Start over: back to the title card at slide 1, with the narration ready to play again.
   function restart() {
@@ -1672,7 +1734,7 @@ const Sound = (() => {
     const redraw = () => renderPresenter(original(), slides[i].dataset.scene);
     eb.addEventListener('click', () => {
       if (titleOn) return;
-      editing = !editing; eb.classList.toggle('on', editing); eb.textContent = editing ? 'Done editing' : '✎ Edit script';
+      editing = !editing; eb.classList.toggle('on', editing); eb.textContent = editing ? 'Done' : 'Edit';
       pvSay.classList.toggle('editing', editing);
       if (editing) { redraw(); pvSay.contentEditable = 'plaintext-only'; if (pvSay.contentEditable !== 'plaintext-only') pvSay.contentEditable = 'true'; pvSay.focus(); }
       else { pvSay.contentEditable = 'false'; eb.blur(); redraw(); }
@@ -1682,7 +1744,7 @@ const Sound = (() => {
     document.getElementById('pvEditCopy').addEventListener('click', e => {
       e.currentTarget.blur();
       const out = slides.map((x, k) => { const v = getEdit(x.id); return v == null ? null : 'Slide ' + (k + 1) + ' (' + x.id + ')\n' + v; }).filter(Boolean).join('\n\n---\n\n');
-      (navigator.clipboard ? navigator.clipboard.writeText(out) : Promise.reject()).then(() => { document.getElementById('pvEditNote').textContent = 'Copied. Paste it to Claude to make it permanent.'; }).catch(() => { prompt('Copy your edits:', out); });
+      (navigator.clipboard ? navigator.clipboard.writeText(out) : Promise.reject()).then(() => { document.getElementById('pvEditNote').textContent = 'Copied. Paste it to Claude.'; }).catch(() => { prompt('Copy your edits:', out); });
     });
   }
   if (resumed && !presenter) {
