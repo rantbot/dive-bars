@@ -149,7 +149,7 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 .pv-notes .say { font-size: clamp(20px, 1.75vw, 30px); line-height: 1.55; white-space: pre-line; max-width: 34em; color: #F1EADD; }
 .pv-notes .say .gap { display: block; height: 0.7em; }
 .pv-notes .say .cue { display: inline-block; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber); border: 1px solid rgba(201,161,90,0.45); border-radius: 999px; padding: 3px 10px; margin: 0 6px 0 0; vertical-align: 0.3em; }
-.pv-notes .say .cue.reveal { font-family: var(--ui); cursor: pointer; background: rgba(201,161,90,0.14); color: #F1EADD; border-color: var(--amber); padding: 5px 12px; }
+.pv-notes .say .cue.reveal { font-family: var(--ui); min-width: 30px; text-align: center; cursor: pointer; background: rgba(201,161,90,0.14); color: #F1EADD; border-color: var(--amber); padding: 5px 12px; }
 .pv-notes .say .cue.reveal:hover { background: rgba(201,161,90,0.28); }
 .pv-notes .say .cue.reveal:disabled { cursor: default; background: transparent; color: #6B6457; border-color: #2E2A24; }
 .pv-more { position: sticky; bottom: 0; height: 90px; margin-top: -40px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; pointer-events: none;
@@ -368,7 +368,7 @@ SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Bever
 <div class="lab" data-k="4" style="position:absolute;left:80px;top:676px;width:312px;align-items:flex-end;text-align:right;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Sedes territorialis</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Territorial seating</p></div>
 <div class="lab" data-k="5" style="position:absolute;left:1528px;top:316px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Horologium cerevisiae</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Brewery-issued clock</p></div>
 <div class="lab" data-k="6" style="position:absolute;left:1528px;top:436px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Artefactum inexplicatum</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Unexplained artifact</p></div>
-<div class="lab" data-k="7" style="position:absolute;left:1528px;top:556px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Paries accumulatus</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Accumulated décor</p></div>
+<div class="lab" data-k="7" style="position:absolute;left:1528px;top:556px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Paries accumulatus</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Gifts left by patrons</p></div>
 <div class="lab" data-k="8" style="position:absolute;left:1528px;top:676px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Machina musicalis</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Jukebox</p></div>
 <div style="position:absolute;left:560px;top:884px;width:330px;height:0px;border-top:1px solid rgba(42,33,25,0.45)"></div>
 <div style="position:absolute;left:1030px;top:884px;width:330px;height:0px;border-top:1px solid rgba(42,33,25,0.45)"></div>
@@ -392,7 +392,7 @@ Let us examine a specimen. Every healthy dive shares the same eight organs.
 
 (click) Six. The unexplained artifact. Every dive has one. Nobody remembers who brought it.
 
-(click) Seven. Accumulated décor. Photographs, dollar bills, things nobody chose all at once.
+(click) Seven. Gifts left by patrons. Photographs, dollar bills, things nobody chose all at once.
 
 (click) Eight. The jukebox. A jukebox with opinions.
 
@@ -550,7 +550,7 @@ PHOTO DIRECTION: Your photo of a working-class bar at night, with work jackets o
 <div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#C9A15A">Isolation</p></div>
 <div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Habitat</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Coasts, back roads, deserts, mountains</p></div>
 <div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Behavior</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Draws intentional travel</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Adaptations</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Cash only. A resident dog. One inexplicably excellent sandwich.</p></div>
+<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Adaptations</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">No bartender. An honor box. Pull your own beer.</p></div>
 </div>
 </div>
 <aside>[4:29 to 4:49 · about 50 words]
@@ -836,7 +836,7 @@ Fortunately, field researchers rely on one simple diagnostic.
 <div style="position:absolute;left:208px;top:410px;width:1504px;display:flex;gap:96px">
 <div style="flex:1;display:flex;flex-direction:column;gap:40px">
 <div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">01</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Four people or fewer. <span style="color:#A89F8F">A larger party disrupts the habitat.</span></p></div>
-<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">02</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">A beer, a shot, or two ingredients. <span style="color:#A89F8F">Never a fancy drink.</span></p></div>
+<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">02</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">A beer, a shot, or two ingredients. <span style="color:#A89F8F">Never a fancy cocktail.</span></p></div>
 <div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">03</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Read the room before the jukebox. <span style="color:#A89F8F">Never try to change the vibe.</span></p></div>
 </div>
 <div style="flex:1;display:flex;flex-direction:column;gap:40px">
@@ -877,8 +877,7 @@ VISUAL NOTE: These are your own field rules, presented as the researcher's opini
 <div style="display:flex;flex-direction:column;gap:10px;padding:0px 0px 0px 28px;border-left:1px solid #5A5246;font-family:Inter, Arial, sans-serif">
 <p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Rising rents</p>
 <p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Redevelopment</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Aging owners</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Changing drinking habits</p>
+<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Fewer drinkers</p>
 </div>
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <p style="font-size:44px;font-style:italic;line-height:1.25;color:#EDE6D8">You can open a bar tomorrow.<br><span style="color:#E2B866">You cannot open a seventy-year-old bar tomorrow.</span></p>
@@ -1440,7 +1439,7 @@ const Sound = (() => {
   pvNotesEl.addEventListener('scroll', updateFold); window.addEventListener('resize', updateFold);
   document.getElementById('pvFoldBtn').addEventListener('click', e => { e.currentTarget.blur(); pvNotesEl.scrollBy({ top: pvNotesEl.clientHeight * 0.7 }); });
   // Your own edits to the script are kept in this browser, per slide, and shown instead of the original.
-  const EDIT_KEY = id => 'dive-bar-script:' + id;
+  const EDIT_KEY = id => 'dive-bar-script:v2:' + id; // v2: edits up to Oct 8 are now built into the deck
   const getEdit = id => { try { return localStorage.getItem(EDIT_KEY(id)); } catch (e) { return null; } };
   const setEdit = (id, v) => { try { v == null ? localStorage.removeItem(EDIT_KEY(id)) : localStorage.setItem(EDIT_KEY(id), v); } catch (e) {} };
   let editing = false;
@@ -1467,7 +1466,7 @@ const Sound = (() => {
         const t = part.slice(1, -1), ci = clickN, pending = builds(slides[i]).length > step && step <= ci;
         if (/^click$/i.test(t.trim())) {
           // The reveal lives here, on the controller: a button in the script itself.
-          const c = document.createElement('button'); c.type = 'button'; c.className = 'cue reveal'; c.textContent = step > ci ? 'Revealed' : 'Click to reveal'; clickN++;
+          const c = document.createElement('button'); c.type = 'button'; c.className = 'cue reveal'; const nb = builds(slides[i]).length; c.textContent = nb > 1 ? String(ci + 1) : (step > ci ? 'Revealed' : 'Reveal'); c.title = 'Click to reveal'; clickN++;
           c.disabled = !pending || step !== ci; c.addEventListener('click', e => { e.currentTarget.blur(); next(); }); pvSay.appendChild(c);
         } else { const c = document.createElement('span'); c.className = 'cue'; c.textContent = t; pvSay.appendChild(c); }
       }
