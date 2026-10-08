@@ -154,6 +154,8 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 @media (max-width: 860px) { body.presenter #pv { grid-template-columns: 1fr; grid-template-rows: auto auto auto; position: static; min-height: 100%; } }
 
 /* Shown after a refresh, until a click or key restarts the sound. */
+.pv-arm { grid-column: 1 / -1; font-family: var(--ui); font-size: 15px; letter-spacing: 0.04em; color: #1a1408; background: #E2B866; padding: 12px 18px; }
+.fs-ask { z-index: 12 !important; }
 .resume { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 9;
   font-family: var(--ui); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory);
   background: rgba(9,9,8,0.82); border: 1px solid rgba(201,161,90,0.6); padding: 11px 18px; pointer-events: none; }
@@ -178,7 +180,14 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 .gate .sub { font-family: var(--display); font-style: italic; font-weight: 400; font-size: clamp(18px, 2.3vw, 34px); color: #D9D1C1; animation: g-in 2.6s ease 4.2s both; }
 .gate .credit { font-family: var(--ui); font-size: clamp(10px, 0.95vw, 12px); letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); margin-top: clamp(30px, 6vh, 64px); animation: g-in 2.4s ease 5.4s both; }
 .gate .start { margin-top: clamp(32px, 5vh, 52px); display: flex; flex-direction: column; align-items: center; gap: 14px; padding-inline: 16px; animation: g-in 2s ease 6.6s both; }
-.gate.armed .start { opacity: 0; transition: opacity .8s; animation: none; }
+.gate .start { position: relative; }
+.gate .k2 { position: absolute; left: 0; right: 0; top: 0; text-align: center; opacity: 0; transition: opacity .6s; }
+.gate .k1 { transition: opacity .6s; }
+.gate.armed .start { animation: none; opacity: 1; }
+.gate.armed .k1 { opacity: 0; }
+.gate.armed .k2 { opacity: 1; }
+.gate.armed.fs .k2 { opacity: 0; }
+.gate.nudge .k1 { color: #E2B866; }
 .gate .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .gate button { font: inherit; font-family: var(--ui); font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; padding: 13px 22px; border-radius: 0; cursor: pointer; background: transparent; }
 .gate .go { color: var(--ivory); border: 1px solid rgba(201,161,90,0.7); }
@@ -927,6 +936,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
     <div class="pv-clock"><span class="el" id="pvEl">0:00</span><span class="of" id="pvOf">of 5:00 · slide 01 / 19</span></div>
     <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvVoice" type="button" hidden>▶ Play or stop narration</button><button id="pvReset" type="button">Reset timer</button><button id="pvFs" type="button">Full screen</button></div>
   </div>
+  <div class="pv-arm" id="pvArm" hidden>The presentation window is not connected yet. Click it once to turn on sound, then click it again for full screen.</div>
   <div class="pv-left">
     <div class="pv-label"><span>On screen now</span><span id="pvScene"></span></div>
     <div class="pv-box" id="pvCur"></div>
@@ -945,7 +955,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
     <div class="rule" aria-hidden="true"></div>
     <div class="sub">An exploration of a fragile ecosystem</div>
     <div class="credit">Observed and narrated by Ran Craycraft</div>
-    <div class="start"><div class="keys">Click anywhere to connect your notes window and sound</div></div>
+    <div class="start"><div class="keys k1">Click anywhere to connect your notes window and sound</div><div class="keys k2">Click once more for full screen</div></div>
   </div>
 </div>
 
@@ -1452,6 +1462,7 @@ const Sound = (() => {
     const on = m.started && !m.muted;
     pvSound.setAttribute('aria-pressed', String(on)); pvSound.textContent = !m.started ? 'Sound off (click the shared screen once to enable)' : on ? 'Sound on' : 'Sound off';
     if (typeof m.vol === 'number') pvVol.value = m.vol;
+    document.getElementById('pvArm').hidden = !!m.started;
   }
   if (presenter) {
     pvSound.addEventListener('click', e => { e.currentTarget.blur(); ch && ch.postMessage({ type: 'soundCmd', from: 'presenter', toggle: true }); });
@@ -1485,7 +1496,7 @@ const Sound = (() => {
     applying = false;
   };
   // Going back from slide 1 brings the title card back up. Forward from the title card returns to slide 1.
-  let titleOn = false;
+  let titleOn = !presenter && !resumed;
   function showTitle(on) {
     titleOn = on;
     if (!presenter) { gate.style.transition = ''; gate.classList.toggle('gone', !on); }
@@ -1512,6 +1523,7 @@ const Sound = (() => {
   function next() {
     if (titleOn) {
       if (presenter) { ch && ch.postMessage({ type: 'titleNext', from: 'presenter' }); return; }
+      if (!started) { sendSound(); gate.classList.add('nudge'); setTimeout(() => gate.classList.remove('nudge'), 1600); return; }
       if (!titleVoiced && Sound.started) { titleVoiced = true; Sound.voice(gate.dataset.voice); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); return; }
       showTitle(false); return;
     }
@@ -1531,13 +1543,17 @@ const Sound = (() => {
   // On a fresh start the title card stays up; on a refresh it resumes the slide.
   function begin(withSound, resume) {
     if (started) return; started = true; document.querySelector('.resume')?.remove();
-    if (resume) gate.classList.add('gone'); else { titleOn = true; gate.classList.add('armed'); }
+    if (resume) { gate.classList.add('gone'); titleOn = false; } else gate.classList.add('armed');
     if (withSound) { Sound.init(); Sound.setVolume(+vol.value); Sound.loadVoice(gate.dataset.voice); slides.forEach(x => x.dataset.voice && Sound.loadVoice(x.dataset.voice)); }
     else { soundBtn.setAttribute('aria-pressed', 'false'); soundBtn.textContent = 'Sound off'; }
     render(); poke();
     if (!presenter) { openPresenter(); sendSound(); }
   }
-  gate.addEventListener('click', () => { if (!started) begin(true); });
+  gate.addEventListener('click', () => {
+    if (!started) { begin(true); return; }
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+  });
+  document.addEventListener('fullscreenchange', () => gate.classList.toggle('fs', !!document.fullscreenElement));
   document.getElementById('prev').addEventListener('click', prev);
   document.getElementById('next').addEventListener('click', next);
   function toggleSound() {
@@ -1609,6 +1625,7 @@ const Sound = (() => {
   applying = presenter; render(false); applying = false;
   fit();
   if (ch && presenter) ch.postMessage({ type: 'hello', from: 'presenter' });
+  if (ch && !presenter) { ch.postMessage({ type: 'title', from: 'audience', on: titleOn, voiced: titleVoiced }); sendSound(); }
 })();
 </script>
 
