@@ -154,6 +154,21 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 @media (max-width: 860px) { body.presenter #pv { grid-template-columns: 1fr; grid-template-rows: auto auto auto; position: static; min-height: 100%; } }
 
 /* Shown after a refresh, until a click or key restarts the sound. */
+.pv-title { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 5; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  background: radial-gradient(ellipse 55% 38% at 50% 50%, rgba(201,161,90,0.10), rgba(201,161,90,0) 70%), #050504; font-family: var(--display); color: var(--ivory); }
+body.presenter.on-title .pv-title { display: flex; }
+.pv-title .e { font-family: var(--ui); font-size: 20px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--muted); margin-bottom: 40px; }
+.pv-title .h { font-size: 132px; font-weight: 300; letter-spacing: 0.14em; line-height: 1.02; text-transform: uppercase; }
+.pv-title .r { width: 160px; height: 1px; background: var(--amber); margin: 44px 0 28px; }
+.pv-title .s { font-style: italic; font-size: 40px; color: #D9D1C1; }
+.pv-title .c { font-family: var(--ui); font-size: 18px; letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); margin-top: 60px; }
+body.on-title .pv-edit { display: none !important; }
+.pv-edit { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; font-family: var(--ui); }
+.pv-edit button { font-family: var(--ui); font-size: 12px; letter-spacing: 0.08em; color: var(--muted); background: transparent; border: 1px solid #3A352D; padding: 5px 10px; cursor: pointer; }
+.pv-edit button:hover { color: var(--ivory); border-color: var(--amber); }
+.pv-edit #pvEdit.on { color: #1a1408; background: var(--amber); border-color: var(--amber); }
+.pv-edit span { font-size: 12px; color: var(--muted); }
+.pv-notes .say.editing { outline: 1px dashed rgba(201,161,90,0.6); outline-offset: 8px; white-space: pre-wrap; caret-color: var(--amber); }
 .pv-arm { grid-column: 1 / -1; font-family: var(--ui); font-size: 15px; letter-spacing: 0.04em; color: #1a1408; background: #E2B866; padding: 12px 18px; }
 .fs-ask { z-index: 12 !important; }
 .resume { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 9;
@@ -205,6 +220,7 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 
 <div id="viewport">
   <div id="stage">
+  <div class="pv-title" aria-hidden="true"><div class="e">Field Study · North America · 2026</div><div class="h">The American<br>Dive Bar</div><div class="r"></div><div class="s">An exploration of a fragile ecosystem</div><div class="c">Observed and narrated by Ran Craycraft</div></div>
 <section class="slide" id="cover" data-scene="exterior" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:28px">
 <div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_cover2.jpg" alt="A weathered brick corner bar called Lucky Star at night, a Pabst neon in the window and two regulars talking by the door" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
@@ -943,7 +959,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
     <div class="pv-label"><span id="pvNextLabel">Up next</span></div>
     <div class="pv-box next" id="pvNextBox"><div class="pv-stage" id="pvNextStage"></div></div>
   </div>
-  <div class="pv-notes"><div class="timing" id="pvTiming"></div><div class="say" id="pvSay"></div><details id="pvMore"><summary>Production notes and sources</summary><div id="pvMoreBody"></div></details><div class="pv-more" id="pvFold"><button type="button" id="pvFoldBtn">More below ↓</button></div></div>
+  <div class="pv-notes"><div class="timing" id="pvTiming"></div><div class="pv-edit" id="pvEditBar"><button type="button" id="pvEdit">✎ Edit script</button><button type="button" id="pvEditReset" hidden>Undo my edits on this slide</button><button type="button" id="pvEditCopy" hidden>Copy all my edits</button><span id="pvEditNote"></span></div><div class="say" id="pvSay"></div><details id="pvMore"><summary>Production notes and sources</summary><div id="pvMoreBody"></div></details><div class="pv-more" id="pvFold"><button type="button" id="pvFoldBtn">More below ↓</button></div></div>
 </div>
 <div class="notes" id="notes" hidden><h4 id="notesHead">Speaker notes</h4><div id="notesBody"></div></div>
 
@@ -1402,8 +1418,20 @@ const Sound = (() => {
   function updateFold() { pvFold.classList.toggle('done', pvNotesEl.scrollTop + pvNotesEl.clientHeight >= pvNotesEl.scrollHeight - 6); }
   pvNotesEl.addEventListener('scroll', updateFold); window.addEventListener('resize', updateFold);
   document.getElementById('pvFoldBtn').addEventListener('click', e => { e.currentTarget.blur(); pvNotesEl.scrollBy({ top: pvNotesEl.clientHeight * 0.7 }); });
+  // Your own edits to the script are kept in this browser, per slide, and shown instead of the original.
+  const EDIT_KEY = id => 'dive-bar-script:' + id;
+  const getEdit = id => { try { return localStorage.getItem(EDIT_KEY(id)); } catch (e) { return null; } };
+  const setEdit = (id, v) => { try { v == null ? localStorage.removeItem(EDIT_KEY(id)) : localStorage.setItem(EDIT_KEY(id), v); } catch (e) {} };
+  let editing = false;
   function renderPresenter(text, scene) {
-    const say = script(text);
+    const own = getEdit(slides[i].id);
+    const say = own != null ? own : script(text);
+    if (presenter) {
+      document.getElementById('pvEditReset').hidden = own == null;
+      document.getElementById('pvEditCopy').hidden = !slides.some(x => getEdit(x.id) != null);
+      document.getElementById('pvEditNote').textContent = own != null ? 'Showing your edited script' : '';
+    }
+    if (editing) { pvSay.textContent = say; return; }
     pvTiming.textContent = ''; pvTiming.hidden = true;
     pvSay.innerHTML = '';
     let clickN = 0;
@@ -1470,8 +1498,11 @@ const Sound = (() => {
     pvVol.addEventListener('input', () => ch && ch.postMessage({ type: 'soundCmd', from: 'presenter', vol: +pvVol.value }));
     pvVol.addEventListener('change', () => pvVol.blur());
   }
+  let pvSeen = false;
   if (ch) ch.onmessage = e => {
     const m = e.data || {};
+    if (!presenter && m.from === 'presenter' && !pvSeen) { pvSeen = true; if (!started) document.querySelector('.gate .k1').textContent = 'Notes window connected · click anywhere to go full screen with sound'; }
+    if (m.type === 'ping' && presenter) { ch.postMessage({ type: 'hello', from: 'presenter' }); return; }
     if (presenter && m.from === 'audience') { pvLink.textContent = '● Audience screen connected. Share that tab, keep this one private.'; pvLink.classList.add('on'); }
     if (m.type === 'hello') { if (!presenter) { ch.postMessage({ type: 'nav', from: 'audience', i, step }); ch.postMessage({ type: 'title', from: 'audience', on: titleOn, voiced: titleVoiced }); sendSound(); } return; }
     if (m.type === 'sound') { showSound(m); return; }
@@ -1482,6 +1513,7 @@ const Sound = (() => {
       sendSound(); render(false); return;
     }
     if (m.type === 'fsCmd' && !presenter) { fullFromPresenter(); return; }
+    if (m.type === 'fsNeedsClick' && presenter) { const b = document.getElementById('pvArm'); b.textContent = 'The browser needs one click on the presentation window itself to go full screen. Click it once.'; b.hidden = false; setTimeout(() => { b.hidden = true; }, 6000); return; }
     if (m.type === 'fs' && presenter) { document.getElementById('pvFs').textContent = m.on ? 'Exit full screen' : 'Full screen'; return; }
     if (m.type === 'restart' && !presenter) { restart(); return; }
     if (m.type === 'titleNext' && !presenter) { if (titleOn) next(); return; }
@@ -1504,7 +1536,7 @@ const Sound = (() => {
     if (!presenter) { gate.style.transition = ''; gate.classList.toggle('gone', !on); }
     if (ch && !applying) ch.postMessage({ type: 'title', from: presenter ? 'presenter' : 'audience', on });
     if (ch && !applying && !presenter) ch.postMessage({ type: 'title', from: 'audience', on, voiced: titleVoiced });
-    if (presenter) { if (on) presenterTitle(); else document.getElementById('pvScene').textContent = ''; }
+    if (presenter) { document.body.classList.toggle('on-title', on); if (on) presenterTitle(); else document.getElementById('pvScene').textContent = ''; }
     if (!on) render();
   }
   // The title card has its own narration. From the title card, Next starts the narration,
@@ -1512,6 +1544,7 @@ const Sound = (() => {
   let titleVoiced = false;
   const voiceUrl = () => titleOn ? gate.dataset.voice : slides[i].dataset.voice;
   function presenterTitle() {
+    if (editing) { editing = false; pvSay.contentEditable = 'false'; pvSay.classList.remove('editing'); const eb = document.getElementById('pvEdit'); eb.classList.remove('on'); eb.textContent = '✎ Edit script'; }
     document.getElementById('pvScene').textContent = 'Title card on screen';
     pvSay.innerHTML = '';
     const c = document.createElement('span'); c.className = 'cue'; c.textContent = 'narrator · about 20 seconds'; pvSay.appendChild(c);
@@ -1519,8 +1552,13 @@ const Sound = (() => {
       ? '\nThe narration has played. Press Next to bring up slide 1, then begin with "Since 1999, which is to say the 1900s."'
       : '\nPress Next to start the narration over the title card. When it ends, press Next again for slide 1.'));
     document.getElementById('pvNext').textContent = titleVoiced ? 'Slide 1 →' : '▶ Start narration';
-    document.getElementById('pvNextLabel').textContent = 'Up next';
+    document.getElementById('pvNextLabel').textContent = titleVoiced ? 'Up next: slide 1' : 'Up next: narration, then slide 1';
     document.getElementById('pvVoice').hidden = false;
+    document.body.classList.add('on-title');
+    pvNextStage.innerHTML = '';
+    const pc = slides[0].cloneNode(true); pc.removeAttribute('id'); pc.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
+    pc.classList.add('active'); pc.classList.remove('leaving'); pc.querySelectorAll('.rise').forEach(x => x.classList.remove('rise')); pc.querySelectorAll('aside').forEach(a => a.remove());
+    pvNextStage.appendChild(pc);
   }
   // Start over: back to the title card at slide 1, with the narration ready to play again.
   function restart() {
@@ -1554,7 +1592,13 @@ const Sound = (() => {
     if (withSound) { Sound.init(); Sound.setVolume(+vol.value); Sound.loadVoice(gate.dataset.voice); slides.forEach(x => x.dataset.voice && Sound.loadVoice(x.dataset.voice)); }
     else { soundBtn.setAttribute('aria-pressed', 'false'); soundBtn.textContent = 'Sound off'; }
     render(); poke();
-    if (!presenter) { openPresenter(); sendSound(); }
+    if (!presenter) {
+      // Browsers allow one action per click here: open the notes window, or go full screen.
+      // If the notes window is already open, this click goes full screen instead.
+      if (pvSeen && !resume) document.documentElement.requestFullscreen?.().catch(() => {});
+      else openPresenter();
+      sendSound();
+    }
   }
   gate.addEventListener('click', () => {
     if (!started) { begin(true); return; }
@@ -1594,7 +1638,7 @@ const Sound = (() => {
       window.addEventListener('click', go2, { capture: true, once: true });
     };
     if (!d.documentElement.requestFullscreen) return;
-    d.documentElement.requestFullscreen().catch(ask);
+    d.documentElement.requestFullscreen().catch(() => { ask(); ch && ch.postMessage({ type: 'fsNeedsClick', from: 'audience' }); });
   }
   document.addEventListener('fullscreenchange', () => { if (ch && !presenter) ch.postMessage({ type: 'fs', from: 'audience', on: !!document.fullscreenElement }); });
   function openPresenter() {
@@ -1607,6 +1651,7 @@ const Sound = (() => {
   viewport.addEventListener('click', e => { if (!started) return; if (!Sound.started) { Sound.init(); Sound.setVolume(+vol.value); Sound.setMuted(false); render(false); sendSound(); return; } const r = viewport.getBoundingClientRect(); (e.clientX - r.left < r.width * 0.25) ? prev() : next(); });
   window.addEventListener('keydown', e => {
     const k = e.key;
+    if (document.activeElement && (document.activeElement.isContentEditable || /INPUT|TEXTAREA/.test(document.activeElement.tagName) && document.activeElement.type !== 'range')) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', ' '].includes(k) && document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
     if (!started) { if (['ArrowRight', ' ', 'Enter', 'PageDown'].includes(k)) { e.preventDefault(); begin(true); } else if (k === 'p' || k === 'P') openPresenter(); return; }
@@ -1620,7 +1665,26 @@ const Sound = (() => {
   function poke() { hud.classList.remove('idle'); viewport.classList.remove('hide-cursor'); clearTimeout(idleT); idleT = setTimeout(() => { if (started) { hud.classList.add('idle'); viewport.classList.add('hide-cursor'); } }, 2600); }
   document.addEventListener('mousemove', poke); hud.addEventListener('focusin', poke);
 
-  if (presenter) { window.addEventListener('resize', fit); }
+  if (presenter) {
+    window.addEventListener('resize', fit);
+    const eb = document.getElementById('pvEdit');
+    const original = () => { const n = slides[i].querySelector('aside'); return n ? n.textContent.trim() : ''; };
+    const redraw = () => renderPresenter(original(), slides[i].dataset.scene);
+    eb.addEventListener('click', () => {
+      if (titleOn) return;
+      editing = !editing; eb.classList.toggle('on', editing); eb.textContent = editing ? 'Done editing' : '✎ Edit script';
+      pvSay.classList.toggle('editing', editing);
+      if (editing) { redraw(); pvSay.contentEditable = 'plaintext-only'; if (pvSay.contentEditable !== 'plaintext-only') pvSay.contentEditable = 'true'; pvSay.focus(); }
+      else { pvSay.contentEditable = 'false'; eb.blur(); redraw(); }
+    });
+    pvSay.addEventListener('input', () => { if (!editing) return; const v = pvSay.innerText.replace(/\n{3,}/g, '\n\n'); const orig = script(original()); setEdit(slides[i].id, v.trim() === orig.trim() ? null : v); document.getElementById('pvEditNote').textContent = 'Saved in this browser'; });
+    document.getElementById('pvEditReset').addEventListener('click', e => { e.currentTarget.blur(); setEdit(slides[i].id, null); redraw(); });
+    document.getElementById('pvEditCopy').addEventListener('click', e => {
+      e.currentTarget.blur();
+      const out = slides.map((x, k) => { const v = getEdit(x.id); return v == null ? null : 'Slide ' + (k + 1) + ' (' + x.id + ')\n' + v; }).filter(Boolean).join('\n\n---\n\n');
+      (navigator.clipboard ? navigator.clipboard.writeText(out) : Promise.reject()).then(() => { document.getElementById('pvEditNote').textContent = 'Copied. Paste it to Claude to make it permanent.'; }).catch(() => { prompt('Copy your edits:', out); });
+    });
+  }
   if (resumed && !presenter) {
     gate.classList.add('gone'); gate.style.transition = 'none';
     const pill = document.createElement('div'); pill.className = 'resume'; pill.textContent = 'Click or press any key to resume with sound';
@@ -1632,7 +1696,7 @@ const Sound = (() => {
   applying = presenter; render(false); applying = false;
   fit();
   if (ch && presenter) ch.postMessage({ type: 'hello', from: 'presenter' });
-  if (ch && !presenter) { ch.postMessage({ type: 'title', from: 'audience', on: titleOn, voiced: titleVoiced }); sendSound(); }
+  if (ch && !presenter) { ch.postMessage({ type: 'ping', from: 'audience' }); ch.postMessage({ type: 'title', from: 'audience', on: titleOn, voiced: titleVoiced }); sendSound(); }
 })();
 </script>
 
