@@ -41,14 +41,16 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
 
 
 /* Motion: everything slow, quiet, and off for reduced-motion viewers. */
-.slide { transform: scale(1.012); transition: opacity 0.9s ease, transform 1.6s cubic-bezier(.2,.7,.2,1), visibility 0s linear 0.9s; }
-.slide.active { transform: none; transition: opacity 0.9s ease, transform 1.6s cubic-bezier(.2,.7,.2,1); }
+/* Crossfade: the new slide fades in on top while the old one holds still underneath, so nothing dips to black or snaps. */
+.slide { transform: scale(1.006); transition: opacity 0.9s cubic-bezier(.4,0,.2,1), transform 1.6s cubic-bezier(.2,.7,.2,1), visibility 0s linear 0.9s; }
+.slide.active { z-index: 2; transform: none; transition: opacity 0.9s cubic-bezier(.4,0,.2,1), transform 1.6s cubic-bezier(.2,.7,.2,1); }
+.slide.leaving { z-index: 1; opacity: 1; visibility: visible; transform: none; transition: none; }
 .kb-in { position: absolute; inset: 0; will-change: transform; }
-.slide.active .kb-in { animation: drift-a 26s cubic-bezier(.25,.6,.3,1) both; }
-.slide.active.alt .kb-in { animation-name: drift-b; }
+.slide.active .kb-in, .slide.leaving .kb-in { animation: drift-a 26s cubic-bezier(.25,.6,.3,1) both; }
+.slide.active.alt .kb-in, .slide.leaving.alt .kb-in { animation-name: drift-b; }
 @keyframes drift-a { from { transform: scale(1.03) translate(0.6%, 0.4%); } to { transform: scale(1.09) translate(-1.1%, -0.7%); } }
 @keyframes drift-b { from { transform: scale(1.09) translate(-0.8%, 0.5%); } to { transform: scale(1.03) translate(0.5%, -0.3%); } }
-.slide.active .rise { animation: rise 1.15s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0ms); }
+.slide.active .rise, .slide.leaving .rise { animation: rise 1.15s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .fx { position: absolute; pointer-events: none; mix-blend-mode: screen; }
 .fx.paper { mix-blend-mode: multiply; }
@@ -59,7 +61,7 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
 .fx.breathe { animation: breathe 3.8s ease-in-out infinite; }
 @keyframes breathe { 0%, 100% { opacity: 0.55; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.12); } }
 .neon-sign { pointer-events: none; opacity: 0; }
-.slide.active .neon-sign { animation: neon-wake 2.6s linear 10s both; }
+.slide.active .neon-sign, .slide.leaving .neon-sign { animation: neon-wake 2.6s linear 10s both; }
 @keyframes neon-wake { 0% { opacity: 0; } 8% { opacity: 0.75; } 11% { opacity: 0; } 30% { opacity: 0; } 33% { opacity: 0.9; } 36% { opacity: 0.1; } 41% { opacity: 1; } 45% { opacity: 0.25; } 52% { opacity: 1; } 100% { opacity: 1; } }
 .neon-tube { filter: drop-shadow(0 0 2px rgba(255,90,60,0.95)) drop-shadow(0 0 9px rgba(255,60,30,0.75)) drop-shadow(0 0 22px rgba(255,50,20,0.45)); animation: tube 6.4s linear infinite; }
 .neon-halo { animation: tube 6.4s linear infinite; }
@@ -295,21 +297,27 @@ TO DO: The dots mark 65 cities you named: Seattle, Vancouver, Portland, Ontario 
 SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Beverages)," has no dive-bar subcategory. Earliest noun use of "dive" for a disreputable establishment, National Police Gazette, Jan. 12, 1867 (via Barry Popik). OED defines the U.S. sense as a drinking den "often situated in a cellar, basement, or other half-concealed place." The basement origin is likely, not certain, which is why the narration says "possibly."</aside>
 </section>
 <section class="slide" id="anatomy" data-scene="quiet" data-cue="neon" data-cue-delay="10000" style="background:#E8DFCC;color:#2A2119;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
-<img src="img/plate_base.jpg" alt="Engraved anatomical illustration of a dive bar interior in lateral section, with arrows pointing to its neon sign, lamp, bottles, stools, clock, mounted fish, photo wall and jukebox" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
-<p style="position:absolute;left:96px;top:84px;width:400px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#6B5440">Plate III</p>
-<p style="position:absolute;left:1124px;top:78px;width:700px;font-size:30px;font-style:italic;text-align:right;color:#6B5440">Diveus americanus</p>
-<h2 style="position:absolute;left:128px;top:112px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:500;line-height:1.1;letter-spacing:12px;text-transform:uppercase;text-align:center;color:#2A2119">Anatomy of a Dive</h2>
-<p style="position:absolute;left:128px;top:194px;width:1664px;font-size:30px;font-style:italic;text-align:center;color:#6B5440">Fig. 1.—Interior, lateral section. Engraved from life.</p>
-<div style="position:absolute;left:96px;top:324px;width:300px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;text-align:right;color:#2A2119"><span style="font-style:normal;color:#8C2F23">1.</span> Neon vestigialis</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;text-align:right;color:#6B5440">Old neon</p></div>
-<div style="position:absolute;left:96px;top:444px;width:300px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;text-align:right;color:#2A2119"><span style="font-style:normal;color:#8C2F23">2.</span> Lumen obscurum</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;text-align:right;color:#6B5440">Low ambient light</p></div>
-<div style="position:absolute;left:96px;top:564px;width:300px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;text-align:right;color:#2A2119"><span style="font-style:normal;color:#8C2F23">3.</span> Reservoir lagerum</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;text-align:right;color:#6B5440">Domestic lager supply</p></div>
-<div style="position:absolute;left:96px;top:704px;width:300px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;text-align:right;color:#2A2119"><span style="font-style:normal;color:#8C2F23">4.</span> Sedes territorialis</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;text-align:right;color:#6B5440">Territorial seating</p></div>
-<div style="position:absolute;left:1514px;top:314px;width:356px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119"><span style="font-style:normal;color:#8C2F23">5.</span> Horologium cerevisiae</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;color:#6B5440">Brewery-issued clock</p></div>
-<div style="position:absolute;left:1514px;top:434px;width:356px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119"><span style="font-style:normal;color:#8C2F23">6.</span> Artefactum inexplicatum</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;color:#6B5440">Unexplained artifact</p></div>
-<div style="position:absolute;left:1514px;top:574px;width:356px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119"><span style="font-style:normal;color:#8C2F23">7.</span> Paries accumulatus</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;color:#6B5440">Accumulated décor</p></div>
-<div style="position:absolute;left:1514px;top:714px;width:356px;display:flex;flex-direction:column;gap:0px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119"><span style="font-style:normal;color:#8C2F23">8.</span> Machina musicalis</p><p style="font-family:Inter, Arial, sans-serif;font-size:24px;line-height:1.3;color:#6B5440">Jukebox</p></div>
-<p style="position:absolute;left:310px;top:884px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;text-align:center;color:#8C2F23">The Law of Accumulation</p>
-<p style="position:absolute;left:310px;top:920px;width:1300px;font-size:30px;font-style:italic;line-height:1.3;text-align:center;color:#2A2119">“The authenticity of a dive bar appears positively correlated with the number of objects whose origin the current bartender cannot explain.”</p>
+<img src="img/plate_base.jpg" alt="Engraved anatomical illustration of a dive bar interior in lateral section, with numbered leader lines pointing to its neon sign, lamp, bottles, stools, clock, mounted fish, photo wall and jukebox" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
+<p style="position:absolute;left:100px;top:84px;width:420px;font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440">Plate III</p>
+<p style="position:absolute;left:560px;top:84px;width:800px;text-align:center;font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440">A Natural History of the American Dive</p>
+<p style="position:absolute;left:1400px;top:76px;width:420px;font-size:26px;font-style:italic;text-align:right;color:#6B5440">Diveus americanus</p>
+<div style="position:absolute;left:100px;top:116px;width:1720px;height:0px;border-top:1px solid rgba(42,33,25,0.55)"></div>
+<div style="position:absolute;left:100px;top:120px;width:1720px;height:0px;border-top:1px solid rgba(42,33,25,0.25)"></div>
+<h2 style="position:absolute;left:128px;top:138px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:62px;font-weight:500;line-height:1;letter-spacing:18px;text-transform:uppercase;text-align:center;color:#2A2119">Anatomy of a Dive</h2>
+<p style="position:absolute;left:128px;top:212px;width:1664px;font-size:24px;font-style:italic;text-align:center;color:#6B5440">Fig. 1.  Interior, lateral section. Engraved from life.</p>
+<div style="position:absolute;left:80px;top:316px;width:312px;align-items:flex-end;text-align:right;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Neon vestigialis</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Old neon</p></div>
+<div style="position:absolute;left:80px;top:436px;width:312px;align-items:flex-end;text-align:right;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Lumen obscurum</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Low ambient light</p></div>
+<div style="position:absolute;left:80px;top:556px;width:312px;align-items:flex-end;text-align:right;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Reservoir lagerum</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Domestic lager supply</p></div>
+<div style="position:absolute;left:80px;top:676px;width:312px;align-items:flex-end;text-align:right;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Sedes territorialis</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Territorial seating</p></div>
+<div style="position:absolute;left:1528px;top:316px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Horologium cerevisiae</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Brewery-issued clock</p></div>
+<div style="position:absolute;left:1528px;top:436px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Artefactum inexplicatum</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Unexplained artifact</p></div>
+<div style="position:absolute;left:1528px;top:556px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Paries accumulatus</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Accumulated décor</p></div>
+<div style="position:absolute;left:1528px;top:676px;width:330px;align-items:flex-start;display:flex;flex-direction:column;gap:6px"><p style="font-size:30px;font-style:italic;line-height:1.1;color:#2A2119">Machina musicalis</p><p style="font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440;font-size:14px;letter-spacing:4px">Jukebox</p></div>
+<div style="position:absolute;left:560px;top:884px;width:330px;height:0px;border-top:1px solid rgba(42,33,25,0.45)"></div>
+<div style="position:absolute;left:1030px;top:884px;width:330px;height:0px;border-top:1px solid rgba(42,33,25,0.45)"></div>
+<p style="position:absolute;left:890px;top:872px;width:140px;font-size:20px;text-align:center;color:#8C2F23">❦</p>
+<p style="position:absolute;left:310px;top:908px;width:1300px;text-align:center;font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#8C2F23">The Law of Accumulation</p>
+<p style="position:absolute;left:260px;top:940px;width:1400px;font-size:29px;font-style:italic;line-height:1.3;text-align:center;color:#2A2119">“The authenticity of a dive bar appears positively correlated with the number<br>of objects whose origin the current bartender cannot explain.”</p>
 <div class="neon-sign" style="position:absolute;left:687px;top:251px;width:215px;height:185px"><div class="neon-halo" style="position:absolute;left:-40px;top:-30px;width:295px;height:245px;background:radial-gradient(closest-side, rgba(255,120,50,0.28), rgba(255,120,50,0))"></div><img class="neon-photo" src="img/sign_lit.png" alt="" style="position:absolute;left:0px;top:0px;width:215px;height:185px"></div>
 <aside>[0:55 to 2:09 · about 185 words]
 
@@ -1329,8 +1337,13 @@ const Sound = (() => {
     });
   }
 
-  const builds = el => [...el.querySelectorAll('.build')];
+  const builds = el => [...el.querySelectorAll('.build')]; let leaveT = null;
   function render(cue = true) {
+    const was = slides.find(x => x.classList.contains('active'));
+    if (was && was !== slides[i]) {
+      slides.forEach(x => x.classList.remove('leaving'));
+      was.classList.add('leaving'); clearTimeout(leaveT); leaveT = setTimeout(() => was.classList.remove('leaving'), 1000);
+    }
     slides.forEach((el, k) => el.classList.toggle('active', k === i));
     const el = slides[i], b = builds(el);
     b.forEach((x, k) => x.classList.toggle('on', k < step));
