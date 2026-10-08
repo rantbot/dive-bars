@@ -193,7 +193,7 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 
 <div id="viewport">
   <div id="stage">
-<section class="slide" id="cover" data-scene="exterior" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:28px">
+<section class="slide" id="cover" data-scene="exterior" data-voice="snd/intro.mp3" data-voice-delay="1500" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:28px">
 <div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_cover2.jpg" alt="A weathered brick corner bar called Lucky Star at night, a Pabst neon in the window and two regulars talking by the door" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
 <div style="position:absolute;left:820px;top:700px;width:1100px;height:380px;background:linear-gradient(180deg, rgba(13,12,10,0) 0%, rgba(13,12,10,0.7) 100%)"></div>
@@ -201,19 +201,13 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;color:#C9A15A">Part I · The Habitat</p>
 <p style="font-size:68px;font-style:italic;font-weight:400;line-height:1.15;color:#EDE6D8;width:900px">Across the American landscape, beneath flickering neon, an extraordinary ecosystem survives.</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:5px;text-transform:uppercase;color:#A89F8F">Corner bar · 9:47 PM · Field log 001</p>
-<aside>[0:00 to 0:25 · about 70 words]
+<aside>[0:00 to 0:40 · narrator about 20 seconds, then you]
 
-Across the American landscape, hidden in strip malls, beneath flickering neon, and along roads less traveled, an extraordinary ecosystem continues to survive.
-
-To the casual observer, it may appear inhospitable.
-
-But look closer.
-
-(pause)
-
-This is the American dive bar.
+(narrator plays · about 20 seconds · wait for "This is the American dive bar.")
 
 Since 1999, which is to say the 1900s, I have conducted extensive field research into this habitat. Most of it at night. Much of it involving beer.
+
+NARRATION: The recorded narrator starts about a second after this slide appears and reads the opening: across the American landscape, hidden in strip malls, beneath flickering neon, an extraordinary ecosystem survives, ending on "This is the American dive bar." The bar sound dips under it. Use Play narration in your notes window to replay it, or to stop it early.
 
 VISUAL NOTE: The title card before this slide already names the talk, so this opening shot works like a documentary's first scene. Change the time or field log number to match a real night if you like.</aside>
 </section>
@@ -924,7 +918,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
   <div class="pv-bar">
     <div class="who"><span class="t">The American Dive Bar · Presenter</span><span class="pv-link" id="pvLink">Looking for the audience screen…</span></div>
     <div class="pv-clock"><span class="el" id="pvEl">0:00</span><span class="of" id="pvOf">of 5:00 · slide 01 / 19</span></div>
-    <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvReset" type="button">Reset timer</button><button id="pvFs" type="button">Full screen</button></div>
+    <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvVoice" type="button" hidden>▶ Play or stop narration</button><button id="pvReset" type="button">Reset timer</button><button id="pvFs" type="button">Full screen</button></div>
   </div>
   <div class="pv-left">
     <div class="pv-label"><span>On screen now</span><span id="pvScene"></span></div>
@@ -954,9 +948,9 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
 </div>
 
 <script>
-// Field audio engine. Every sound is synthesized live with Web Audio; no files.
+// Field audio engine: synthesized layers, field recordings and narration, mixed with Web Audio.
 const Sound = (() => {
-  let ctx = null, master = null, verb = null, noise = {}, recs = {};
+  let ctx = null, master = null, amb = null, verb = null, noise = {}, recs = {}, voices = {}, voiceSrc = null, voiceGain = null;
   let current = null, currentKey = null, volume = 0.7, muted = false;
   const R = (a, b) => a + Math.random() * (b - a);
   const pick = a => a[Math.floor(Math.random() * a.length)];
@@ -995,8 +989,9 @@ const Sound = (() => {
     const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 3; comp.knee.value = 12;
     master = ctx.createGain(); master.gain.value = muted ? 0 : volume;
     master.connect(comp); comp.connect(ctx.destination);
+    amb = ctx.createGain(); amb.gain.value = 1; amb.connect(master);
     verb = ctx.createConvolver(); verb.buffer = makeIR(2.2, 3.2);
-    const vg = ctx.createGain(); vg.gain.value = 0.5; verb.connect(vg); vg.connect(master);
+    const vg = ctx.createGain(); vg.gain.value = 0.5; verb.connect(vg); vg.connect(amb);
     noise = { white: makeNoise('white'), pink: makeNoise('pink'), brown: makeNoise('brown') };
     ['chatter', 'bikerbar', 'barloop'].forEach(n => {
       recs[n] = fetch('snd/' + n + '.mp3').then(r => { if (!r.ok) throw new Error(n); return r.arrayBuffer(); })
@@ -1007,7 +1002,7 @@ const Sound = (() => {
   // A scene owns its nodes, timers and two faders (dry and reverb send).
   function Scene(key) {
     const s = { key, nodes: [], timers: [], alive: true };
-    s.dry = ctx.createGain(); s.dry.gain.value = 0; s.dry.connect(master);
+    s.dry = ctx.createGain(); s.dry.gain.value = 0; s.dry.connect(amb);
     s.wet = ctx.createGain(); s.wet.gain.value = 0; s.wet.connect(verb);
     s.track = n => { s.nodes.push(n); return n; };
     s.out = (node, dry = 1, wet = 0.3) => {
@@ -1248,10 +1243,33 @@ const Sound = (() => {
     currentKey = key; current = Scene(key);
     (SCENES[key] || SCENES.silence)(current); current.fadeIn(secs);
   }
+  // Narration: a recorded voice over the scene. The ambience dips while it plays.
+  function loadVoice(url) {
+    if (!voices[url]) voices[url] = fetch(url).then(r => { if (!r.ok) throw new Error(url); return r.arrayBuffer(); })
+      .then(b => new Promise((ok, bad) => ctx.decodeAudioData(b, ok, bad))).catch(() => null);
+    return voices[url];
+  }
+  function stopVoice(secs = 1.2) {
+    if (!voiceSrc) return; const t = ctx.currentTime, src = voiceSrc, g = voiceGain; voiceSrc = null;
+    g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0, t + secs);
+    setTimeout(() => { try { src.stop(); } catch (e) {} }, secs * 1000 + 100);
+    amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(1, t, 0.6);
+  }
+  function voice(url, onEnd) {
+    if (!ctx) return; stopVoice(0.3);
+    loadVoice(url).then(buf => {
+      if (!buf) return;
+      const t = ctx.currentTime + 0.05, src = ctx.createBufferSource(), g = ctx.createGain();
+      src.buffer = buf; g.gain.value = 1.15; src.connect(g); g.connect(master); src.start(t);
+      voiceSrc = src; voiceGain = g;
+      amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(0.32, t, 0.4);
+      src.onended = () => { if (voiceSrc === src) { voiceSrc = null; amb.gain.setTargetAtTime(1, ctx.currentTime, 0.9); } onEnd && onEnd(); };
+    });
+  }
   function cue(name) { if (ctx && current && CUES[name]) CUES[name](current); }
   function setVolume(v) { volume = v; if (master) master.gain.setTargetAtTime(muted ? 0 : v, ctx.currentTime, 0.1); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : volume, ctx.currentTime, 0.1); }
-  return { init, setScene, cue, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
+  return { init, setScene, cue, voice, stopVoice, loadVoice, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
 })();
 
 </script>
@@ -1265,7 +1283,7 @@ const Sound = (() => {
   const gate = document.getElementById('gate');
   const SCENE_LABELS = { exterior: 'Exterior, night', quiet: 'Interior, quiet hour · field recording', neighborhood: 'Neighborhood bar · field recording', working: 'The regulars · field recording',
     coast: 'Coastal bar, dusk', latenight: 'Biker bar · field recording', lounge: 'Hospitality-group lounge', lastcall: 'Closing time', silence: 'Silence' };
-  let i = 0, step = 0, started = false;
+  let i = 0, step = 0, started = false; const voicePlayed = new Set();
   // A fresh visit starts at the title card. A refresh of this tab returns to the same slide.
   let resumed = false;
   try {
@@ -1329,6 +1347,12 @@ const Sound = (() => {
     sceneEl.textContent = Sound.started && !Sound.muted ? '♪ ' + (SCENE_LABELS[scene] || '') : '';
     if (started && !presenter) {
       Sound.setScene(scene);
+      if (cue && step === 0) {
+        if (el.dataset.voice && !voicePlayed.has(el.id)) {
+          voicePlayed.add(el.id);
+          setTimeout(() => { if (slides[i] === el && !titleOn) Sound.voice(el.dataset.voice); }, +(el.dataset.voiceDelay || 800));
+        } else if (!el.dataset.voice) Sound.stopVoice();
+      }
       if (cue && step === 0 && el.dataset.cue) setTimeout(() => { if (slides[i] === el) Sound.cue(el.dataset.cue); }, +(el.dataset.cueDelay || 1400));
     }
     slides.forEach((s2, k) => s2.querySelectorAll('video').forEach(v => {
@@ -1377,6 +1401,7 @@ const Sound = (() => {
       else if (part) part.split(/\n{2,}/).forEach((seg, k) => { if (k) { const g = document.createElement('span'); g.className = 'gap'; pvSay.appendChild(g); } if (seg) pvSay.appendChild(document.createTextNode(seg.replace(/^\n+|\n+$/g, ''))); });
     });
     document.getElementById('pvMore').hidden = true;
+    document.getElementById('pvVoice').hidden = !slides[i].dataset.voice;
     if (lastPvI !== i) { pvNotesEl.style.scrollBehavior = 'auto'; pvNotesEl.scrollTop = 0; pvNotesEl.style.scrollBehavior = ''; lastPvI = i; }
     requestAnimationFrame(updateFold);
     document.getElementById('pvScene').textContent = SCENE_LABELS[scene] ? '♪ ' + SCENE_LABELS[scene] : '';
@@ -1408,6 +1433,7 @@ const Sound = (() => {
     setInterval(tick, 500);
     document.getElementById('pvNext').addEventListener('click', e => { e.currentTarget.blur(); next(); });
     document.getElementById('pvPrev').addEventListener('click', e => { e.currentTarget.blur(); prev(); });
+    document.getElementById('pvVoice').addEventListener('click', e => { e.currentTarget.blur(); ch && ch.postMessage({ type: 'soundCmd', from: 'presenter', voice: true }); });
     document.getElementById('pvFs').addEventListener('click', e => { e.currentTarget.blur(); ch && ch.postMessage({ type: 'fsCmd', from: 'presenter' }); });
     document.getElementById('pvReset').addEventListener('click', e => { e.currentTarget.blur(); t0 = i > 0 ? Date.now() : null; tick(); });
   }
@@ -1432,6 +1458,7 @@ const Sound = (() => {
     if (m.type === 'soundCmd' && !presenter) {
       if (m.toggle) { if (Sound.started) Sound.setMuted(!Sound.muted); else if (started) toast('Click this screen once to turn the sound on.', 5000); }
       if (typeof m.vol === 'number') { vol.value = m.vol; Sound.setVolume(m.vol); }
+      if (m.voice) { const el = slides[i]; if (Sound.speaking) Sound.stopVoice(0.6); else if (el.dataset.voice && Sound.started) Sound.voice(el.dataset.voice); }
       sendSound(); render(false); return;
     }
     if (m.type === 'fsCmd' && !presenter) { fullFromPresenter(); return; }
@@ -1469,7 +1496,7 @@ const Sound = (() => {
 
   function begin(withSound) {
     if (started) { if (titleOn) next(); return; } started = true; gate.classList.add('gone'); document.querySelector('.resume')?.remove();
-    if (withSound) { Sound.init(); Sound.setVolume(+vol.value); }
+    if (withSound) { Sound.init(); Sound.setVolume(+vol.value); slides.forEach(x => x.dataset.voice && Sound.loadVoice(x.dataset.voice)); }
     else { soundBtn.setAttribute('aria-pressed', 'false'); soundBtn.textContent = 'Sound off'; }
     render(); poke();
     if (!presenter) { openPresenter(); sendSound(); }
