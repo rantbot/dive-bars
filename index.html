@@ -1194,10 +1194,16 @@ const Sound = (() => {
       if (isGroup(c)) walk(c); else list.push(c);
     });
     walk(el);
-    list.forEach((c, n) => { c.classList.add('rise'); c.style.setProperty('--d', Math.min(250 + n * 95, 1700) + 'ms'); });
-    el.querySelectorAll('.dot').forEach(d => d.style.animationDelay = (-Math.random() * 4.5).toFixed(2) + 's');
+    // Delays go through data attributes and one generated stylesheet. Writing to element.style would
+    // rewrite each style attribute ("display:flex" becomes "display: flex") and break the layout rules that read them.
+    list.forEach((c, n) => { c.classList.add('rise'); c.dataset.r = Math.min(n, 15); });
+    el.querySelectorAll('.dot').forEach(d => { d.dataset.dd = Math.floor(Math.random() * 10); });
     el.querySelectorAll('p').forEach(p => { if (/^\d+%$/.test(p.textContent.trim())) p.dataset.count = p.textContent.trim(); });
   });
+  { const st = document.createElement('style'); let css = '';
+    for (let n = 0; n <= 15; n++) css += `.rise[data-r="${n}"]{--d:${Math.min(250 + n * 95, 1700)}ms}`;
+    for (let n = 0; n < 10; n++) css += `.dot[data-dd="${n}"]{animation-delay:-${(n * 0.45).toFixed(2)}s}`;
+    st.textContent = css; document.head.appendChild(st); }
   function countUp(el) {
     el.querySelectorAll('[data-count]').forEach(p => {
       const box = p.closest('.build'); if (box && !box.classList.contains('on')) { p.dataset.done = ''; return; }
