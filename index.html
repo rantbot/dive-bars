@@ -934,7 +934,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
   <div class="pv-bar">
     <div class="who"><span class="t">The American Dive Bar · Presenter</span><span class="pv-link" id="pvLink">Looking for the audience screen…</span></div>
     <div class="pv-clock"><span class="el" id="pvEl">0:00</span><span class="of" id="pvOf">of 5:00 · slide 01 / 19</span></div>
-    <div class="pv-tools"><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvVoice" type="button" hidden>▶ Play or stop narration</button><button id="pvReset" type="button">Reset timer</button><button id="pvFs" type="button">Full screen</button></div>
+    <div class="pv-tools"><button id="pvStart" type="button" title="Back to the title card, ready to play the narration again">⏮ Start over</button><button id="pvPrev" type="button">← Back</button><button id="pvNext" class="big" type="button">Next →</button><button id="pvSound" type="button" aria-pressed="true">Sound on</button><label class="pv-vol" for="pvVol"><span>Volume</span><input id="pvVol" type="range" min="0" max="1" step="0.05" value="0.7"></label><button id="pvVoice" type="button" hidden>▶ Play or stop narration</button><button id="pvReset" type="button">Reset timer</button><button id="pvFs" type="button">Full screen</button></div>
   </div>
   <div class="pv-arm" id="pvArm" hidden>The presentation window is not connected yet. Click it once to turn on sound, then click it again for full screen.</div>
   <div class="pv-left">
@@ -1451,6 +1451,7 @@ const Sound = (() => {
     setInterval(tick, 500);
     document.getElementById('pvNext').addEventListener('click', e => { e.currentTarget.blur(); next(); });
     document.getElementById('pvPrev').addEventListener('click', e => { e.currentTarget.blur(); prev(); });
+    document.getElementById('pvStart').addEventListener('click', e => { e.currentTarget.blur(); t0 = null; tick(); ch && ch.postMessage({ type: 'restart', from: 'presenter' }); });
     document.getElementById('pvVoice').addEventListener('click', e => { e.currentTarget.blur(); ch && ch.postMessage({ type: 'soundCmd', from: 'presenter', voice: true }); });
     document.getElementById('pvFs').addEventListener('click', e => { e.currentTarget.blur(); ch && ch.postMessage({ type: 'fsCmd', from: 'presenter' }); });
     document.getElementById('pvReset').addEventListener('click', e => { e.currentTarget.blur(); t0 = i > 0 ? Date.now() : null; tick(); });
@@ -1482,6 +1483,7 @@ const Sound = (() => {
     }
     if (m.type === 'fsCmd' && !presenter) { fullFromPresenter(); return; }
     if (m.type === 'fs' && presenter) { document.getElementById('pvFs').textContent = m.on ? 'Exit full screen' : 'Full screen'; return; }
+    if (m.type === 'restart' && !presenter) { restart(); return; }
     if (m.type === 'titleNext' && !presenter) { if (titleOn) next(); return; }
     if (m.type === 'title' && (m.from === 'presenter') !== presenter) {
       applying = true; if (typeof m.voiced === 'boolean') titleVoiced = m.voiced;
@@ -1519,6 +1521,11 @@ const Sound = (() => {
     document.getElementById('pvNext').textContent = titleVoiced ? 'Slide 1 →' : '▶ Start narration';
     document.getElementById('pvNextLabel').textContent = 'Up next';
     document.getElementById('pvVoice').hidden = false;
+  }
+  // Start over: back to the title card at slide 1, with the narration ready to play again.
+  function restart() {
+    Sound.stopVoice(0.6); titleVoiced = false; voicePlayed.clear(); i = 0; step = 0;
+    render(false); titleOn = false; showTitle(true);
   }
   function next() {
     if (titleOn) {
