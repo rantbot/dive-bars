@@ -176,6 +176,7 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 .gate .sub { font-family: var(--display); font-style: italic; font-weight: 400; font-size: clamp(18px, 2.3vw, 34px); color: #D9D1C1; animation: g-in 2.6s ease 4.2s both; }
 .gate .credit { font-family: var(--ui); font-size: clamp(10px, 0.95vw, 12px); letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); margin-top: clamp(30px, 6vh, 64px); animation: g-in 2.4s ease 5.4s both; }
 .gate .start { margin-top: clamp(32px, 5vh, 52px); display: flex; flex-direction: column; align-items: center; gap: 14px; padding-inline: 16px; animation: g-in 2s ease 6.6s both; }
+.gate.armed .start { opacity: 0; transition: opacity .8s; animation: none; }
 .gate .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .gate button { font: inherit; font-family: var(--ui); font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; padding: 13px 22px; border-radius: 0; cursor: pointer; background: transparent; }
 .gate .go { color: var(--ivory); border: 1px solid rgba(201,161,90,0.7); }
@@ -193,7 +194,7 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 
 <div id="viewport">
   <div id="stage">
-<section class="slide" id="cover" data-scene="exterior" data-voice="snd/intro.mp3" data-voice-delay="1500" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:28px">
+<section class="slide" id="cover" data-scene="exterior" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:28px">
 <div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_cover2.jpg" alt="A weathered brick corner bar called Lucky Star at night, a Pabst neon in the window and two regulars talking by the door" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
 <div style="position:absolute;left:820px;top:700px;width:1100px;height:380px;background:linear-gradient(180deg, rgba(13,12,10,0) 0%, rgba(13,12,10,0.7) 100%)"></div>
@@ -201,13 +202,11 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;color:#C9A15A">Part I · The Habitat</p>
 <p style="font-size:68px;font-style:italic;font-weight:400;line-height:1.15;color:#EDE6D8;width:900px">Across the American landscape, beneath flickering neon, an extraordinary ecosystem survives.</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:5px;text-transform:uppercase;color:#A89F8F">Corner bar · 9:47 PM · Field log 001</p>
-<aside>[0:00 to 0:40 · narrator about 20 seconds, then you]
-
-(narrator plays · about 20 seconds · wait for "This is the American dive bar.")
+<aside>[0:00 to 0:20 · after the narrator]
 
 Since 1999, which is to say the 1900s, I have conducted extensive field research into this habitat. Most of it at night. Much of it involving beer.
 
-NARRATION: The recorded narrator starts about a second after this slide appears and reads the opening: across the American landscape, hidden in strip malls, beneath flickering neon, an extraordinary ecosystem survives, ending on "This is the American dive bar." The bar sound dips under it. Use Play narration in your notes window to replay it, or to stop it early.
+NARRATION: The recorded narrator plays over the title card before this slide, started from your notes window, and reads the opening: across the American landscape, hidden in strip malls, beneath flickering neon, an extraordinary ecosystem survives, ending on "This is the American dive bar." The bar sound dips under it. You pick up here on slide 1.
 
 VISUAL NOTE: The title card before this slide already names the talk, so this opening shot works like a documentary's first scene. Change the time or field log number to match a real night if you like.</aside>
 </section>
@@ -930,7 +929,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
 </div>
 <div class="notes" id="notes" hidden><h4 id="notesHead">Speaker notes</h4><div id="notesBody"></div></div>
 
-<div class="gate" id="gate">
+<div class="gate" id="gate" data-voice="snd/intro.mp3">
   <div class="gate-grain" aria-hidden="true"></div>
   <div class="card">
     <div class="eyebrow">Field Study · North America · 2026</div>
@@ -938,12 +937,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
     <div class="rule" aria-hidden="true"></div>
     <div class="sub">An exploration of a fragile ecosystem</div>
     <div class="credit">Observed and narrated by Ran Craycraft</div>
-    <div class="start">
-      <div class="row">
-        <button class="go" id="begin" type="button">Begin</button>
-      </div>
-      <div class="keys"><kbd>→</kbd> or a clicker advances · Your notes and controls open in a separate window when you begin.</div>
-    </div>
+    <div class="start"><div class="keys">Click anywhere to connect your notes window and sound</div></div>
   </div>
 </div>
 
@@ -1362,6 +1356,7 @@ const Sound = (() => {
     notesHead.textContent = 'Speaker notes · ' + countEl.textContent;
     notesBody.textContent = n ? script(n.textContent.trim()) : '';
     if (presenter) renderPresenter(n ? n.textContent.trim() : '', scene);
+    if (presenter && titleOn) presenterTitle();
     if (ch && !applying) ch.postMessage({ type: 'nav', from: presenter ? 'presenter' : 'audience', i, step });
     if (started && !presenter) try { sessionStorage.setItem('dive-bar-pos', JSON.stringify({ i, step, started: true })); } catch (e) {}
   }
@@ -1453,17 +1448,22 @@ const Sound = (() => {
   if (ch) ch.onmessage = e => {
     const m = e.data || {};
     if (presenter && m.from === 'audience') { pvLink.textContent = '● Audience screen connected. Share that tab, keep this one private.'; pvLink.classList.add('on'); }
-    if (m.type === 'hello') { if (!presenter) { ch.postMessage({ type: 'nav', from: 'audience', i, step }); sendSound(); } return; }
+    if (m.type === 'hello') { if (!presenter) { ch.postMessage({ type: 'nav', from: 'audience', i, step }); ch.postMessage({ type: 'title', from: 'audience', on: titleOn, voiced: titleVoiced }); sendSound(); } return; }
     if (m.type === 'sound') { showSound(m); return; }
     if (m.type === 'soundCmd' && !presenter) {
       if (m.toggle) { if (Sound.started) Sound.setMuted(!Sound.muted); else if (started) toast('Click this screen once to turn the sound on.', 5000); }
       if (typeof m.vol === 'number') { vol.value = m.vol; Sound.setVolume(m.vol); }
-      if (m.voice) { const el = slides[i]; if (Sound.speaking) Sound.stopVoice(0.6); else if (el.dataset.voice && Sound.started) Sound.voice(el.dataset.voice); }
+      if (m.voice) { const u = voiceUrl(); if (Sound.speaking) Sound.stopVoice(0.6); else if (u && Sound.started) { Sound.voice(u); if (titleOn && !titleVoiced) { titleVoiced = true; ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); } } }
       sendSound(); render(false); return;
     }
     if (m.type === 'fsCmd' && !presenter) { fullFromPresenter(); return; }
     if (m.type === 'fs' && presenter) { document.getElementById('pvFs').textContent = m.on ? 'Exit full screen' : 'Full screen'; return; }
-    if (m.type === 'title' && (m.from === 'presenter') !== presenter) { applying = true; if (m.on !== titleOn) showTitle(m.on); applying = false; return; }
+    if (m.type === 'titleNext' && !presenter) { if (titleOn) next(); return; }
+    if (m.type === 'title' && (m.from === 'presenter') !== presenter) {
+      applying = true; if (typeof m.voiced === 'boolean') titleVoiced = m.voiced;
+      if (m.on !== titleOn) showTitle(m.on); else if (presenter && titleOn) presenterTitle();
+      applying = false; return;
+    }
     if (m.type !== 'nav' || (m.from === 'presenter') === presenter) return;
     const pi = i, ps = step; if (m.i === pi && m.step === ps) return;
     i = Math.max(0, Math.min(slides.length - 1, m.i)); step = m.step; applying = true;
@@ -1477,11 +1477,31 @@ const Sound = (() => {
     titleOn = on;
     if (!presenter) { gate.style.transition = ''; gate.classList.toggle('gone', !on); }
     if (ch && !applying) ch.postMessage({ type: 'title', from: presenter ? 'presenter' : 'audience', on });
-    if (presenter) document.getElementById('pvScene').textContent = on ? 'Title card on screen' : '';
+    if (ch && !applying && !presenter) ch.postMessage({ type: 'title', from: 'audience', on, voiced: titleVoiced });
+    if (presenter) { if (on) presenterTitle(); else document.getElementById('pvScene').textContent = ''; }
     if (!on) render();
   }
+  // The title card has its own narration. From the title card, Next starts the narration,
+  // then the next Next brings up slide 1. The audience window decides; the controller asks it.
+  let titleVoiced = false;
+  const voiceUrl = () => titleOn ? gate.dataset.voice : slides[i].dataset.voice;
+  function presenterTitle() {
+    document.getElementById('pvScene').textContent = 'Title card on screen';
+    pvSay.innerHTML = '';
+    const c = document.createElement('span'); c.className = 'cue'; c.textContent = 'narrator · about 20 seconds'; pvSay.appendChild(c);
+    pvSay.appendChild(document.createTextNode(titleVoiced
+      ? '\nThe narration has played. Press Next to bring up slide 1, then begin with "Since 1999, which is to say the 1900s."'
+      : '\nPress Next to start the narration over the title card. When it ends, press Next again for slide 1.'));
+    document.getElementById('pvNext').textContent = titleVoiced ? 'Slide 1 →' : '▶ Start narration';
+    document.getElementById('pvNextLabel').textContent = 'Up next';
+    document.getElementById('pvVoice').hidden = false;
+  }
   function next() {
-    if (titleOn) { showTitle(false); return; }
+    if (titleOn) {
+      if (presenter) { ch && ch.postMessage({ type: 'titleNext', from: 'presenter' }); return; }
+      if (!titleVoiced && Sound.started) { titleVoiced = true; Sound.voice(gate.dataset.voice); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); return; }
+      showTitle(false); return;
+    }
     const el = slides[i], b = builds(el);
     if (step < b.length) { step++; if (el.dataset.buildCue && started) Sound.cue(el.dataset.buildCue); render(false); return; }
     if (i < slides.length - 1) { i++; step = 0; render(); }
@@ -1494,15 +1514,17 @@ const Sound = (() => {
   }
   function go(n) { i = Math.max(0, Math.min(slides.length - 1, n)); step = 0; render(); }
 
-  function begin(withSound) {
-    if (started) { if (titleOn) next(); return; } started = true; gate.classList.add('gone'); document.querySelector('.resume')?.remove();
-    if (withSound) { Sound.init(); Sound.setVolume(+vol.value); slides.forEach(x => x.dataset.voice && Sound.loadVoice(x.dataset.voice)); }
+  // Begin arms the deck: sound on (browsers need one click here for that) and the notes window opens.
+  // On a fresh start the title card stays up; on a refresh it resumes the slide.
+  function begin(withSound, resume) {
+    if (started) return; started = true; document.querySelector('.resume')?.remove();
+    if (resume) gate.classList.add('gone'); else { titleOn = true; gate.classList.add('armed'); }
+    if (withSound) { Sound.init(); Sound.setVolume(+vol.value); Sound.loadVoice(gate.dataset.voice); slides.forEach(x => x.dataset.voice && Sound.loadVoice(x.dataset.voice)); }
     else { soundBtn.setAttribute('aria-pressed', 'false'); soundBtn.textContent = 'Sound off'; }
     render(); poke();
     if (!presenter) { openPresenter(); sendSound(); }
   }
-  document.getElementById('begin').addEventListener('click', e => { e.stopPropagation(); begin(true); });
-  gate.addEventListener('click', () => { if (started && titleOn) next(); else begin(true); });
+  gate.addEventListener('click', () => { if (!started) begin(true); });
   document.getElementById('prev').addEventListener('click', prev);
   document.getElementById('next').addEventListener('click', next);
   function toggleSound() {
@@ -1567,7 +1589,7 @@ const Sound = (() => {
     gate.classList.add('gone'); gate.style.transition = 'none';
     const pill = document.createElement('div'); pill.className = 'resume'; pill.textContent = 'Click or press any key to resume with sound';
     document.body.appendChild(pill);
-    const go1 = e => { if (started) return; if (e) { e.preventDefault(); e.stopPropagation(); } pill.remove(); begin(true); };
+    const go1 = e => { if (started) return; if (e) { e.preventDefault(); e.stopPropagation(); } pill.remove(); begin(true, true); };
     window.addEventListener('keydown', go1, { capture: true, once: true });
     viewport.addEventListener('click', go1, { capture: true, once: true });
   }
