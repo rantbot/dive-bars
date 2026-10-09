@@ -261,6 +261,20 @@ body.on-title .pv-edit { visibility: hidden; }
 @keyframes g-title { from { opacity: 0; transform: scale(1.07); filter: blur(6px); } 35% { opacity: 1; filter: blur(0); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
 @keyframes g-rule { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
 /* The title card waits in the dark until the narration starts, so the room sees it fade in. */
+/* Opening shot: a photo under the narration's first lines, with a slow push-in and a flickering sign.
+   It fades out just before "This is the American dive bar," and the title card fades in on that line. */
+.gate .gate-photo { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
+.gate.intro .gate-photo { opacity: 1; transition-duration: 1.8s; }
+.gate .gate-photo .frame { position: absolute; left: 50%; top: 40%; width: max(100vw, calc(100vh * 1100 / 1080)); aspect-ratio: 1100 / 1080; transform: translate(-50%, -40%); }
+.gate .gate-photo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.gate.intro .gate-photo .frame { animation: g-push 20s linear both; }
+.gate .gate-photo .glow { position: absolute; left: 30%; top: 38%; width: 37%; height: 28%; background: radial-gradient(closest-side, rgba(255,70,45,0.42), rgba(255,70,45,0)); mix-blend-mode: screen; opacity: 0; }
+.gate.intro .gate-photo .glow { animation: g-sign 20s linear both; }
+.gate .gate-photo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.6) 100%); }
+@keyframes g-push { from { transform: translate(-50%, -40%) scale(1); } to { transform: translate(-50%, -40%) scale(1.09); } }
+/* The sign stutters on around "beneath flickering neon" (about five seconds in), then hums along. */
+@keyframes g-sign { 0%, 25% { opacity: 0; } 25.5% { opacity: 0.8; } 26.3% { opacity: 0.1; } 27.5% { opacity: 0; } 28% { opacity: 0.9; } 28.6% { opacity: 0.2; } 29.4% { opacity: 1; } 55% { opacity: 1; } 55.4% { opacity: 0.55; } 55.8% { opacity: 1; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .gate.intro .gate-photo .frame, .gate.intro .gate-photo .glow { animation: none !important; } .gate.intro .gate-photo .glow { opacity: 1; } }
 .gate:not(.play) .card > *, .gate:not(.play)::before { animation: none !important; opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .gate *, .gate::before { animation: none !important; } }
 @media (prefers-reduced-motion: reduce) { .slide, .slide.active, .build, .hud, .gate { transition: none; } }
@@ -281,7 +295,7 @@ body.on-title .pv-edit { visibility: hidden; }
 
 Since 1999, which is to say the 1900s, I have conducted extensive field research into this habitat. Most of it at night. Much of it involving beer.
 
-NARRATION: The recorded narrator plays over the title card before this slide, started from your notes window, and reads the opening: across the American landscape, hidden in strip malls, beneath flickering neon, an extraordinary ecosystem survives, ending on "This is the American dive bar." The bar sound dips under it. You pick up here on slide 1.
+NARRATION: The recorded narrator plays over the title card before this slide, started from your notes window, and reads the opening: across the American landscape, hidden in strip malls, beneath flickering neon, an extraordinary ecosystem survives, ending on "This is the American dive bar." It plays over a photo of a roadside bar at dusk whose sign flickers on, and the title card fades in on that last line. The bar sound dips under it. You pick up here on slide 1.
 
 VISUAL NOTE: The title card before this slide already names the talk, so this opening shot works like a documentary's first scene. Change the time or field log number to match a real night if you like.</aside>
 </section>
@@ -1002,6 +1016,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
 <div class="notes" id="notes" hidden><h4 id="notesHead">Speaker notes</h4><div id="notesBody"></div></div>
 
 <div class="gate" id="gate" data-voice="snd/intro.mp3">
+  <div class="gate-photo" aria-hidden="true"><div class="frame"><img src="img/p_closing.jpg" alt=""><div class="glow"></div></div></div>
   <div class="gate-grain" aria-hidden="true"></div>
   <div class="card">
     <div class="eyebrow">Field Study · North America · 2026</div>
@@ -1615,7 +1630,7 @@ const Sound = (() => {
     if (m.type === 'soundCmd' && !presenter) {
       if (m.toggle) { if (Sound.started) Sound.setMuted(!Sound.muted); else if (started) toast('Click this screen once to turn the sound on.', 5000); }
       if (typeof m.vol === 'number') { vol.value = m.vol; Sound.setVolume(m.vol); }
-      if (m.voice) { const u = voiceUrl(); if (Sound.speaking) Sound.stopVoice(0.6); else if (u && Sound.started) { Sound.voice(u); if (titleOn && !titleVoiced) { titleVoiced = true; gate.classList.add('play'); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); } } }
+      if (m.voice) { const u = voiceUrl(); if (Sound.speaking) Sound.stopVoice(0.6); else if (u && Sound.started) { Sound.voice(u); if (titleOn && !titleVoiced) { titleVoiced = true; startIntro(!Sound.muted); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); } } }
       sendSound(); render(false); return;
     }
     if (m.type === 'fsCmd' && !presenter) { fullFromPresenter(); return; }
@@ -1655,6 +1670,17 @@ const Sound = (() => {
   // The title card has its own narration. From the title card, Next starts the narration,
   // then the next Next brings up slide 1. The audience window decides; the controller asks it.
   let titleVoiced = false;
+  // The narration opens over a photo. Times are seconds into intro.mp3: the photo fades out after
+  // "...survives" and its last pause, and the title card starts so its name lands on "This is the American dive bar."
+  const INTRO_PHOTO_OUT = 16.6, INTRO_TITLE_IN = 16.9;
+  let introTimers = [];
+  function startIntro(withNarration) {
+    introTimers.forEach(clearTimeout); introTimers = [];
+    if (!withNarration) { gate.classList.add('play'); return; }
+    gate.classList.remove('play'); gate.classList.add('intro');
+    introTimers.push(setTimeout(() => gate.classList.remove('intro'), INTRO_PHOTO_OUT * 1000));
+    introTimers.push(setTimeout(() => gate.classList.add('play'), INTRO_TITLE_IN * 1000));
+  }
   const voiceUrl = () => titleOn ? gate.dataset.voice : slides[i].dataset.voice;
   function presenterTitle() {
     if (editing) { editing = false; pvSay.contentEditable = 'false'; pvSay.classList.remove('editing'); const eb = document.getElementById('pvEdit'); eb.classList.remove('on'); eb.textContent = 'Edit'; }
@@ -1674,14 +1700,14 @@ const Sound = (() => {
   }
   // Start over: back to the title card at slide 1, with the narration ready to play again.
   function restart() {
-    Sound.stopVoice(0.6); titleVoiced = false; gate.classList.remove('play'); voicePlayed.clear(); i = 0; step = 0;
+    Sound.stopVoice(0.6); titleVoiced = false; introTimers.forEach(clearTimeout); introTimers = []; gate.classList.remove('play', 'intro'); voicePlayed.clear(); i = 0; step = 0;
     render(false); titleOn = false; showTitle(true);
   }
   function next() {
     if (titleOn) {
       if (presenter) { ch && ch.postMessage({ type: 'titleNext', from: 'presenter' }); return; }
       if (!started) { sendSound(); gate.classList.add('nudge'); setTimeout(() => gate.classList.remove('nudge'), 1600); return; }
-      if (!titleVoiced) { titleVoiced = true; gate.classList.add('play'); if (Sound.started) Sound.voice(gate.dataset.voice); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); return; }
+      if (!titleVoiced) { titleVoiced = true; const heard = Sound.started && !Sound.muted; if (Sound.started) Sound.voice(gate.dataset.voice); startIntro(heard); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); return; }
       showTitle(false); return;
     }
     const el = slides[i], b = builds(el);
