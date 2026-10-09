@@ -247,6 +247,8 @@ body.on-title .pv-edit { visibility: hidden; }
 @keyframes g-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes g-title { from { opacity: 0; transform: scale(1.07); filter: blur(6px); } 35% { opacity: 1; filter: blur(0); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
 @keyframes g-rule { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+/* The title card waits in the dark until the narration starts, so the room sees it fade in. */
+.gate:not(.play) .card > *, .gate:not(.play)::before { animation: none !important; opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .gate *, .gate::before { animation: none !important; } }
 @media (prefers-reduced-motion: reduce) { .slide, .slide.active, .build, .hud, .gate { transition: none; } }
 </style>
@@ -1429,7 +1431,7 @@ const Sound = (() => {
     if (m.type === 'soundCmd' && !presenter) {
       if (m.toggle) { if (Sound.started) Sound.setMuted(!Sound.muted); else if (started) toast('Click this screen once to turn the sound on.', 5000); }
       if (typeof m.vol === 'number') { vol.value = m.vol; Sound.setVolume(m.vol); }
-      if (m.voice) { const u = voiceUrl(); if (Sound.speaking) Sound.stopVoice(0.6); else if (u && Sound.started) { Sound.voice(u); if (titleOn && !titleVoiced) { titleVoiced = true; ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); } } }
+      if (m.voice) { const u = voiceUrl(); if (Sound.speaking) Sound.stopVoice(0.6); else if (u && Sound.started) { Sound.voice(u); if (titleOn && !titleVoiced) { titleVoiced = true; gate.classList.add('play'); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); } } }
       sendSound(); render(false); return;
     }
     if (m.type === 'fsCmd' && !presenter) { fullFromPresenter(); return; }
@@ -1460,7 +1462,7 @@ const Sound = (() => {
   let titleOn = !presenter && !resumed;
   function showTitle(on) {
     titleOn = on;
-    if (!presenter) { gate.style.transition = ''; gate.classList.toggle('gone', !on); }
+    if (!presenter) { gate.style.transition = ''; gate.classList.toggle('gone', !on); gate.classList.toggle('play', on && titleVoiced); }
     if (ch && !applying) ch.postMessage({ type: 'title', from: presenter ? 'presenter' : 'audience', on });
     if (ch && !applying && !presenter) ch.postMessage({ type: 'title', from: 'audience', on, voiced: titleVoiced });
     if (presenter) { document.body.classList.toggle('on-title', on); if (on) presenterTitle(); else document.getElementById('pvScene').textContent = ''; }
@@ -1488,14 +1490,14 @@ const Sound = (() => {
   }
   // Start over: back to the title card at slide 1, with the narration ready to play again.
   function restart() {
-    Sound.stopVoice(0.6); titleVoiced = false; voicePlayed.clear(); i = 0; step = 0;
+    Sound.stopVoice(0.6); titleVoiced = false; gate.classList.remove('play'); voicePlayed.clear(); i = 0; step = 0;
     render(false); titleOn = false; showTitle(true);
   }
   function next() {
     if (titleOn) {
       if (presenter) { ch && ch.postMessage({ type: 'titleNext', from: 'presenter' }); return; }
       if (!started) { sendSound(); gate.classList.add('nudge'); setTimeout(() => gate.classList.remove('nudge'), 1600); return; }
-      if (!titleVoiced && Sound.started) { titleVoiced = true; Sound.voice(gate.dataset.voice); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); return; }
+      if (!titleVoiced) { titleVoiced = true; gate.classList.add('play'); if (Sound.started) Sound.voice(gate.dataset.voice); ch && ch.postMessage({ type: 'title', from: 'audience', on: true, voiced: true }); return; }
       showTitle(false); return;
     }
     const el = slides[i], b = builds(el);
