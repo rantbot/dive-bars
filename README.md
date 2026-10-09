@@ -4,7 +4,7 @@ A five-minute lightning talk in the style of a prestige nature documentary, abou
 
 ## Presenting
 
-1. Open the site and click anywhere on the dark screen. Your notes window opens and the sound turns on. The title stays hidden until the narration starts, so the room sees it fade in. Click the dark screen once more to go full screen. Shortcut: if you open your notes window first (add #presenter to the end of the site address), a single click on the dark screen turns on sound and goes full screen together. In the notes window, press **Next** once to play the narrator over the title card, and again to bring up slide 1. If your browser blocks it, allow pop-ups for the site and press **P**.
+1. Open the site and click anywhere on the dark screen. Your notes window opens and the sound turns on. The title stays hidden until the narration starts, so the room sees it fade in. The presentation stays in a normal window. To go full screen, press **Full screen** in the notes window or press **F** in the presentation window. In the notes window, press **Next** once to play the narrator over the title card, and again to bring up slide 1. If your browser blocks it, allow pop-ups for the site and press **P**.
 2. In your video call, share only the presentation tab. It shows no controls, just the slides.
 3. Run everything from the notes window: Back and Next, sound on or off, volume and the talk timer. Arrow keys and clickers work in either window, and the two stay in sync.
 
