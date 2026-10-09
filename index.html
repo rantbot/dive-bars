@@ -41,17 +41,18 @@ body.ended #viewport::after { opacity: 1; }
 .slide > :not([style*="position:absolute"]) { position: relative; }
 .build { opacity: 0; transition: opacity 0.8s ease; }
 .build.on { opacity: 1; }
-/* A focus build stays visible and is highlighted on its click, while the others dim. */
-.slide .build.focus { opacity: 1; transition: opacity .45s ease, filter .45s ease; }
-.slide:not([data-step="0"]) .build.focus { opacity: 0.28; filter: grayscale(0.6); }
-.slide[data-step="1"] .build.focus[data-k="1"]{opacity:1;filter:none}
-.slide[data-step="2"] .build.focus[data-k="2"]{opacity:1;filter:none}
-.slide[data-step="3"] .build.focus[data-k="3"]{opacity:1;filter:none}
-.slide[data-step="4"] .build.focus[data-k="4"]{opacity:1;filter:none}
-.slide[data-step="5"] .build.focus[data-k="5"]{opacity:1;filter:none}
-.slide[data-step="6"] .build.focus[data-k="6"]{opacity:1;filter:none}
-.slide[data-step="7"] .build.focus[data-k="7"]{opacity:1;filter:none}
-.slide[data-step="8"] .build.focus[data-k="8"]{opacity:1;filter:none}
+/* Focus cards: every card stays on screen, and the one for the current step is highlighted while the others dim.
+   The first card (data-k="0") is highlighted on arrival, and each click moves to the next. */
+.slide .focus { opacity: 0.28; filter: grayscale(0.6); transition: opacity .45s ease, filter .45s ease; }
+.slide[data-step="0"] .focus[data-k="0"]{opacity:1;filter:none}
+.slide[data-step="1"] .focus[data-k="1"]{opacity:1;filter:none}
+.slide[data-step="2"] .focus[data-k="2"]{opacity:1;filter:none}
+.slide[data-step="3"] .focus[data-k="3"]{opacity:1;filter:none}
+.slide[data-step="4"] .focus[data-k="4"]{opacity:1;filter:none}
+.slide[data-step="5"] .focus[data-k="5"]{opacity:1;filter:none}
+.slide[data-step="6"] .focus[data-k="6"]{opacity:1;filter:none}
+.slide[data-step="7"] .focus[data-k="7"]{opacity:1;filter:none}
+.slide[data-step="8"] .focus[data-k="8"]{opacity:1;filter:none}
 
 
 /* Motion: everything slow, quiet, and off for reduced-motion viewers. */
@@ -160,7 +161,7 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 .pv-where .n { font-size: 13px; color: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
 .pv-where .t { font-family: var(--display); font-size: 26px; color: #E6DECF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pv-notes { position: relative; min-width: 0; min-height: 0; flex: 1; overflow: auto; padding: 0 4px 0 0; scroll-behavior: smooth; }
-.pv-notes .say { font-size: clamp(20px, 1.75vw, 30px); line-height: 1.55; white-space: pre-line; max-width: 34em; color: #F1EADD; }
+.pv-notes .say { font-size: calc(clamp(20px, 1.75vw, 30px) * var(--notes-scale, 1)); line-height: 1.55; white-space: pre-line; max-width: 34em; color: #F1EADD; }
 .pv-notes .say .gap { display: block; height: 0.7em; }
 .pv-notes .say .cue { display: inline-block; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber); border: 1px solid rgba(201,161,90,0.45); border-radius: 999px; padding: 3px 10px; margin: 0 6px 0 0; vertical-align: 0.3em; }
 .pv-notes .say .seg { transition: color .3s ease; }
@@ -208,6 +209,11 @@ body.on-title .pv-edit { visibility: hidden; }
 .pv-edit button:hover { color: var(--ivory); border-color: var(--amber); }
 .pv-edit #pvEdit.on { color: #1a1408; background: var(--amber); border-color: var(--amber); }
 .pv-edit span { font-size: 12px; color: #6B6457; margin-right: 6px; }
+.pv-edit .pv-size { display: inline-flex; gap: 0; margin: 0 6px 0 0; }
+.pv-edit .pv-size button { padding: 5px 10px; min-width: 38px; }
+.pv-edit .pv-size button:first-child { border-radius: 999px 0 0 999px; border-right: none; font-size: 11px; }
+.pv-edit .pv-size button:last-child { border-radius: 0 999px 999px 0; font-size: 14px; }
+.pv-edit .pv-size button:disabled { opacity: 0.35; cursor: default; border-color: #2E2A24; color: #9C9384; }
 .pv-notes .say.editing { outline: 1px dashed rgba(201,161,90,0.6); outline-offset: 8px; white-space: pre-wrap; caret-color: var(--amber); }
 .pv-arm { grid-column: 1 / -1; grid-row: 2; margin-top: 14px; border-radius: 8px; font-family: var(--ui); font-size: 15px; letter-spacing: 0.04em; color: #1a1408; background: #E2B866; padding: 12px 18px; }
 .fs-ask { z-index: 12 !important; }
@@ -558,29 +564,29 @@ AUDIO: In the web presentation, your own biker bar field recording starts on thi
 
 PHOTO DIRECTION: Your photo of the row of bikes outside a desert roadhouse at sunset.</aside>
 </section>
-<section class="slide" id="fauna" data-scene="latenight" data-step-cue="4:woo" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
+<section class="slide" id="fauna" data-scene="latenight" data-step-cue="3:woo" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
 <p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">09</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:56px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Fauna of the American Dive</h2>
 <div style="display:flex;gap:48px">
-<div class="build focus" data-k="1" data-label="The Regular" style="flex:1;display:flex;flex-direction:column;gap:12px">
+<div class="focus" data-k="0" data-label="The Regular" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_regular2.jpg" alt="An older regular in a worn ball cap and denim jacket, alone at the bar with a beer" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Regular</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo regularis</p>
 <p style="font-size:28px;line-height:1.3;color:#A89F8F">Territorial. Same stool, same drink.</p>
 </div>
-<div class="build focus" data-k="2" data-label="The Bartender" style="flex:1;display:flex;flex-direction:column;gap:12px">
+<div class="build focus" data-k="1" data-label="The Bartender" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_bartender2.jpg" alt="A tattooed bartender drying a glass behind a worn bar" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Bartender</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Minister potus</p>
 <p style="font-size:28px;line-height:1.3;color:#A89F8F">Apex species. Controls access to resources.</p>
 </div>
-<div class="build focus" data-k="3" data-label="The Tourist" style="flex:1;display:flex;flex-direction:column;gap:12px">
+<div class="build focus" data-k="2" data-label="The Tourist" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_tourist2.jpg" alt="A traveler holding a paper map, hesitating just inside the door of a desert bar" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Tourist</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo peregrinus</p>
 <p style="font-size:28px;line-height:1.3;color:#A89F8F">Identified by looking around too much.</p>
 </div>
-<div class="build focus" data-k="4" data-label="The Bachelorette Party" style="flex:1;display:flex;flex-direction:column;gap:12px">
+<div class="build focus" data-k="3" data-label="The Bachelorette Party" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_bachelorette2.jpg" alt="A bride-to-be in a veil laughing with a friend in a dive bar booth" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Bachelorette Party</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo celebrans</p>
@@ -591,7 +597,7 @@ PHOTO DIRECTION: Your photo of the row of bikes outside a desert roadhouse at su
 
 Every habitat supports its fauna.
 
-(click) The Regular. Territorial. (click) The Bartender, the apex species, controlling access to all resources. (click) The Tourist, identified by looking around too much.
+The Regular. Territorial. (click) The Bartender, the apex species, controlling access to all resources. (click) The Tourist, identified by looking around too much.
 
 (click) And the Bachelorette Party. Native species are known to retreat until the disturbance has passed.
 
@@ -602,7 +608,7 @@ PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light.
 <p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">The genus beyond the border</p>
 <h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Related Populations</h2>
 <div style="position:absolute;left:288px;top:320px;width:1344px;display:flex;gap:48px">
-<div class="build focus" data-k="1" data-label="The pulquería" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<div class="focus" data-k="0" data-label="The pulquería" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
 <img src="img/p_pulqueria.jpg" alt="A pulquería in Mexico City: regulars sharing glasses of pulque at a metal table, a painted agave on the wall and the day's flavors on a hand-lettered sign" style="width:646px;height:270px;object-fit:cover;margin:-36px -36px 10px -36px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Mexico</p>
 <p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Pulquería</p>
@@ -610,7 +616,7 @@ PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light.
 <p style="font-size:30px;line-height:1.35;color:#D9D1C1">Serves pulque, the fermented agave drink the Aztecs held sacred.</p>
 <p style="font-size:30px;line-height:1.35;color:#A89F8F">Mexico City once counted about 1,100. By 2000, about 80 remained.</p>
 </div>
-<div class="build focus" data-k="2" data-label="The boteco" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<div class="build focus" data-k="1" data-label="The boteco" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
 <img src="img/p_boteco.jpg" alt="A boteco in Rio at dusk: friends at yellow plastic tables with beer bottles in koozies and fried snacks, the barman laughing behind the counter" style="width:646px;height:270px;object-fit:cover;margin:-36px -36px 10px -36px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Brazil</p>
 <p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Boteco</p>
@@ -623,7 +629,7 @@ PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light.
 
 The genus doesn't stop at the United States border.
 
-(click) In Mexico, the pulquería, serving the fermented agave drink the Aztecs held sacred long before the invention of tequila and mezcal. Mexico City once counted about 1,100 pulquerías. Until beer companies and the government, spent decades disparaging pulque as unclean and a poor man’s drink. Today, approximately 80 pulquerías remain.
+In Mexico, the pulquería, serving the fermented agave drink the Aztecs held sacred long before the invention of tequila and mezcal. Mexico City once counted about 1,100 pulquerías. Until beer companies and the government, spent decades disparaging pulque as unclean and a poor man’s drink. Today, approximately 80 pulquerías remain.
 
 (click) In Brazil, the boteco, where bars in 25 cities compete every year in the Comida di Buteco, to name Brazil's best snack and coldest beer.
 
@@ -673,7 +679,7 @@ SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana P
 </div>
 <aside>[4:28 to 4:41 · about 35 words]
 
-In your explorations, beware the False Dive. Its camouflage can be quickly identified by its Edison bulbs, its custom neon signs with clever phrases. And of course, a signature $17 cocktail.
+In your explorations, beware the False Dive. Its camouflage can be quickly identified by Edison bulbs, custom neon signs with clever phrases. And of course, a signature $17 cocktail.
 
 While attempts have been made to breed the dive bar in captivity, they have largely failed.
 
@@ -721,7 +727,7 @@ If your curiosity takes over and you decide to explore a dive bar for yourself, 
 
 (click) Watch how seriously they play pool. Mimic accordingly.
 
-(click) The restroom is for number one. Number two means it's time to go home.
+(click) The restroom is only for number one. Number two means it's time to go home.
 
 (beat)
 
@@ -750,7 +756,9 @@ No one has ever counted all of America's dive bars, while many have tried. But t
 
 You can open a bar tomorrow. But you cannot open a seventy-year-old bar tomorrow.
 
-Do you see that stool over there? That's Gary's seat. It took him decades.
+(wait a beat)
+
+Do you see that stool over there? That's Gary's seat. It took him decades to earn it.
 
 PHOTO DIRECTION: Your photo of Gary's seat, the thing you cannot open tomorrow.
 
@@ -822,7 +830,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
   </section>
   <section class="pv-right">
     <div class="pv-head"><div class="pv-where"><span class="n" id="pvSlideN">01</span><span class="t" id="pvSlideT"></span></div>
-      <div class="pv-edit" id="pvEditBar"><span id="pvEditNote"></span><button type="button" id="pvEditReset" hidden>Undo edits</button><button type="button" id="pvEditCopy" hidden>Copy edits</button><button type="button" id="pvEdit">Edit</button></div></div>
+      <div class="pv-edit" id="pvEditBar"><span id="pvEditNote"></span><button type="button" id="pvEditReset" hidden>Undo edits</button><button type="button" id="pvEditCopy" hidden>Copy edits</button><span class="pv-size" role="group" aria-label="Notes text size"><button type="button" id="pvSmaller" aria-label="Smaller notes text" title="Smaller text">A−</button><button type="button" id="pvBigger" aria-label="Larger notes text" title="Larger text">A+</button></span><button type="button" id="pvEdit">Edit</button></div></div>
     <div class="pv-notes"><div class="timing" id="pvTiming" hidden></div><div class="say" id="pvSay"></div><details id="pvMore" hidden><summary>Notes</summary><div id="pvMoreBody"></div></details><div class="pv-more" id="pvFold"><button type="button" id="pvFoldBtn">More below ↓</button></div></div>
   </section>
   <footer class="pv-nav">
@@ -1221,7 +1229,7 @@ const Sound = (() => {
     const list = [];
     const isGroup = d => d.tagName === 'DIV' && !d.classList.contains('build') && (d.querySelector(':scope > h2, :scope > hr') || ([...d.children].length > 1 && [...d.children].every(c => c.tagName === 'DIV')));
     const walk = node => [...node.children].forEach(c => {
-      if (c.matches('aside, img, .kb, .fx, .build, .dot')) return;
+      if (c.matches('aside, img, .kb, .fx, .build, .focus, .dot')) return;
       if (c.tagName === 'HR') { list.push(c); return; }
       if (!c.textContent.trim()) return;
       if (isGroup(c)) walk(c); else list.push(c);
@@ -1252,7 +1260,7 @@ const Sound = (() => {
   }
 
   const builds = el => [...el.querySelectorAll('.build')]; let leaveT = null;
-  // A sound for a click: data-build-cue plays on every click, data-step-cue="4:woo" on that click only.
+  // A sound for a click: data-build-cue plays on every click, data-step-cue="3:woo" on that click only.
   const stepCue = (el, n) => { if (n > builds(el).length) return null; const m = (el.dataset.stepCue || '').match(/^(\d+):(\w+)$/); return m && +m[1] === n ? m[2] : el.dataset.buildCue; };
   // A short name for what a click reveals: data-label, the organ's label on the anatomy plate, or the opening words.
   function buildLabel(el, k) {
@@ -1623,6 +1631,18 @@ const Sound = (() => {
       else { pvSay.contentEditable = 'false'; eb.blur(); redraw(); }
     });
     pvSay.addEventListener('input', () => { if (!editing) return; const v = pvSay.innerText.replace(/\n{3,}/g, '\n\n'); const orig = script(original()); setEdit(slides[i].id, v.trim() === orig.trim() ? null : v); document.getElementById('pvEditNote').textContent = 'Saved in this browser'; });
+    // Notes text size, remembered in this browser. A− and A+ step it down and up.
+    const SIZES = [0.7, 0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75, 2];
+    let sizeK = 3; try { const v = +localStorage.getItem('dive-bar-notes-size'); if (SIZES.includes(v)) sizeK = SIZES.indexOf(v); } catch (e) {}
+    const applySize = () => {
+      document.documentElement.style.setProperty('--notes-scale', SIZES[sizeK]);
+      document.getElementById('pvSmaller').disabled = sizeK === 0; document.getElementById('pvBigger').disabled = sizeK === SIZES.length - 1;
+      try { localStorage.setItem('dive-bar-notes-size', SIZES[sizeK]); } catch (e) {}
+      requestAnimationFrame(updateFold);
+    };
+    document.getElementById('pvSmaller').addEventListener('click', e => { e.currentTarget.blur(); if (sizeK > 0) { sizeK--; applySize(); } });
+    document.getElementById('pvBigger').addEventListener('click', e => { e.currentTarget.blur(); if (sizeK < SIZES.length - 1) { sizeK++; applySize(); } });
+    applySize();
     document.getElementById('pvEditReset').addEventListener('click', e => { e.currentTarget.blur(); setEdit(slides[i].id, null); redraw(); });
     document.getElementById('pvEditCopy').addEventListener('click', e => {
       e.currentTarget.blur();
