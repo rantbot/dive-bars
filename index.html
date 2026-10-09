@@ -61,7 +61,7 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
 .fx.breathe { animation: breathe 3.8s ease-in-out infinite; }
 @keyframes breathe { 0%, 100% { opacity: 0.55; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.12); } }
 .neon-sign { pointer-events: none; opacity: 0; }
-.slide.active .neon-sign, .slide.leaving .neon-sign { animation: neon-wake 2.6s linear 10s both; }
+.slide.active[data-step="1"] .neon-sign { animation: neon-wake 2.6s linear 0.05s both; }
 @keyframes neon-wake { 0% { opacity: 0; } 8% { opacity: 0.75; } 11% { opacity: 0; } 30% { opacity: 0; } 33% { opacity: 0.9; } 36% { opacity: 0.1; } 41% { opacity: 1; } 45% { opacity: 0.25; } 52% { opacity: 1; } 100% { opacity: 1; } }
 .neon-tube { filter: drop-shadow(0 0 2px rgba(255,90,60,0.95)) drop-shadow(0 0 9px rgba(255,60,30,0.75)) drop-shadow(0 0 22px rgba(255,50,20,0.45)); animation: tube 6.4s linear infinite; }
 .neon-halo { animation: tube 6.4s linear infinite; }
@@ -152,6 +152,16 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 .pv-notes .say .cue.reveal { font-family: var(--ui); min-width: 30px; text-align: center; cursor: pointer; background: rgba(201,161,90,0.14); color: #F1EADD; border-color: var(--amber); padding: 5px 12px; }
 .pv-notes .say .cue.reveal:hover { background: rgba(201,161,90,0.28); }
 .pv-notes .say .cue.reveal:disabled { cursor: default; background: transparent; color: #6B6457; border-color: #2E2A24; }
+.pv-notes .say .seg { transition: color .3s ease, opacity .3s ease; }
+.pv-notes .say .seg.said { color: #6B6457; }
+.pv-notes .say .seg.later { opacity: 0.55; }
+.pv-notes .say .seg.now { color: #FFFFFF; background: rgba(201,161,90,0.09); box-shadow: 0 0 0 4px rgba(201,161,90,0.09); border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.pv-notes .say .cue.reveal.next { font-size: 15px; letter-spacing: 0.1em; background: var(--amber); color: #13110E; border-color: var(--amber); padding: 6px 14px; margin: 0 8px; box-shadow: 0 0 0 4px rgba(201,161,90,0.25); animation: cue-pulse 1.6s ease-in-out infinite; }
+.pv-notes .say .cue.reveal.next:hover { background: #E2BC75; }
+.pv-notes .say .cue.reveal.done { color: #8A8274; border-color: #3A352D; background: transparent; }
+.pv-notes .say .cue.reveal.later { color: #8A8274; border-color: #3A352D; background: transparent; }
+@keyframes cue-pulse { 50% { box-shadow: 0 0 0 9px rgba(201,161,90,0.08); } }
+@media (prefers-reduced-motion: reduce) { .pv-notes .say .cue.reveal.next { animation: none; } }
 .pv-more { position: sticky; bottom: 0; height: 90px; margin-top: -40px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; pointer-events: none;
   background: linear-gradient(180deg, rgba(11,10,9,0) 0%, rgba(11,10,9,0.94) 60%, #0B0A09 100%); transition: opacity .25s; }
 .pv-more button { pointer-events: auto; font-family: var(--ui); font-size: 12px; letter-spacing: 0.08em; color: #E6DECF; background: #1A1815; border: 1px solid #3A352D; border-radius: 999px; padding: 7px 16px; cursor: pointer; }
@@ -254,7 +264,7 @@ body.on-title .pv-edit { visibility: hidden; }
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:5px;text-transform:uppercase;color:#A89F8F">Corner bar · 9:47 PM · Field log 001</p>
 <aside>[0:20 to 0:29 · about 25 words]
 
-Since the late 1900s, I have conducted field research into this fragile habitat. Most of it at night. Much of it involving beer.
+Since the late 1900s, I've conducted extensive field research into this fragile habitat. Most of it at night. All of it involving beer.
 
 NARRATION: The recorded narrator plays over the title card before this slide, started from your notes window, and reads the opening: across the American landscape, hidden in strip malls, beneath flickering neon, an extraordinary ecosystem survives, ending on "This is the American dive bar." The bar sound dips under it. You pick up here on slide 1.
 
@@ -334,15 +344,15 @@ VISUAL NOTE: The title card before this slide already names the talk, so this op
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#C9A15A;width:520px">65 sites · survey ongoing</p>
 <aside>[0:29 to 0:43 · about 35 words]
 
-Sixty-five documented research sites, from Vancouver to Guayaquil, but the survey continues.
+Sixty-five documented research sites, from Vancouver to Guayaquil, spanning both American continents, yet the survey continues to this day.
 
-The federal government counts drinking places. However, it has no category for a dive. Diveus americanus remains today, officially, unrecognized by science.
+The US government counts drinking places. However, it has no category for a dive. Diveus americanus remains today, unrecognized by science.
 
 TO DO: The dots mark 65 cities you named: Seattle, Vancouver, Portland, Ontario (placed at Toronto), Montreal, New York, Atlantic City, Las Vegas, Fort Lauderdale, Tampa, Marathon, Islamorada, Miami, Austin, Cincinnati, Cleveland, Detroit, Great Falls, Boise, Victor, Redondo Beach, San Francisco, Louisville, Beckley, Huntington, Denver, Colorado Springs, Madison, Mineral Point, Los Angeles, Mexico City, Mérida, Cancún, Guayaquil, Cabo San Lucas, Portland (Maine), Jackson (Montana), Dubuque, Pittsburgh, Nashville, Memphis, Wilmington (North Carolina), North Myrtle Beach, Tallahassee, Washington D.C., Boston, Providence, Philadelphia, Biloxi, Phoenix, Tucson, Tombstone, San Diego, Riverside, Tijuana, Rosarito, Ensenada, Portsmouth (Ohio), Ashland (Kentucky), Quito, Dayton, New Orleans, Albany, Syracuse and Nassau (Bahamas). Each dot is its own shape, so add more as the survey continues.
 
 SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Beverages)," has no dive-bar subcategory. Earliest noun use of "dive" for a disreputable establishment, National Police Gazette, Jan. 12, 1867 (via Barry Popik). OED defines the U.S. sense as a drinking den "often situated in a cellar, basement, or other half-concealed place." The basement origin is likely, not certain, which is why the narration says "possibly."</aside>
 </section>
-<section class="slide" id="anatomy" data-scene="quiet" data-cue="neon" data-cue-delay="10000" style="background:#E8DFCC;color:#2A2119;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<section class="slide" id="anatomy" data-scene="quiet" style="background:#E8DFCC;color:#2A2119;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <img src="img/plate_base.jpg" alt="Engraved anatomical illustration of a dive bar interior in lateral section, with numbered leader lines pointing to its neon sign, lamp, bottles, stools, clock, mounted fish, photo wall and jukebox" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
 <div class="build spot" data-k="1" style="position:absolute;left:709px;top:273px;width:170px;height:140px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
 <div class="build spot" data-k="2" style="position:absolute;left:477px;top:345px;width:230px;height:250px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
@@ -378,17 +388,15 @@ SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Bever
 
 Let us examine a specimen up close. Every healthy dive shares eight organs.
 
-(click) Old neon. (click) Light low enough to forgive you and what you've seen. (click) Beer at exactly one temperature. (click) A stool that belongs to someone, even when they're not on it.
+(click) An old neon sign. (click) Light dim enough to forgive you and what you might've seen. (click) Beer at exactly one temperature. (click) A stool that belongs to someone, even when they're not sitting on it.
 
-(click) The brewery clock. After Prohibition, Congress barred brewers from giving bar owners anything of value...unless it carried the brewer's name. A free clock is a bribe. A free clock with a beer's name on it is marketing.
+(click) The beer clock. After Prohibition, Congress barred brewers from giving bar owners anything of value...unless it carried the brewer's name on it. A free clock would be a bribe. A free clock with a beer's name on it...is marketing.
 
-Then hanging on the wall, there is (click) the thing nobody can explain, alongside it, (click) objects left behind as gifts from patrons, and of course, (click) a jukebox with opinions.
-
-(read the law slowly)
+Then hanging on the wall, there is also (click) the thing nobody can explain, (click) there are personal objects left behind as gifts from patrons, and of course, (click) an analog jukebox to create the unique soundtrack found only in this dive.
 
 A real dive is not decorated. It accumulates.
 
-VISUAL NOTE: This plate is an original engraving-style illustration in the manner of a 19th-century anatomy atlas. The neon sign is drawn in ink and flickers on about ten seconds after you arrive. The leader lines are part of the image. All eight labels show from the start. Each click circles the next organ on the plate and brings its label forward, 1 to 8.
+VISUAL NOTE: This plate is an original engraving-style illustration in the manner of a 19th-century anatomy atlas. The neon sign is drawn in ink. It stays dark until the first click, flickers on while it is circled, and goes dark again when you move to the next organ. The leader lines are part of the image. All eight labels show from the start. Each click circles the next organ on the plate and brings its label forward, 1 to 8.
 
 SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars" and "brewery-branded mirrors and hardware" (Whiting-Robertsdale Historical Society, "The Tied House System That Left Its Mark on Whiting"). Federal Alcohol Administration Act of 1935, section 205(b) (27 U.S.C. 205): suppliers may not induce retailers with things of value (the "tied house" provision). Brewers Association, "Tied House Laws": temperance campaigners used "tied house" against brewer-controlled saloons, which helped bring Prohibition; federal rules bar suppliers from giving retailers cash, equipment or other goods, with exceptions for advertising materials. 27 CFR 6.102: outside signs must carry conspicuous advertising and cost no more than $400. 27 CFR 6.83: product displays are limited to $300 per brand at a time in one retail establishment. 27 CFR 6.84 lets industry members give retailers point-of-sale materials such as "inside signs," "back bar mats," "clocks, calendars" and menus, provided they carry conspicuous advertising. The Law of Accumulation and the Latin anatomy terms are our own invention, presented as such.</aside>
 </section>
@@ -413,17 +421,15 @@ SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars"
 <p style="position:absolute;left:310px;top:884px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;text-align:center;color:#A89F8F">Zora Neale Hurston, on the juke joint’s place in American music</p>
 <aside>[1:29 to 2:05 · about 90 words]
 
-Every species has ancestors.
+Every known species has ancestors.
 
-(slow down here)
+For the dive bar, it may be the juke joint. In the Jim Crow South, Black workers were shut out of white establishments, so they built their own. An unassuming shack at a crossroads. Music, food, and dancing after a long week.
 
-The juke joint. In the Jim Crow South, Black workers were shut out of white establishments, so they built their own. A shack at a crossroads. Music, food and dancing at the end of a long week.
-
-Some historians call it the first private space Black Americans had in this country. The blues grew up there. When record machines came to bars, they took its name. The jukebox.
+Some historians call this the first private space Black Americans had in this country. The blues grew up there. When record machines came to bars, they took its name. The jukebox.
 
 (pause)
 
-Out west, the honky-tonk was born. Country music went electric partly so it could be heard over the noise.
+Out west, the honky-tonk was born. Country music is said to have gone electric partly so it could be heard over the rowdy noise.
 
 TONE NOTE: Play the juke joint straight. This is the one moment in the talk where the history carries more weight than the joke.
 
@@ -449,9 +455,9 @@ SOURCES: Wikipedia, "Juke joint": juke joints were primarily operated by African
 </div>
 <aside>[2:05 to 2:20 · about 35 words]
 
-Our research has identified three living species.
+Our research has identified three remaining species today.
 
-The most widespread is the Neighborhood Dive. Its defining trait is community. The bartender starts pouring before you order. Some regulars have been observed changing the music. Others, the keg.
+The most widespread is the Neighborhood Dive. Its defining trait is community. The bartender may even start pouring before your order is complete. Some regulars have been observed changing the music. Others, the keg.
 
 PHOTO DIRECTION: Your photo of a neighborhood bar on a snowy afternoon.</aside>
 </section>
@@ -473,7 +479,7 @@ PHOTO DIRECTION: Your photo of a neighborhood bar on a snowy afternoon.</aside>
 </div>
 <aside>[2:20 to 2:45 · about 60 words]
 
-Here is the Neighborhood Dive in its oldest form. McSorley's Old Ale House, New York. It claims 1854.
+Here is the Neighborhood Dive in its oldest form. McSorley's Old Ale House in New York's East Village. It claims a birth in 1854 and historic patrons, Abraham Lincoln, Ulysses S. Grant, Teddy Roosevelt, and William Jefferson Clinton.
 
 It served men only until 1970, when two lawyers sued and won.
 
@@ -503,11 +509,11 @@ SOURCES: Wikipedia, "McSorley's Old Ale House": claimed founding 1854, evidence 
 </div>
 <aside>[2:45 to 3:12 · about 65 words]
 
-The Destination Dive. Found on coastlines, back roads and at the ends of things.
+The Destination Dive. Found on back roads, coastlines, and generally, at the ends of things.
 
-This is Jimbo's Place, on Virginia Key in Miami. When I was there decades ago, there was no bartender, only a caretaker who occasionally surfaced to restore the habitat. You paid through a slot in a lockbox and pulled your own beer from the cooler.
+This is Jimbo's Place, tucked behind a water treatment plant on Virginia Key in Miami. When I first explored Jimbo's over two decades ago, they kept no bartender, only a caretaker who occasionally surfaced to restore the habitat, and an old fisherman grilling fresh oysters for guests over a burning barrel. You paid in cash through a slot in a lockbox and pulled your own beer from the cooler.
 
-That's not a business model. That's a community.
+That's not a business. That's a community.
 
 FOLKLORE FLAG: The Jimbo's honor-system lockbox is your own eyewitness memory; news coverage doesn't describe how payment worked, so it's told as your field note.
 
@@ -578,7 +584,7 @@ Every habitat supports its fauna.
 
 The Regular. Territorial. The Bartender, the apex species, controlling access to all resources. The Tourist, identified by looking around too much.
 
-And the Bachelorette Party. Native species retreat until the disturbance has passed.
+And the Bachelorette Party. Native species are known to retreat until the disturbance has passed.
 
 PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light. Real people need their permission. Silhouettes, hands on a bar, or a back-of-head shot also work and keep everyone anonymous. All four are your photos.</aside>
 </section>
@@ -608,9 +614,9 @@ PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light.
 
 The genus doesn't stop at the United States border.
 
-In Mexico, the pulquería, serving the fermented agave drink the Aztecs held sacred. Mexico City once counted about 1,100. Then beer companies, and the government, spent decades selling pulque as a poor man’s drink. By 2000, about 80 remained.
+In Mexico, the pulquería, serving the fermented agave drink the Aztecs held sacred long before the invention of tequila and mezcal. Mexico City once counted about 1,100 pulquerías. Until beer companies and the government, spent decades disparaging pulque as unclean and a poor man’s drink. Today, approximately 80 pulquerías remain.
 
-In Brazil, the boteco, where bars in 25 cities compete every year over the best snack and the coldest beer.
+In Brazil, the boteco, where bars in 25 cities compete every year in the Comida di Buteco, to name Brazil's the best snack and the coldest beer.
 
 SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritual role; pulquerías "once estimated at 1,100" (the estimate is undated), about 80 by the start of the 21st century; decline tied to a decades-long campaign by beer companies and the government depicting pulque as "a crass, poor man's drink"; the stigma lasted into the 1990s. Rio de Janeiro by Cariocas: botecos began in 19th-century Rio with Portuguese port warehouses; Comida di Buteco, created in 1999 in Belo Horizonte, now has botecos in 25 cities competing, judged on snack, service, hygiene and drink temperature.</aside>
 </section>
@@ -631,9 +637,9 @@ SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritua
 
 The sociologist Ray Oldenburg called these third places. Home is the first. Work is the second.
 
-In a national survey, Americans with a regular spot were far more likely to talk with someone they don't know well. Forty-eight percent.
+In a national survey, Americans who identified with a regular spot were far more likely to talk with someone they don't know well. Forty-eight percent.
 
-(click) Versus twenty-eight percent with no regular place at all.
+(click) Versus only twenty-eight percent for those with no regular place at all.
 
 BUILD: The 28% fades in on click.
 
@@ -658,9 +664,9 @@ SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana P
 </div>
 <aside>[4:28 to 4:41 · about 35 words]
 
-Beware the False Dive. It can be quickly identified by its Edison bulbs, its custom neon. And of course, a seventeen-dollar cocktail.
+In your explorations, beware the False Dive. It can be quickly identified by its Edison bulbs, its custom neon signs with clever sayings. And of course, a signature $17 cocktail.
 
-Attempts to breed the dive bar in captivity have largely failed.
+While attempts have been made to breed the dive bar in captivity, they have largely failed.
 
 PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs, a coupe glass, subway tile, merch for sale by the door. Shoot it beautifully. The joke lands better if it looks good. Avoid showing a recognizable venue's name or logo. The current image is your martini-under-Edison-bulbs shot.</aside>
 </section>
@@ -696,11 +702,11 @@ Did this accumulate? Or was it purchased?
 </div>
 <aside>[4:47 to 5:22 · about 90 words]
 
-If you become curious at some stage in your life and decide to observe one yourself, here are a few protocols.
+If your curiosity takes over and you decide to observe a dive bar for yourself, here are a few protocols to observe.
 
-(click) Arrive with four people or fewer.
+(click) Arrive with no more than three other people.
 
-(click) A beer, a shot, or a drink with two ingredients. Never a fancy cocktail.
+(click) A beer, a shot, or a drink with two ingredients. Never order a fancy cocktail.
 
 (click) Read the room before you touch the jukebox.
 
@@ -710,7 +716,7 @@ If you become curious at some stage in your life and decide to observe one yours
 
 (beat)
 
-(click) And finally, always bring cash. If they don't take cards, be delighted. They are trying to survive.
+(click) And finally, always bring cash. If they don't take cards, be delighted. You have just encountered one of the last remaining American dive bars.
 
 VISUAL NOTE: These are your own field rules, presented as the researcher's opinion. Nothing here needs a source.</aside>
 </section>
@@ -731,11 +737,11 @@ VISUAL NOTE: These are your own field rules, presented as the researcher's opini
 </div>
 <aside>[5:22 to 5:40 · about 45 words]
 
-No one has ever counted America's dive bars. But the pressures are real. Rising rents. Redevelopment. Fewer drinkers.
+No one has ever counted all of America's dive bars, while many have tried. But the pressures today are real. Rising rents. Redevelopment. Fewer drinkers.
 
 You can open a bar tomorrow. But you cannot open a seventy-year-old bar tomorrow.
 
-Do you see that stool over there? That's Gary's seat. It took decades.
+Do you see that stool over there? That's Gary's seat. It took him decades.
 
 PHOTO DIRECTION: Your photo of Gary's seat, the thing you cannot open tomorrow.
 
@@ -756,7 +762,7 @@ SOURCES: Gallup, 2025 Consumption Habits survey, 54% of U.S. adults say they dri
 
 A great dive bar isn't designed. It evolves.
 
-So if you find one in the wild, approach respectfully. Order something simple.
+So if you find one in the wild, approach it respectfully. Order something simple.
 
 And whatever you do...
 
@@ -836,6 +842,8 @@ const Sound = (() => {
   let ctx = null, master = null, amb = null, verb = null, noise = {}, recs = {}, voices = {}, voiceSrc = null, voiceGain = null;
   let current = null, currentKey = null, volume = 0.7, muted = false;
   const R = (a, b) => a + Math.random() * (b - a);
+  // Mix levels. The room sits well under the talk, and drops further while the narrator speaks.
+  const AMB = 0.3, AMB_UNDER_VOICE = 0.07, VOICE = 1.7;
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
 
@@ -869,10 +877,10 @@ const Sound = (() => {
   function init() {
     if (ctx) { ctx.resume(); return; }
     ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 3; comp.knee.value = 12;
+    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -8; comp.ratio.value = 12; comp.knee.value = 4; comp.attack.value = 0.003; comp.release.value = 0.25;
     master = ctx.createGain(); master.gain.value = muted ? 0 : volume;
     master.connect(comp); comp.connect(ctx.destination);
-    amb = ctx.createGain(); amb.gain.value = 1; amb.connect(master);
+    amb = ctx.createGain(); amb.gain.value = AMB; amb.connect(master);
     verb = ctx.createConvolver(); verb.buffer = makeIR(2.2, 3.2);
     const vg = ctx.createGain(); vg.gain.value = 0.5; verb.connect(vg); vg.connect(amb);
     noise = { white: makeNoise('white'), pink: makeNoise('pink'), brown: makeNoise('brown') };
@@ -1095,7 +1103,7 @@ const Sound = (() => {
       [0, 0.26, 0.33, 0.86, 0.94, 1.05, 1.3].forEach(dt => burst(s, t + dt, 'white', 'highpass', 3000, 0.7, 0.001, 0.22, 0.02, s.dry));
       const o = ctx.createOscillator(), g = ctx.createGain(), f = s.filter('lowpass', 900); o.type = 'sawtooth'; o.frequency.value = 120;
       g.gain.setValueAtTime(0.0001, t); g.gain.setValueAtTime(0.03, t + 0.26); g.gain.setValueAtTime(0.0001, t + 0.34); g.gain.setValueAtTime(0.04, t + 1.3);
-      g.gain.exponentialRampToValueAtTime(0.012, t + 4); o.connect(f); f.connect(g); g.connect(s.dry); o.start(t); s.track(o);
+      g.gain.exponentialRampToValueAtTime(0.012, t + 4); o.connect(f); f.connect(g); g.connect(s.dry); o.start(t); s.track(o); return g;
     },
     door(s) { // the door swings shut
       const t = ctx.currentTime + 0.05;
@@ -1136,23 +1144,30 @@ const Sound = (() => {
     if (!voiceSrc) return; const t = ctx.currentTime, src = voiceSrc, g = voiceGain; voiceSrc = null;
     g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0, t + secs);
     setTimeout(() => { try { src.stop(); } catch (e) {} }, secs * 1000 + 100);
-    amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(1, t, 0.6);
+    amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(AMB, t, 0.6);
   }
   function voice(url, onEnd) {
     if (!ctx) return; stopVoice(0.3);
     loadVoice(url).then(buf => {
       if (!buf) return;
       const t = ctx.currentTime + 0.05, src = ctx.createBufferSource(), g = ctx.createGain();
-      src.buffer = buf; g.gain.value = 1.15; src.connect(g); g.connect(master); src.start(t);
+      src.buffer = buf; g.gain.value = VOICE; src.connect(g); g.connect(master); src.start(t);
       voiceSrc = src; voiceGain = g;
-      amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(0.32, t, 0.4);
-      src.onended = () => { if (voiceSrc === src) { voiceSrc = null; amb.gain.setTargetAtTime(1, ctx.currentTime, 0.9); } onEnd && onEnd(); };
+      amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(AMB_UNDER_VOICE, t, 0.4);
+      src.onended = () => { if (voiceSrc === src) { voiceSrc = null; amb.gain.setTargetAtTime(AMB, ctx.currentTime, 0.9); } onEnd && onEnd(); };
     });
   }
   function cue(name) { if (ctx && current && CUES[name]) CUES[name](current); }
+  let neonLit = null, neonScene = null;
+  function neon(on) {
+    if (!ctx || !current) return;
+    if (neonScene !== current) { neonLit = null; neonScene = current; }
+    if (on && !neonLit) neonLit = CUES.neon(current);
+    else if (!on && neonLit) { const t = ctx.currentTime; neonLit.gain.cancelScheduledValues(t); neonLit.gain.setTargetAtTime(0.0001, t, 0.06); neonLit = null; }
+  }
   function setVolume(v) { volume = v; if (master) master.gain.setTargetAtTime(muted ? 0 : v, ctx.currentTime, 0.1); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : volume, ctx.currentTime, 0.1); }
-  return { init, setScene, cue, voice, stopVoice, loadVoice, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
+  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
 })();
 
 </script>
@@ -1228,6 +1243,16 @@ const Sound = (() => {
   }
 
   const builds = el => [...el.querySelectorAll('.build')]; let leaveT = null;
+  // A short name for what a click reveals: data-label, the organ's label on the anatomy plate, or the opening words.
+  function buildLabel(el, k) {
+    const b = builds(el)[k]; if (!b) return '';
+    if (b.dataset.label) return b.dataset.label;
+    const lab = b.dataset.k && el.querySelector('.lab[data-k="' + b.dataset.k + '"]');
+    if (lab) { const ps = lab.querySelectorAll('p'); return ps[ps.length - 1].textContent.trim(); }
+    const t = b.textContent.replace(/\s+/g, ' ').trim().replace(/^\d+\s*/, '');
+    const first = t.split(/(?<=[.!?])\s/)[0], w = first.split(' ');
+    return w.length > 5 ? w.slice(0, 5).join(' ') + '…' : first.replace(/[.]$/, '');
+  }
   function render(cue = true) {
     const was = slides.find(x => x.classList.contains('active'));
     if (was && was !== slides[i]) {
@@ -1251,6 +1276,7 @@ const Sound = (() => {
           setTimeout(() => { if (slides[i] === el && !titleOn) Sound.voice(el.dataset.voice); }, +(el.dataset.voiceDelay || 800));
         } else if (!el.dataset.voice) Sound.stopVoice();
       }
+      Sound.neon(step === 1 && !!el.querySelector('.neon-sign'));
       if (cue && step === 0 && el.dataset.cue) setTimeout(() => { if (slides[i] === el) Sound.cue(el.dataset.cue); }, +(el.dataset.cueDelay || 1400));
     }
     slides.forEach((s2, k) => s2.querySelectorAll('video').forEach(v => {
@@ -1305,27 +1331,37 @@ const Sound = (() => {
     if (editing) { pvSay.textContent = say; return; }
     pvTiming.textContent = ''; pvTiming.hidden = true;
     pvSay.innerHTML = '';
-    let clickN = 0;
+    // The script is cut into stretches at each (click). The stretch to say now is lit,
+    // what's done is dimmed, and the next click is one bright button naming what it reveals.
+    let clickN = 0, seg = null;
+    const nb = builds(slides[i]).length, staged = nb > 0;
+    const newSeg = k => { seg = document.createElement('span'); seg.className = 'seg' + (staged ? (k < step ? ' said' : k === step ? ' now' : ' later') : ''); pvSay.appendChild(seg); };
+    newSeg(0);
     say.split(/(\([^)]*\))/).forEach(part => {
       if (/^\(.*\)$/.test(part)) {
-        const t = part.slice(1, -1), ci = clickN, pending = builds(slides[i]).length > step && step <= ci;
-        if (/^click$/i.test(t.trim())) {
+        const t = part.slice(1, -1), m = t.trim().match(/^click\b\s*:?\s*(.*)$/i);
+        if (m) {
           // The reveal lives here, on the controller: a button in the script itself.
-          const c = document.createElement('button'); c.type = 'button'; c.className = 'cue reveal'; const nb = builds(slides[i]).length; c.textContent = nb > 1 ? String(ci + 1) : (step > ci ? 'Revealed' : 'Reveal'); c.title = 'Click to reveal'; clickN++;
-          c.disabled = !pending || step !== ci; c.addEventListener('click', e => { e.currentTarget.blur(); next(); }); pvSay.appendChild(c);
-        } else { const c = document.createElement('span'); c.className = 'cue'; c.textContent = t; pvSay.appendChild(c); }
+          const ci = clickN++, name = m[1] || buildLabel(slides[i], ci), c = document.createElement('button'); c.type = 'button';
+          const state = ci < step ? 'done' : ci === step ? 'next' : 'later';
+          c.className = 'cue reveal ' + state; c.title = 'Click to reveal';
+          c.textContent = state === 'done' ? '✓ ' + name : state === 'next' ? 'Click ▸ ' + name : (nb > 1 ? (ci + 1) + ' · ' : '') + name;
+          c.disabled = state !== 'next'; c.addEventListener('click', e => { e.currentTarget.blur(); next(); }); seg.appendChild(c);
+          newSeg(clickN);
+        } else { const c = document.createElement('span'); c.className = 'cue'; c.textContent = t; seg.appendChild(c); }
       }
-      else if (part) part.split(/\n{2,}/).forEach((seg, k) => { if (k) { const g = document.createElement('span'); g.className = 'gap'; pvSay.appendChild(g); } if (seg) pvSay.appendChild(document.createTextNode(seg.replace(/^\n+|\n+$/g, ''))); });
+      else if (part) part.split(/\n{2,}/).forEach((tx, k) => { if (k) { const g = document.createElement('span'); g.className = 'gap'; seg.appendChild(g); } if (tx) seg.appendChild(document.createTextNode(tx.replace(/^\n+|\n+$/g, ''))); });
     });
     document.getElementById('pvMore').hidden = true;
     document.getElementById('pvVoice').hidden = !slides[i].dataset.voice;
     if (lastPvI !== i) { pvNotesEl.style.scrollBehavior = 'auto'; pvNotesEl.scrollTop = 0; pvNotesEl.style.scrollBehavior = ''; lastPvI = i; }
+    else if (staged) { const now = pvSay.querySelector('.seg.now'); if (now) now.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
     requestAnimationFrame(updateFold);
     document.getElementById('pvScene').textContent = SCENE_LABELS[scene] ? '♪ ' + SCENE_LABELS[scene] : '';
     const b = builds(slides[i]); let previewIdx = i + 1, label = 'Up next';
     pvNextStage.innerHTML = '';
     label = 'Next';
-    if (step < b.length) { previewIdx = i; label = 'Next · reveal on this slide'; setNext('Reveal', (step + 1) + ' of ' + b.length + ' on this slide'); }
+    if (step < b.length) { previewIdx = i; label = 'Next · reveal on this slide'; setNext('Reveal ' + (step + 1) + ' of ' + b.length, buildLabel(slides[i], step)); }
     else if (i >= slides.length - 1) { label = 'End of the talk'; previewIdx = -1; setNext('End', ''); }
     else setNext('Next', slideTitle(i + 1));
     document.getElementById('pvSlideN').textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
