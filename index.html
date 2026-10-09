@@ -19,6 +19,9 @@
 html, body { height: 100%; }
 body { background: var(--ink); color: var(--ivory); font-family: var(--ui); overflow: hidden; }
 #viewport { position: fixed; inset: 0; overflow: hidden; background: var(--ink); cursor: default; }
+/* Pressing End after the last slide fades the whole screen to black. */
+#viewport::after { content: ""; position: absolute; inset: 0; z-index: 5; background: #000; opacity: 0; pointer-events: none; transition: opacity 3s ease; }
+body.ended #viewport::after { opacity: 1; }
 #viewport.hide-cursor { cursor: none; }
 #stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center center; background: var(--night); }
 .slide { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; box-sizing: border-box; overflow: hidden;
@@ -1250,7 +1253,7 @@ const Sound = (() => {
 
   const builds = el => [...el.querySelectorAll('.build')]; let leaveT = null;
   // A sound for a click: data-build-cue plays on every click, data-step-cue="4:woo" on that click only.
-  const stepCue = (el, n) => { const m = (el.dataset.stepCue || '').match(/^(\d+):(\w+)$/); return m && +m[1] === n ? m[2] : el.dataset.buildCue; };
+  const stepCue = (el, n) => { if (n > builds(el).length) return null; const m = (el.dataset.stepCue || '').match(/^(\d+):(\w+)$/); return m && +m[1] === n ? m[2] : el.dataset.buildCue; };
   // A short name for what a click reveals: data-label, the organ's label on the anatomy plate, or the opening words.
   function buildLabel(el, k) {
     const b = builds(el)[k]; if (!b) return '';
@@ -1270,6 +1273,10 @@ const Sound = (() => {
     slides.forEach((el, k) => el.classList.toggle('active', k === i));
     const el = slides[i], b = builds(el);
     b.forEach((x, k) => x.classList.toggle('on', k < step));
+    // One step past the last reveal on the last slide is the end: the screen fades to black.
+    const ended = i === slides.length - 1 && step > b.length;
+    document.body.classList.toggle('ended', ended && !presenter);
+    if (ended && started && !presenter) Sound.stopVoice(1.5);
     el.dataset.step = step; el.classList.toggle('hl', step > 0 && !!el.querySelector('.spot'));
     slides.forEach((s2, k) => { if (k !== i) s2.querySelectorAll('[data-count]').forEach(p => p.dataset.done = ''); });
     countUp(el);
@@ -1373,7 +1380,7 @@ const Sound = (() => {
     pvNextStage.innerHTML = '';
     label = 'Next';
     if (step < b.length) { previewIdx = i; label = 'Next · reveal on this slide'; setNext('Reveal ' + (step + 1) + ' of ' + b.length, buildLabel(slides[i], step)); }
-    else if (i >= slides.length - 1) { label = 'End of the talk'; previewIdx = -1; setNext('End', ''); }
+    else if (i >= slides.length - 1) { label = 'End of the talk'; previewIdx = -1; if (step > b.length) setNext('Faded to black', 'Back undoes it'); else setNext('End', 'Fade to black'); }
     else setNext('Next', slideTitle(i + 1));
     document.getElementById('pvSlideN').textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
     document.getElementById('pvSlideT').textContent = slideTitle(i);
@@ -1512,6 +1519,7 @@ const Sound = (() => {
     const el = slides[i], b = builds(el);
     if (step < b.length) { step++; const sc = stepCue(el, step); if (sc && started) Sound.cue(sc); render(false); return; }
     if (i < slides.length - 1) { i++; step = 0; render(); }
+    else if (step === b.length) { step++; render(false); }
   }
   function prev() {
     if (titleOn) return;
