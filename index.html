@@ -261,6 +261,9 @@ body.on-title .pv-edit { visibility: hidden; }
 @keyframes g-title { from { opacity: 0; transform: scale(1.07); filter: blur(6px); } 35% { opacity: 1; filter: blur(0); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
 @keyframes g-rule { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
 /* The title card waits in the dark until the narration starts, so the room sees it fade in. */
+.gate .gate-grain { transition: opacity 3s ease; }
+.gate:not(.play):not(.intro) .gate-grain { opacity: 0; }
+.gate { background: #000; }
 /* Opening shot: your footage from Jimmy's Corner under the narration's first lines.
    It fades out just before "This is the American dive bar," and the title card fades in on that line. */
 .gate .gate-photo { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
@@ -1304,7 +1307,8 @@ const Sound = (() => {
     const scene = (step > 0 && el.dataset.buildScene) ? el.dataset.buildScene : el.dataset.scene;
     sceneEl.textContent = Sound.started && !Sound.muted ? '♪ ' + (SCENE_LABELS[scene] || '') : '';
     if (started && !presenter) {
-      Sound.setScene(scene);
+      // Before the narration starts, the title card is black and silent. The room sound comes up with the opening.
+      Sound.setScene(titleOn && !titleVoiced ? 'silence' : scene);
       if (cue && step === 0) {
         if (el.dataset.voice && !voicePlayed.has(el.id)) {
           voicePlayed.add(el.id);
@@ -1513,6 +1517,7 @@ const Sound = (() => {
   let introTimers = [];
   function startIntro(withNarration) {
     introTimers.forEach(clearTimeout); introTimers = [];
+    if (Sound.started) Sound.setScene(slides[i].dataset.scene, 4);
     if (!withNarration) { gate.classList.add('play'); return; }
     gate.classList.remove('play'); gate.classList.add('intro');
     // jimmys_intro.mp4 is the Jimmy's Corner clip steadied and slowed to three-quarter speed, with in-between
@@ -1543,6 +1548,7 @@ const Sound = (() => {
   function restart() {
     Sound.stopVoice(0.6); titleVoiced = false; introTimers.forEach(clearTimeout); introTimers = []; gate.classList.remove('play', 'intro'); document.getElementById('introVideo')?.pause(); voicePlayed.clear(); i = 0; step = 0;
     render(false); titleOn = false; showTitle(true);
+    if (!presenter && Sound.started) Sound.setScene('silence');
   }
   function next() {
     if (titleOn) {
