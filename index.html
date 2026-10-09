@@ -38,6 +38,17 @@ body { background: var(--ink); color: var(--ivory); font-family: var(--ui); over
 .slide > :not([style*="position:absolute"]) { position: relative; }
 .build { opacity: 0; transition: opacity 0.8s ease; }
 .build.on { opacity: 1; }
+/* A focus build stays visible and is highlighted on its click, while the others dim. */
+.slide .build.focus { opacity: 1; transition: opacity .45s ease, filter .45s ease; }
+.slide:not([data-step="0"]) .build.focus { opacity: 0.28; filter: grayscale(0.6); }
+.slide[data-step="1"] .build.focus[data-k="1"]{opacity:1;filter:none}
+.slide[data-step="2"] .build.focus[data-k="2"]{opacity:1;filter:none}
+.slide[data-step="3"] .build.focus[data-k="3"]{opacity:1;filter:none}
+.slide[data-step="4"] .build.focus[data-k="4"]{opacity:1;filter:none}
+.slide[data-step="5"] .build.focus[data-k="5"]{opacity:1;filter:none}
+.slide[data-step="6"] .build.focus[data-k="6"]{opacity:1;filter:none}
+.slide[data-step="7"] .build.focus[data-k="7"]{opacity:1;filter:none}
+.slide[data-step="8"] .build.focus[data-k="8"]{opacity:1;filter:none}
 
 
 /* Motion: everything slow, quiet, and off for reduced-motion viewers. */
@@ -149,19 +160,12 @@ body.presenter #pv { display: grid; position: fixed; inset: 0; grid-template-col
 .pv-notes .say { font-size: clamp(20px, 1.75vw, 30px); line-height: 1.55; white-space: pre-line; max-width: 34em; color: #F1EADD; }
 .pv-notes .say .gap { display: block; height: 0.7em; }
 .pv-notes .say .cue { display: inline-block; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber); border: 1px solid rgba(201,161,90,0.45); border-radius: 999px; padding: 3px 10px; margin: 0 6px 0 0; vertical-align: 0.3em; }
-.pv-notes .say .cue.reveal { font-family: var(--ui); min-width: 30px; text-align: center; cursor: pointer; background: rgba(201,161,90,0.14); color: #F1EADD; border-color: var(--amber); padding: 5px 12px; }
-.pv-notes .say .cue.reveal:hover { background: rgba(201,161,90,0.28); }
-.pv-notes .say .cue.reveal:disabled { cursor: default; background: transparent; color: #6B6457; border-color: #2E2A24; }
-.pv-notes .say .seg { transition: color .3s ease, opacity .3s ease; }
-.pv-notes .say .seg.said { color: #6B6457; }
-.pv-notes .say .seg.later { opacity: 0.55; }
-.pv-notes .say .seg.now { color: #FFFFFF; background: rgba(201,161,90,0.09); box-shadow: 0 0 0 4px rgba(201,161,90,0.09); border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.pv-notes .say .cue.reveal.next { font-size: 15px; letter-spacing: 0.1em; background: var(--amber); color: #13110E; border-color: var(--amber); padding: 6px 14px; margin: 0 8px; box-shadow: 0 0 0 4px rgba(201,161,90,0.25); animation: cue-pulse 1.6s ease-in-out infinite; }
+.pv-notes .say .seg { transition: color .3s ease; }
+.pv-notes .say .seg.said { color: #8A8274; }
+.pv-notes .say .cue.reveal { font-family: var(--ui); font-size: 12px; font-weight: 600; letter-spacing: 0; min-width: 0; width: 1.7em; height: 1.7em; padding: 0; margin: 0 0.35em; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; vertical-align: 0.15em; cursor: pointer; }
+.pv-notes .say .cue.reveal.next { background: var(--amber); color: #13110E; border: 1px solid var(--amber); }
 .pv-notes .say .cue.reveal.next:hover { background: #E2BC75; }
-.pv-notes .say .cue.reveal.done { color: #8A8274; border-color: #3A352D; background: transparent; }
-.pv-notes .say .cue.reveal.later { color: #8A8274; border-color: #3A352D; background: transparent; }
-@keyframes cue-pulse { 50% { box-shadow: 0 0 0 9px rgba(201,161,90,0.08); } }
-@media (prefers-reduced-motion: reduce) { .pv-notes .say .cue.reveal.next { animation: none; } }
+.pv-notes .say .cue.reveal.done, .pv-notes .say .cue.reveal.later { background: transparent; color: #8A8274; border: 1px solid #4A443A; cursor: default; }
 .pv-more { position: sticky; bottom: 0; height: 90px; margin-top: -40px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; pointer-events: none;
   background: linear-gradient(180deg, rgba(11,10,9,0) 0%, rgba(11,10,9,0.94) 60%, #0B0A09 100%); transition: opacity .25s; }
 .pv-more button { pointer-events: auto; font-family: var(--ui); font-size: 12px; letter-spacing: 0.08em; color: #E6DECF; background: #1A1815; border: 1px solid #3A352D; border-radius: 999px; padding: 7px 16px; cursor: pointer; }
@@ -551,29 +555,29 @@ AUDIO: In the web presentation, your own biker bar field recording starts on thi
 
 PHOTO DIRECTION: Your photo of the row of bikes outside a desert roadhouse at sunset.</aside>
 </section>
-<section class="slide" id="fauna" data-scene="latenight" data-cue="woo" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
+<section class="slide" id="fauna" data-scene="latenight" data-step-cue="4:woo" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
 <p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">09</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:56px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Fauna of the American Dive</h2>
 <div style="display:flex;gap:48px">
-<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<div class="build focus" data-k="1" data-label="The Regular" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_regular2.jpg" alt="An older regular in a worn ball cap and denim jacket, alone at the bar with a beer" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Regular</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo regularis</p>
 <p style="font-size:28px;line-height:1.3;color:#A89F8F">Territorial. Same stool, same drink.</p>
 </div>
-<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<div class="build focus" data-k="2" data-label="The Bartender" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_bartender2.jpg" alt="A tattooed bartender drying a glass behind a worn bar" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Bartender</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Minister potus</p>
 <p style="font-size:28px;line-height:1.3;color:#A89F8F">Apex species. Controls access to resources.</p>
 </div>
-<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<div class="build focus" data-k="3" data-label="The Tourist" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_tourist2.jpg" alt="A traveler holding a paper map, hesitating just inside the door of a desert bar" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Tourist</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo peregrinus</p>
 <p style="font-size:28px;line-height:1.3;color:#A89F8F">Identified by looking around too much.</p>
 </div>
-<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<div class="build focus" data-k="4" data-label="The Bachelorette Party" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_bachelorette2.jpg" alt="A bride-to-be in a veil laughing with a friend in a dive bar booth" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Bachelorette Party</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo celebrans</p>
@@ -584,9 +588,9 @@ PHOTO DIRECTION: Your photo of the row of bikes outside a desert roadhouse at su
 
 Every habitat supports its fauna.
 
-The Regular. Territorial. The Bartender, the apex species, controlling access to all resources. The Tourist, identified by looking around too much.
+(click) The Regular. Territorial. (click) The Bartender, the apex species, controlling access to all resources. (click) The Tourist, identified by looking around too much.
 
-And the Bachelorette Party. Native species are known to retreat until the disturbance has passed.
+(click) And the Bachelorette Party. Native species are known to retreat until the disturbance has passed.
 
 PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light. Real people need their permission. Silhouettes, hands on a bar, or a back-of-head shot also work and keep everyone anonymous. All four are your photos.</aside>
 </section>
@@ -618,7 +622,7 @@ The genus doesn't stop at the United States border.
 
 In Mexico, the pulquería, serving the fermented agave drink the Aztecs held sacred long before the invention of tequila and mezcal. Mexico City once counted about 1,100 pulquerías. Until beer companies and the government, spent decades disparaging pulque as unclean and a poor man’s drink. Today, approximately 80 pulquerías remain.
 
-In Brazil, the boteco, where bars in 25 cities compete every year in the Comida di Buteco, to name Brazil's the best snack and the coldest beer.
+In Brazil, the boteco, where bars in 25 cities compete every year in the Comida di Buteco, to name Brazil's best snack and coldest beer.
 
 SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritual role; pulquerías "once estimated at 1,100" (the estimate is undated), about 80 by the start of the 21st century; decline tied to a decades-long campaign by beer companies and the government depicting pulque as "a crass, poor man's drink"; the stigma lasted into the 1990s. Rio de Janeiro by Cariocas: botecos began in 19th-century Rio with Portuguese port warehouses; Comida di Buteco, created in 1999 in Belo Horizonte, now has botecos in 25 cities competing, judged on snack, service, hygiene and drink temperature.</aside>
 </section>
@@ -637,7 +641,7 @@ SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritua
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;color:#7E7668">Survey Center on American Life, American Community Life Survey, June–July 2020, n = 5,058</p>
 <aside>[4:09 to 4:28 · about 50 words]
 
-The sociologist Ray Oldenburg called these third places. Home is the first. Work is the second.
+Sociologist Ray Oldenburg defines these as third places. Home is the first. Work is the second.
 
 In a national survey, Americans who identified with a regular spot were far more likely to talk with someone they don't know well. Forty-eight percent.
 
@@ -666,7 +670,7 @@ SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana P
 </div>
 <aside>[4:28 to 4:41 · about 35 words]
 
-In your explorations, beware the False Dive. It can be quickly identified by its Edison bulbs, its custom neon signs with clever sayings. And of course, a signature $17 cocktail.
+In your explorations, beware the False Dive. Its camouflage can be quickly identified by its Edison bulbs, its custom neon signs with clever phrases. And of course, a signature $17 cocktail.
 
 While attempts have been made to breed the dive bar in captivity, they have largely failed.
 
@@ -679,7 +683,7 @@ PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs
 <hr style="width:96px;border-top:2px solid #C9A15A">
 <aside>[4:41 to 4:47 · about 15 words]
 
-There is one simple diagnostic for a dive bar.
+Today, there is one simple diagnostic for a dive bar.
 Did this accumulate? Or was it purchased?
 
 (Let the slide sit for three full seconds. Say nothing.)
@@ -704,7 +708,7 @@ Did this accumulate? Or was it purchased?
 </div>
 <aside>[4:47 to 5:22 · about 90 words]
 
-If your curiosity takes over and you decide to observe a dive bar for yourself, here are a few protocols to observe.
+If your curiosity takes over and you decide to explore a dive bar for yourself, here are a few protocols to observe.
 
 (click) Arrive with no more than three other people.
 
@@ -1245,6 +1249,8 @@ const Sound = (() => {
   }
 
   const builds = el => [...el.querySelectorAll('.build')]; let leaveT = null;
+  // A sound for a click: data-build-cue plays on every click, data-step-cue="4:woo" on that click only.
+  const stepCue = (el, n) => { const m = (el.dataset.stepCue || '').match(/^(\d+):(\w+)$/); return m && +m[1] === n ? m[2] : el.dataset.buildCue; };
   // A short name for what a click reveals: data-label, the organ's label on the anatomy plate, or the opening words.
   function buildLabel(el, k) {
     const b = builds(el)[k]; if (!b) return '';
@@ -1333,11 +1339,11 @@ const Sound = (() => {
     if (editing) { pvSay.textContent = say; return; }
     pvTiming.textContent = ''; pvTiming.hidden = true;
     pvSay.innerHTML = '';
-    // The script is cut into stretches at each (click). The stretch to say now is lit,
-    // what's done is dimmed, and the next click is one bright button naming what it reveals.
+    // The script is cut into stretches at each (click). What's already said is dimmed a little,
+    // and each click is a small numbered dot, filled for the next one.
     let clickN = 0, seg = null;
     const nb = builds(slides[i]).length, staged = nb > 0;
-    const newSeg = k => { seg = document.createElement('span'); seg.className = 'seg' + (staged ? (k < step ? ' said' : k === step ? ' now' : ' later') : ''); pvSay.appendChild(seg); };
+    const newSeg = k => { seg = document.createElement('span'); seg.className = 'seg' + (staged && k < step ? ' said' : ''); pvSay.appendChild(seg); };
     newSeg(0);
     say.split(/(\([^)]*\))/).forEach(part => {
       if (/^\(.*\)$/.test(part)) {
@@ -1346,8 +1352,8 @@ const Sound = (() => {
           // The reveal lives here, on the controller: a button in the script itself.
           const ci = clickN++, name = m[1] || buildLabel(slides[i], ci), c = document.createElement('button'); c.type = 'button';
           const state = ci < step ? 'done' : ci === step ? 'next' : 'later';
-          c.className = 'cue reveal ' + state; c.title = 'Click to reveal';
-          c.textContent = state === 'done' ? '✓ ' + name : state === 'next' ? 'Click ▸ ' + name : (nb > 1 ? (ci + 1) + ' · ' : '') + name;
+          c.className = 'cue reveal ' + state; c.title = name; c.setAttribute('aria-label', 'Reveal ' + name);
+          c.textContent = state === 'done' ? '✓' : String(ci + 1);
           c.disabled = state !== 'next'; c.addEventListener('click', e => { e.currentTarget.blur(); next(); }); seg.appendChild(c);
           newSeg(clickN);
         } else { const c = document.createElement('span'); c.className = 'cue'; c.textContent = t; seg.appendChild(c); }
@@ -1357,7 +1363,7 @@ const Sound = (() => {
     document.getElementById('pvMore').hidden = true;
     document.getElementById('pvVoice').hidden = !slides[i].dataset.voice;
     if (lastPvI !== i) { pvNotesEl.style.scrollBehavior = 'auto'; pvNotesEl.scrollTop = 0; pvNotesEl.style.scrollBehavior = ''; lastPvI = i; }
-    else if (staged) { const now = pvSay.querySelector('.seg.now'); if (now) now.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    else if (staged) { const nx = pvSay.querySelector('.cue.reveal.next'); if (nx) nx.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
     requestAnimationFrame(updateFold);
     document.getElementById('pvScene').textContent = SCENE_LABELS[scene] ? '♪ ' + SCENE_LABELS[scene] : '';
     const b = builds(slides[i]); let previewIdx = i + 1, label = 'Up next';
@@ -1454,7 +1460,7 @@ const Sound = (() => {
     if (m.type !== 'nav' || (m.from === 'presenter') === presenter) return;
     const pi = i, ps = step; if (m.i === pi && m.step === ps) return;
     i = Math.max(0, Math.min(slides.length - 1, m.i)); step = m.step; applying = true;
-    if (i === pi && step === ps + 1) { const el = slides[i]; if (el.dataset.buildCue && started && !presenter) Sound.cue(el.dataset.buildCue); render(false); }
+    if (i === pi && step === ps + 1) { const el = slides[i]; const sc = stepCue(el, step); if (sc && started && !presenter) Sound.cue(sc); render(false); }
     else render(i !== pi && step === 0);
     applying = false;
   };
@@ -1501,7 +1507,7 @@ const Sound = (() => {
       showTitle(false); return;
     }
     const el = slides[i], b = builds(el);
-    if (step < b.length) { step++; if (el.dataset.buildCue && started) Sound.cue(el.dataset.buildCue); render(false); return; }
+    if (step < b.length) { step++; const sc = stepCue(el, step); if (sc && started) Sound.cue(sc); render(false); return; }
     if (i < slides.length - 1) { i++; step = 0; render(); }
   }
   function prev() {
