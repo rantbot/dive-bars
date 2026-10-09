@@ -751,7 +751,7 @@ SOURCES: Chicago Commission on Chicago Landmarks, "Five Brewery Tied Houses and 
 <p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">The genus beyond the border</p>
 <h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Related Populations</h2>
 <div style="position:absolute;left:288px;top:320px;width:1344px;display:flex;gap:48px">
-<div style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<div class="build focus" data-k="1" data-label="The pulquería" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
 <img src="img/p_pulqueria.jpg" alt="A pulquería in Mexico City: regulars sharing glasses of pulque at a metal table, a painted agave on the wall and the day's flavors on a hand-lettered sign" style="width:646px;height:270px;object-fit:cover;margin:-36px -36px 10px -36px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Mexico</p>
 <p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Pulquería</p>
@@ -759,7 +759,7 @@ SOURCES: Chicago Commission on Chicago Landmarks, "Five Brewery Tied Houses and 
 <p style="font-size:30px;line-height:1.35;color:#D9D1C1">Serves pulque, the fermented agave drink the Aztecs held sacred.</p>
 <p style="font-size:30px;line-height:1.35;color:#A89F8F">Mexico City once counted about 1,100. By 2000, about 80 remained.</p>
 </div>
-<div style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<div class="build focus" data-k="2" data-label="The boteco" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
 <img src="img/p_boteco.jpg" alt="A boteco in Rio at dusk: friends at yellow plastic tables with beer bottles in koozies and fried snacks, the barman laughing behind the counter" style="width:646px;height:270px;object-fit:cover;margin:-36px -36px 10px -36px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Brazil</p>
 <p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Boteco</p>
@@ -772,9 +772,9 @@ SOURCES: Chicago Commission on Chicago Landmarks, "Five Brewery Tied Houses and 
 
 The genus does not stop at the border.
 
-In Mexico, the pulquería serves pulque, fermented agave sap the Aztecs considered sacred. Mexico City once counted around eleven hundred. Then for decades, beer companies, and the government, sold pulque as a poor man's drink, a crass relic of the past. By 2000, about eighty remained. [Optional: a nod to your teammates in Mexico.]
+(click) In Mexico, the pulquería serves pulque, fermented agave sap the Aztecs considered sacred. Mexico City once counted around eleven hundred. Then for decades, beer companies, and the government, sold pulque as a poor man's drink, a crass relic of the past. By 2000, about eighty remained. [Optional: a nod to your teammates in Mexico.]
 
-In Brazil, the boteco began in the warehouses of Rio's port. Today botecos in 25 cities compete every year over the best snack, and the coldest beer. [Optional: a nod to your teammates in Brazil.]
+(click) In Brazil, the boteco began in the warehouses of Rio's port. Today botecos in 25 cities compete every year over the best snack, and the coldest beer. [Optional: a nod to your teammates in Brazil.]
 
 SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritual role; pulquerías "once estimated at 1,100" (the estimate is undated), about 80 by the start of the 21st century; decline tied to a decades-long campaign by beer companies and the government depicting pulque as "a crass, poor man's drink"; the stigma lasted into the 1990s. Rio de Janeiro by Cariocas: botecos began in 19th-century Rio with Portuguese port warehouses; Comida di Buteco, created in 1999 in Belo Horizonte, now has botecos in 25 cities competing, judged on snack, service, hygiene and drink temperature.</aside>
 </section>
@@ -1477,9 +1477,12 @@ const Sound = (() => {
   pvNotesEl.addEventListener('scroll', updateFold); window.addEventListener('resize', updateFold);
   document.getElementById('pvFoldBtn').addEventListener('click', e => { e.currentTarget.blur(); pvNotesEl.scrollBy({ top: pvNotesEl.clientHeight * 0.7 }); });
   // Your own edits to the script are kept in this browser, per slide, and shown instead of the original.
-  const EDIT_KEY = id => 'dive-bar-script:v2:' + id; // v2: edits up to Oct 8 are now built into the deck
-  const getEdit = id => { try { return localStorage.getItem(EDIT_KEY(id)); } catch (e) { return null; } };
-  const setEdit = (id, v) => { try { v == null ? localStorage.removeItem(EDIT_KEY(id)) : localStorage.setItem(EDIT_KEY(id), v); } catch (e) {} };
+  // Your own edits to the script, kept in this browser. Each is saved with the built-in script it was made from,
+  // so when the deck's script changes (new click markers, edits made permanent) the old edit steps aside.
+  const EDIT_KEY = id => 'dive-bar-script:v3:' + id; // v3: edits up to Oct 9 are now built into the deck
+  const baseOf = id => { const el = document.getElementById(id), a = el && el.querySelector('aside'); return a ? script(a.textContent.trim()) : ''; };
+  const getEdit = id => { try { const r = JSON.parse(localStorage.getItem(EDIT_KEY(id)) || 'null'); return r && r.base === baseOf(id) ? r.text : null; } catch (e) { return null; } };
+  const setEdit = (id, v) => { try { v == null ? localStorage.removeItem(EDIT_KEY(id)) : localStorage.setItem(EDIT_KEY(id), JSON.stringify({ base: baseOf(id), text: v })); } catch (e) {} };
   let editing = false;
   const TITLES = { cover: 'Habitat', test: 'The diagnostic', closing: 'The close', third: 'Third places' };
   function slideTitle(k) { const el = slides[k]; if (!el) return ''; if (TITLES[el.id]) return TITLES[el.id]; const h = el.querySelector('h1, h2'); return h ? h.textContent.replace(/\s+/g, ' ').trim().replace(/^./, c => c.toUpperCase()).replace(/\b([A-Z])([A-Z’']+)\b/g, (w, a, r) => a + r.toLowerCase()) : el.id; }
