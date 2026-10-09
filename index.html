@@ -264,7 +264,7 @@ body.on-title .pv-edit { visibility: hidden; }
 /* Opening shot: your footage from Jimmy's Corner under the narration's first lines.
    It fades out just before "This is the American dive bar," and the title card fades in on that line. */
 .gate .gate-photo { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
-.gate.intro .gate-photo { opacity: 1; transition-duration: 1.8s; }
+.gate.intro .gate-photo { opacity: 1; transition: opacity 4s cubic-bezier(.45,0,.55,1); }
 .gate .gate-photo video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .gate .gate-photo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.55) 100%); }
 .gate:not(.play) .card > *, .gate:not(.play)::before { animation: none !important; opacity: 0; }
