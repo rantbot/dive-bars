@@ -1,6 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6K22W54S0C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6K22W54S0C');
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="A twelve-minute field film about a fragile American ecosystem, told as a nature documentary.">
@@ -210,6 +219,21 @@ html.film #stage { overflow: hidden; }
 html.film #viewport, html.film body { background: #000; }
 .film-end .credits a, .lp-foot a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(201,161,90,0.5); transition: color .2s, border-color .2s; }
 .film-end .credits a:hover, .film-end .credits a:focus-visible, .lp-foot a:hover, .lp-foot a:focus-visible { color: var(--ivory); border-color: var(--amber); outline: none; }
+
+/* ---------- Film stock: grain, dust and a little exposure flicker over the photographs and footage ---------- */
+/* The textures are drawn once in the script and stepped through like frames. Only the texture moves, never the frame. */
+html.film .kb::after, html.film .grain-layer { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background-image: var(--film-grain, none); background-size: 220px 220px; mix-blend-mode: overlay; opacity: 0.42;
+  animation: film-grain 0.42s steps(1) infinite; }
+html.film .kb::before, html.film .grain-layer::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background-image: var(--film-dust, none); background-size: 900px 600px; opacity: 0.55;
+  animation: film-dust 1.25s steps(1) infinite, film-flicker 4.6s steps(1) infinite; }
+html.film .grain-layer { overflow: hidden; }
+@keyframes film-grain { 0% { background-position: 0 0; } 14% { background-position: -71px 39px; } 28% { background-position: 53px -88px; } 42% { background-position: -120px -17px; } 57% { background-position: 97px 64px; } 71% { background-position: -33px 112px; } 85% { background-position: 140px -51px; } }
+@keyframes film-dust { 0% { background-position: 0 0; } 20% { background-position: -410px 230px; } 40% { background-position: 260px -370px; } 60% { background-position: -150px -120px; } 80% { background-position: 520px 310px; } }
+@keyframes film-flicker { 0%, 100% { opacity: 0.55; } 9% { opacity: 0.35; } 10% { opacity: 0.6; } 47% { opacity: 0.45; } 48% { opacity: 0.62; } 73% { opacity: 0.4; } 74% { opacity: 0.55; } }
+body.film-paused .kb::after, body.film-paused .kb::before, body.film-paused .grain-layer, body.film-paused .grain-layer::before { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { html.film .kb::after, html.film .kb::before, html.film .grain-layer, html.film .grain-layer::before { animation: none; } }
 </style>
 <title>The American Dive Bar</title>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
@@ -587,7 +611,7 @@ TO DO: The dots mark 68 cities you named: Seattle, Vancouver, Portland, Ontario 
 SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Beverages)," has no dive-bar subcategory. Earliest noun use of "dive" for a disreputable establishment, National Police Gazette, Jan. 12, 1867 (via Barry Popik). OED defines the U.S. sense as a drinking den "often situated in a cellar, basement, or other half-concealed place." The basement origin is likely, not certain, which is why the narration says "possibly."</aside>
 </section>
 <section class="slide" id="origin" data-scene="exterior" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
-<img src="img/p_stairs.jpg" alt="Wet concrete steps leading down from a city sidewalk to a basement bar door under a red neon BAR sign" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
+<img src="img/p_stairs.jpg" alt="Wet concrete steps leading down from a city sidewalk to a basement bar door under a red neon BAR sign" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover"><div class="grain-layer" aria-hidden="true"></div>
 <div style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;background:linear-gradient(90deg, rgba(11,10,8,0.92) 0%, rgba(11,10,8,0.72) 30%, rgba(11,10,8,0) 58%)"></div>
 <div style="position:absolute;left:128px;top:0px;width:700px;height:1080px;display:flex;flex-direction:column;justify-content:center;gap:18px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;color:#C9A15A">Etymology</p>
@@ -712,7 +736,7 @@ PHOTO DIRECTION: Your photo of a neighborhood bar on a snowy afternoon.</aside>
 <div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1970</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">Women first served</p></div>
 <div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1986</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">A ladies’ room arrives</p></div>
 </div>
-<div class="build" data-label="The wishbones" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;transition:opacity 1.8s ease"><img src="img/p_wishbones.jpg" alt="A close-up of dusty, cobwebbed wishbones hanging from an old gas lamp above the bar at McSorley’s" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover"><div style="position:absolute;left:0px;top:780px;width:1920px;height:300px;background:linear-gradient(0deg, rgba(11,10,8,0.85), rgba(11,10,8,0))"></div><p style="position:absolute;left:128px;top:960px;width:1200px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#D9D1C1">The wishbones · McSorley’s Old Ale House</p></div>
+<div class="build" data-label="The wishbones" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;transition:opacity 1.8s ease"><img src="img/p_wishbones.jpg" alt="A close-up of dusty, cobwebbed wishbones hanging from an old gas lamp above the bar at McSorley’s" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover"><div class="grain-layer" aria-hidden="true"></div><div style="position:absolute;left:0px;top:780px;width:1920px;height:300px;background:linear-gradient(0deg, rgba(11,10,8,0.85), rgba(11,10,8,0))"></div><p style="position:absolute;left:128px;top:960px;width:1200px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#D9D1C1">The wishbones · McSorley’s Old Ale House</p></div>
 <aside>[2:20 to 2:45 · about 60 words]
 
 Here is the Neighborhood Dive in its oldest form. McSorley's Old Ale House in New York's East Village. It claims a birth in 1854 and historic patrons, Abraham Lincoln, Ulysses S. Grant, Teddy Roosevelt, and William Jefferson Clinton.
@@ -784,7 +808,7 @@ JIMBO'S SOURCES: NBC Miami (March 15, 2012) and CBS Miami (March 20, 2012): Jame
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">The Currency Ceiling</h2>
 <div style="display:flex;flex-direction:column;gap:10px;width:760px;font-family:Inter, Arial, sans-serif">
 </div>
-<div class="build" data-label="Siesta Key Oyster Bar" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;transition:opacity 1.8s ease"><img src="img/p_siestakey.jpg" alt="The dining room of the Siesta Key Oyster Bar, every ceiling, wall and post covered in signed dollar bills" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover"><div style="position:absolute;left:0px;top:560px;width:1920px;height:520px;background:linear-gradient(0deg, rgba(11,10,8,0.92), rgba(11,10,8,0))"></div><p style="position:absolute;left:128px;top:770px;width:900px;font-size:150px;font-weight:300;line-height:1;color:#E2B866">$13,961</p><p style="position:absolute;left:132px;top:940px;width:1400px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#D9D1C1">Siesta Key Oyster Bar · Sarasota, Florida · 2019</p></div>
+<div class="build" data-label="Siesta Key Oyster Bar" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;transition:opacity 1.8s ease"><img src="img/p_siestakey.jpg" alt="The dining room of the Siesta Key Oyster Bar, every ceiling, wall and post covered in signed dollar bills" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover"><div class="grain-layer" aria-hidden="true"></div><div style="position:absolute;left:0px;top:560px;width:1920px;height:520px;background:linear-gradient(0deg, rgba(11,10,8,0.92), rgba(11,10,8,0))"></div><p style="position:absolute;left:128px;top:770px;width:900px;font-size:150px;font-weight:300;line-height:1;color:#E2B866">$13,961</p><p style="position:absolute;left:132px;top:940px;width:1400px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#D9D1C1">Siesta Key Oyster Bar · Sarasota, Florida · 2019</p></div>
 <aside>[4:49 to 5:34 · about 115 words]
 
 Why money? Scientists remain divided.
@@ -821,11 +845,11 @@ AUDIO: In the web presentation, your own biker bar field recording starts on thi
 PHOTO DIRECTION: Your photo of the row of bikes outside a desert roadhouse at sunset.</aside>
 </section>
 <section class="slide" id="sp4" data-scene="latenight" style="background:#0B0B0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:start;gap:16px">
-<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/migration2.jpg" alt="Dark city street map with five golden migration paths converging on one glowing point" style="width:100%;height:100%;object-fit:cover"><div class="fx breathe" style="position:absolute;left:1000px;top:440px;width:300px;height:300px;background:radial-gradient(closest-side, rgba(255,200,120,0.55), rgba(255,170,80,0.15) 45%, rgba(255,170,80,0))"></div></div></div>
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/migration3.jpg" alt="Dark street map of a city at night, five golden routes walking the streets to one corner bar" style="width:100%;height:100%;object-fit:cover"><div class="fx breathe" style="position:absolute;left:1000px;top:440px;width:300px;height:300px;background:radial-gradient(closest-side, rgba(255,200,120,0.55), rgba(255,170,80,0.15) 45%, rgba(255,170,80,0))"></div></div></div>
 <p style="font-size:44px;color:#C9A15A;line-height:1">05</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Late-Night Dive</h2>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus nocturnus</p>
-<p style="position:absolute;left:128px;top:548px;width:330px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Restaurants</p>
+<p style="position:absolute;left:128px;top:573px;width:330px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Restaurants</p>
 <p style="position:absolute;left:128px;top:768px;width:270px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Concerts</p>
 <p style="position:absolute;left:790px;top:888px;width:320px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#EDE6D8">Weddings</p>
 <p style="position:absolute;left:1440px;top:364px;width:350px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Other bars, closed</p>
@@ -849,7 +873,7 @@ HAPPY HOUR SOURCES: Wikipedia, "Happy hour": by June 1913 the crew of USS Arkans
 VISUAL NOTE: The map is an abstract city, not a real one. If you want it to be your city, a dark-mode screenshot of a real street map works as a replacement. The labels are separate text boxes, so you can move them.</aside>
 </section>
 <section class="slide" id="happyhour" data-scene="neighborhood" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
-<img src="img/p_boston.jpg" alt="A tavern on a rainy evening in Boston's North End, neon beer signs glowing in its windows and a ballgame on the TV inside" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
+<img src="img/p_boston.jpg" alt="A tavern on a rainy evening in Boston's North End, neon beer signs glowing in its windows and a ballgame on the TV inside" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover"><div class="grain-layer" aria-hidden="true"></div>
 <div style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;background:linear-gradient(90deg, rgba(11,10,8,0.94) 0%, rgba(11,10,8,0.75) 32%, rgba(11,10,8,0) 60%)"></div>
 <div style="position:absolute;left:128px;top:0px;width:720px;height:1080px;display:flex;flex-direction:column;justify-content:center;gap:18px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;color:#C9A15A">Behavioral note</p>
@@ -1141,7 +1165,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
 <div class="notes" id="notes" hidden><h4 id="notesHead">Speaker notes</h4><div id="notesBody"></div></div>
 
 <div class="gate" id="gate" data-voice="snd/intro.mp3">
-  <div class="gate-photo" aria-hidden="true"><video id="introVideo" src="img/jimmys_intro.mp4" poster="img/jimmys_still.jpg" muted playsinline preload="auto"></video></div>
+  <div class="gate-photo" aria-hidden="true"><video id="introVideo" src="img/jimmys_intro.mp4" poster="img/jimmys_still.jpg" muted playsinline preload="auto"></video><div class="grain-layer" aria-hidden="true"></div></div>
   <div class="gate-grain" aria-hidden="true"></div>
   <div class="card">
     <div class="eyebrow">Field Study · North America · 2026</div>
@@ -2049,7 +2073,7 @@ const Sound = (() => {
       <div><b>Go at your pace.</b> Pause any time, skip ahead, or jump straight to a chapter.</div>
       <div><b>Sound makes it.</b> Headphones bring the room in around you. Captions are on if you need them.</div>
     </div>
-    <footer class="lp-foot">Field research by <a href="https://rancraycraft.com" target="_blank" rel="noopener">Ran Craycraft</a> · Narration voiced with ElevenLabs</footer>
+    <footer class="lp-foot">Field research by <a href="https://rancraycraft.com" target="_blank" rel="noopener">Ran Craycraft</a> · Narration voiced with <a href="https://elevenlabs.io" target="_blank" rel="noopener">ElevenLabs</a></footer>
   </section>
 </div>
 <div class="film-cc" id="filmCC" aria-hidden="true"><span></span></div>
@@ -2076,7 +2100,7 @@ const Sound = (() => {
       <div class="e">End of field study</div>
       <h2>The American<br>Dive Bar</h2>
       <div class="r"></div>
-      <div class="credits"><b>Field research</b> <a href="https://rancraycraft.com" target="_blank" rel="noopener">Ran Craycraft</a><br><b>Narration</b> voiced with ElevenLabs</div>
+      <div class="credits"><b>Field research</b> <a href="https://rancraycraft.com" target="_blank" rel="noopener">Ran Craycraft</a><br><b>Narration</b> voiced with <a href="https://elevenlabs.io" target="_blank" rel="noopener">ElevenLabs</a><br><b>Opening footage</b> Jimmy’s Corner, by <a href="https://www.youtube.com/@Drunktopus" target="_blank" rel="noopener">Drunktopus</a></div>
       <div class="fe-acts"><button type="button" class="fe-share" data-share><span class="fe-share-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"/><path d="M5 12v7.5h14V12"/></svg></span><span>Share with a friend</span></button><div class="fe-links"><button type="button" class="fe-link" id="feAgain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg><span>Watch again</span></button><button type="button" class="fe-link" id="feChap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/></svg><span>Chapters</span></button></div></div>
     </div>
     <form class="fe-journal" id="fieldNotes" novalidate>
@@ -2101,6 +2125,27 @@ const Sound = (() => {
 // the whole film. A clip that has not been recorded yet plays as a caption, timed to its length in words.
 (() => {
   const D = window.Deck, $ = id => document.getElementById(id);
+  // Film stock textures, drawn once: fine grain, and a sheet of dust, specks and the odd hair or scratch.
+  (function filmStock() {
+    try {
+      const g = document.createElement('canvas'); g.width = g.height = 220; const gx = g.getContext('2d');
+      const small = document.createElement('canvas'); small.width = small.height = 110; const sx = small.getContext('2d');
+      const im = sx.createImageData(110, 110);
+      for (let i = 0; i < im.data.length; i += 4) { const v = 128 + ((Math.random() + Math.random() + Math.random() - 1.5) * 95); im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
+      sx.putImageData(im, 0, 0); gx.imageSmoothingEnabled = true; gx.drawImage(small, 0, 0, 220, 220);
+      const fine = gx.getImageData(0, 0, 220, 220);
+      for (let i = 0; i < fine.data.length; i += 4) { const n = (Math.random() - 0.5) * 70; fine.data[i] += n; fine.data[i + 1] += n; fine.data[i + 2] += n; }
+      gx.putImageData(fine, 0, 0);
+      const d = document.createElement('canvas'); d.width = 900; d.height = 600; const dx = d.getContext('2d');
+      for (let k = 0; k < 26; k++) { const x = Math.random() * 900, y = Math.random() * 600, r = 0.5 + Math.random() * 1.6;
+        dx.fillStyle = Math.random() < 0.7 ? 'rgba(255,248,230,0.55)' : 'rgba(0,0,0,0.6)'; dx.beginPath(); dx.ellipse(x, y, r, r * (0.6 + Math.random() * 0.8), Math.random() * 3, 0, Math.PI * 2); dx.fill(); }
+      for (let k = 0; k < 3; k++) { dx.strokeStyle = 'rgba(255,248,230,0.35)'; dx.lineWidth = 0.7; dx.beginPath(); let x = Math.random() * 900, y = Math.random() * 600; dx.moveTo(x, y);
+        dx.bezierCurveTo(x + 8 - Math.random() * 16, y + 10, x + 14 - Math.random() * 28, y + 22, x + 6 - Math.random() * 12, y + 26 + Math.random() * 20); dx.stroke(); }
+      dx.strokeStyle = 'rgba(255,248,230,0.18)'; dx.lineWidth = 0.8; const sx2 = 120 + Math.random() * 660; dx.beginPath(); dx.moveTo(sx2, 0); dx.lineTo(sx2 + 4, 600); dx.stroke();
+      document.documentElement.style.setProperty('--film-grain', 'url(' + g.toDataURL('image/png') + ')');
+      document.documentElement.style.setProperty('--film-dust', 'url(' + d.toDataURL('image/png') + ')');
+    } catch (e) {}
+  })();
   const gate = $('gate'), video = $('introVideo'), ccEl = $('filmCC').firstElementChild;
   const INTRO_OUT = 16.6, INTRO_TITLE = 16.9, INTRO_LEN = 20.45, INTRO_TAIL = 1.8, LEAD = 0.9, WORDS_PER_SEC = 2.5;
   // The title card builds over about eight seconds (eyebrow, title, rule, subtitle, credit), then stays up long
