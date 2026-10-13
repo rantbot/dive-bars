@@ -2037,6 +2037,10 @@ const Sound = (() => {
   const D = window.Deck, $ = id => document.getElementById(id);
   const gate = $('gate'), video = $('introVideo'), ccEl = $('filmCC').firstElementChild;
   const INTRO_OUT = 16.6, INTRO_TITLE = 16.9, INTRO_LEN = 20.45, INTRO_TAIL = 1.8, LEAD = 0.9, WORDS_PER_SEC = 2.5;
+  // The title card builds over about eight seconds (eyebrow, title, rule, subtitle, credit), then stays up long
+  // enough to read every line before the first chapter begins.
+  const TITLE_HOLD = 13;
+  const introEnd = d => Math.max(d + INTRO_TAIL, INTRO_TITLE + TITLE_HOLD);
   let DATA = null, cur = -1, playing = false, started = false, token = 0, events = [], sceneT0 = 0, idleT = null;
 
   // ---------- the clock ----------
@@ -2088,8 +2092,8 @@ const Sound = (() => {
     at(INTRO_TITLE, () => gate.classList.add('play'));
     sceneT0 = now(); markChapter();
     const tok = token;
-    Sound.play(DATA.intro.file, () => { if (tok === token) at(INTRO_TAIL, () => startScene(0)); })
-      .then(d => { if (tok === token && d == null) at(INTRO_LEN + INTRO_TAIL, () => startScene(0)); });
+    const t0 = now();
+    Sound.play(DATA.intro.file).then(d => { if (tok === token) at(introEnd(d == null ? INTRO_LEN : d) - (now() - t0), () => startScene(0)); });
   }
 
   // ---------- scenes ----------
@@ -2156,7 +2160,7 @@ const Sound = (() => {
 
   // ---------- chapters and progress ----------
   const titles = () => [DATA.intro.title].concat(DATA.scenes.map(s => s.title));
-  const lens = () => [INTRO_LEN + INTRO_TAIL].concat(DATA.scenes.map(sceneLen));
+  const lens = () => [introEnd(INTRO_LEN)].concat(DATA.scenes.map(sceneLen));
   const fmt = s => Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0');
   function layoutTrack() {
     const tr = $('fbTrack'), L = lens();
