@@ -3,9 +3,209 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="The American Dive Bar: a five-minute nature-documentary lightning talk with live ambient sound.">
-<style>*,*::before,*::after{box-sizing:border-box}html,body{margin:0}body{-webkit-font-smoothing:antialiased}[hidden]{display:none!important}</style>
+<meta name="description" content="A twelve-minute field film about a fragile American ecosystem, told as a nature documentary.">
+<meta property="og:type" content="video.other">
+<meta property="og:title" content="The American Dive Bar">
+<meta property="og:description" content="A twelve-minute field film about a fragile American ecosystem, told as a nature documentary.">
+<meta property="og:url" content="https://rantbot.github.io/dive-bars/">
+<meta property="og:image" content="https://rantbot.github.io/dive-bars/img/p_hero.jpg">
+<meta property="og:image:alt" content="A brick corner tavern at dusk under a lit Old Style sign">
+<meta name="twitter:card" content="summary_large_image">
+<style>*,*::before,*::after{box-sizing:border-box}html,body{margin:0}body{-webkit-font-smoothing:antialiased}[hidden]{display:none!important}/* ---------- Film mode: the talk plays itself, narrated, with captions and chapters ---------- */
+html.film .hud, html.film .notes, html.film .resume, html.film .pv, html.film .gate .start { display: none !important; }
+html.film #viewport { cursor: pointer; }
+body.film-idle, body.film-idle #viewport { cursor: none; }
+body.film-paused .slide *, body.film-paused .gate *, body.film-paused .slide { animation-play-state: paused !important; }
+
+.film-start { position: fixed; inset: 0; z-index: 40; overflow-y: auto; overflow-x: hidden; background: #050504; color: var(--ivory); scroll-behavior: smooth; transition: opacity 1.2s ease; -webkit-overflow-scrolling: touch; }
+.film-start.gone { opacity: 0; pointer-events: none; }
+.film-start a { color: inherit; }
+.lp-hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: flex-end; overflow: hidden; }
+.lp-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; opacity: 0; transform: scale(1.04); transition: opacity 2s ease, transform 30s cubic-bezier(.2,.6,.3,1); }
+.lp-bg.on { opacity: 1; transform: scale(1); }
+/* On wide screens the photo sits on the right and the left side is left dark for the title. */
+@media (min-width: 900px) { .lp-bg { left: 30%; width: 70%; object-position: 30% 50%; } }
+.lp-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5,5,4,1) 0%, rgba(5,5,4,1) 30%, rgba(5,5,4,0.55) 46%, rgba(5,5,4,0.12) 70%, rgba(5,5,4,0.25) 100%), linear-gradient(0deg, rgba(5,5,4,1) 0%, rgba(5,5,4,0) 38%), radial-gradient(ellipse at 70% 40%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.55) 100%); }
+.lp-bars::before, .lp-bars::after { content: ""; position: absolute; left: 0; right: 0; height: 5.5vh; background: #000; z-index: 1; }
+.lp-bars::before { top: 0; } .lp-bars::after { bottom: 0; }
+.lp-copy { position: relative; z-index: 2; width: min(860px, 100%); padding: max(96px, 12vh) max(20px, 6vw) calc(5.5vh + max(44px, 6vh)); }
+.lp-copy > * { opacity: 0; animation: lp-in 1.6s cubic-bezier(.2,.7,.2,1) both; }
+.lp-copy > :nth-child(1) { animation-delay: .3s; } .lp-copy > :nth-child(2) { animation-delay: .6s; } .lp-copy > :nth-child(3) { animation-delay: 1.1s; }
+.lp-copy > :nth-child(4) { animation-delay: 1.3s; } .lp-copy > :nth-child(5) { animation-delay: 1.6s; } .lp-copy > :nth-child(6) { animation-delay: 1.8s; }
+.lp-copy > :nth-child(7) { animation-delay: 2.1s; } .lp-copy > :nth-child(8) { animation-delay: 2.4s; }
+@keyframes lp-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.lp-eyebrow { font-family: var(--ui); font-size: 12px; letter-spacing: 0.38em; text-transform: uppercase; color: var(--amber); }
+.lp-title { margin: 18px 0 0; font-family: var(--display); font-weight: 300; text-transform: uppercase; color: var(--ivory); line-height: 0.98; letter-spacing: 0.08em; font-size: clamp(40px, min(7.2vw, 11.5vh), 112px); text-shadow: 0 2px 40px rgba(0,0,0,0.5); }
+.lp-title span { display: block; white-space: nowrap; }
+.lp-rule { width: 120px; height: 1px; background: var(--amber); margin: clamp(16px, 2.8vh, 26px) 0 clamp(12px, 2vh, 18px); transform-origin: left; }
+.lp-sub { margin: 0; font-family: var(--display); font-style: italic; font-size: clamp(20px, 2.2vw, 30px); color: #D9D1C1; }
+.lp-log { margin: clamp(10px, 2vh, 18px) 0 0; max-width: 36em; font-family: var(--ui); font-size: clamp(15px, 1.15vw, 17px); line-height: 1.65; color: #B9B1A2; }
+.lp-meta { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 0; margin: clamp(14px, 2.4vh, 22px) 0 0; padding: 0; font-family: var(--ui); font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: #9C9384; }
+.lp-meta li { display: inline-flex; align-items: center; }
+/* Every item carries a dot in front, and the strip is shifted left and clipped, so a line never starts with a dot. */
+.lp-meta { margin-left: -31px !important; clip-path: inset(0 0 0 31px); }
+.lp-meta li::before { content: ""; width: 3px; height: 3px; border-radius: 50%; background: var(--amber); opacity: 0.7; margin: 0 14px; }
+.lp-meta li:first-child { color: var(--ivory); }
+.lp-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: clamp(18px, 3.4vh, 30px); }
+.lp-play { display: inline-flex; align-items: center; gap: 16px; padding: 10px 28px 10px 10px; border-radius: 999px; border: 0; background: var(--ivory); color: #13110E; font-family: var(--ui); font-size: 14px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 40px rgba(201,161,90,0.25); transition: transform .25s ease, box-shadow .25s ease, background .25s ease; }
+.lp-play:hover:not(:disabled), .lp-play:focus-visible { transform: translateY(-2px); background: #fff; box-shadow: 0 14px 50px rgba(201,161,90,0.4); outline: none; }
+.lp-play:disabled { opacity: 0.5; cursor: default; }
+.lp-play-i { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: #13110E; color: var(--ivory); }
+.lp-play-i svg { width: 18px; height: 18px; margin-left: 3px; }
+.lp-more { font-family: var(--ui); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none; color: var(--ivory); border-bottom: 1px solid rgba(201,161,90,0.6); padding: 4px 0; }
+.lp-more:hover, .lp-more:focus-visible { color: #fff; border-color: var(--amber); outline: none; }
+.lp-note { margin: clamp(10px, 2vh, 18px) 0 0; font-family: var(--ui); font-size: 12px; letter-spacing: 0.05em; color: #7D7668; }
+.lp-scroll { position: absolute; z-index: 2; right: max(20px, 4vw); bottom: calc(5.5vh + 18px); display: flex; align-items: center; gap: 8px; font-family: var(--ui); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; color: #9C9384; opacity: 0; animation: lp-in 1.6s ease 3s both; }
+.lp-scroll svg { width: 18px; height: 18px; animation: lp-bob 2.4s ease-in-out infinite; }
+.lp-scroll:hover { color: var(--ivory); }
+@keyframes lp-bob { 50% { transform: translateY(4px); } }
+.lp-inside { position: relative; padding: 72px max(20px, 6vw) 48px; background: #050504; }
+.lp-head h2 { margin: 12px 0 34px; font-family: var(--display); font-weight: 300; font-size: clamp(30px, 3.6vw, 52px); letter-spacing: 0.02em; color: var(--ivory); }
+.lp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+.lp-card { position: relative; display: block; text-align: left; padding: 0; border: 0; background: #0D0C0A; color: var(--ivory); cursor: pointer; border-radius: 6px; overflow: hidden; font: inherit; }
+.lp-card .ph { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #13110E; }
+.lp-card img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.85) brightness(0.82); transform: scale(1.02); transition: transform .8s cubic-bezier(.2,.7,.2,1), filter .5s ease; }
+.lp-card .ph::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,5,4,0.85), rgba(5,5,4,0) 55%); }
+.lp-card .pl { position: absolute; z-index: 1; right: 12px; bottom: 12px; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(237,230,216,0.92); color: #13110E; opacity: 0; transform: scale(.85); transition: opacity .3s ease, transform .3s ease; }
+.lp-card .pl svg { width: 14px; height: 14px; margin-left: 2px; }
+.lp-card .n { position: absolute; z-index: 1; left: 14px; bottom: 12px; font-family: var(--ui); font-size: 11px; letter-spacing: 0.24em; color: var(--amber); }
+.lp-card .tx { padding: 14px 16px 18px; }
+.lp-card .t { font-family: var(--display); font-size: 23px; line-height: 1.15; }
+.lp-card .d { margin-top: 6px; font-family: var(--ui); font-size: 13px; line-height: 1.5; color: #9C9384; }
+.lp-card:hover img, .lp-card:focus-visible img { transform: scale(1.08); filter: saturate(1) brightness(0.95); }
+.lp-card:hover .pl, .lp-card:focus-visible .pl { opacity: 1; transform: none; }
+.lp-card:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+.lp-how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px 40px; margin-top: 56px; padding-top: 32px; border-top: 1px solid rgba(237,230,216,0.12); font-family: var(--ui); font-size: 14px; line-height: 1.65; color: #9C9384; }
+.lp-how b { display: block; margin-bottom: 4px; font-family: var(--display); font-weight: 400; font-size: 21px; color: var(--ivory); }
+.lp-foot { margin-top: 56px; font-family: var(--ui); font-size: 12px; letter-spacing: 0.06em; color: #6B6457; }
+.fs-err { margin-top: 18px; font-family: var(--ui); font-size: 14px; color: #E2B866; max-width: 34em; }
+@media (max-width: 640px) {
+  .lp-shade { background: linear-gradient(0deg, rgba(5,5,4,1) 0%, rgba(5,5,4,0.85) 45%, rgba(5,5,4,0.35) 100%); }
+  .lp-copy { padding-top: 26vh; padding-bottom: calc(3vh + 56px); }
+  .lp-title { font-size: 9.6vw; letter-spacing: 0.05em; }
+  .lp-bars::before, .lp-bars::after { height: 3vh; }
+  .lp-scroll { display: none; }
+  .lp-cards { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lp-card .t { font-size: 19px; } .lp-card .d { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .lp-copy > *, .lp-scroll { animation: none; opacity: 1; } .lp-bg { transition: none; transform: none; } .lp-grain, .lp-scroll svg { animation: none; } }
+
+.film-cc { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 25; width: min(1000px, calc(100vw - 32px)); text-align: center; pointer-events: none; transition: bottom .35s ease; }
+body.film-idle .film-cc { bottom: calc(22px + env(safe-area-inset-bottom)); }
+.film-cc span { display: inline; font-family: var(--ui); font-weight: 500; font-size: clamp(16px, 1.9vw, 25px); line-height: 1.55; color: #F6F1E6; background: rgba(0,0,0,0.62); padding: 0.12em 0.45em; border-radius: 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; text-shadow: 0 1px 2px rgba(0,0,0,0.6); transition: opacity .25s ease; }
+.film-cc span:empty, body.cc-off .film-cc span { opacity: 0; }
+
+.film-ui { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 40px max(16px, 2.5vw) calc(14px + env(safe-area-inset-bottom)); background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0)); color: var(--ivory); font-family: var(--ui); transition: opacity .5s ease, transform .5s ease; }
+body.film-idle .film-ui { opacity: 0; transform: translateY(12px); pointer-events: none; }
+.film-ui[hidden] { display: none; }
+.fb-now { display: flex; align-items: baseline; gap: 12px; margin: 0 2px 10px; min-height: 20px; }
+.fb-now .n { font-size: 12px; letter-spacing: 0.2em; color: var(--amber); font-variant-numeric: tabular-nums; }
+.fb-now .t { font-family: var(--display); font-size: clamp(18px, 1.8vw, 24px); color: var(--ivory); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fb-track { display: flex; gap: 3px; height: 16px; align-items: center; cursor: pointer; margin-bottom: 8px; }
+.fb-seg { position: relative; height: 4px; flex: 1 1 0; background: rgba(237,230,216,0.22); border-radius: 2px; transition: height .2s ease; border: 0; padding: 0; cursor: pointer; }
+.fb-seg:hover, .fb-seg:focus-visible { height: 8px; outline: none; }
+.fb-seg i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--amber); border-radius: 2px; }
+.fb-seg .tip { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 12px; padding: 5px 9px; border-radius: 4px; background: rgba(13,12,10,0.94); border: 1px solid rgba(237,230,216,0.15); color: var(--ivory); opacity: 0; pointer-events: none; transition: opacity .15s; }
+.fb-seg:hover .tip, .fb-seg:focus-visible .tip { opacity: 1; }
+.fb-row { display: flex; align-items: center; gap: 4px; }
+.fb-row .sp { flex: 1; }
+.fb-btn { min-width: 44px; height: 44px; display: inline-grid; place-items: center; border: 0; background: transparent; color: var(--ivory); border-radius: 8px; cursor: pointer; padding: 0 10px; font: inherit; font-size: 13px; letter-spacing: 0.06em; }
+.fb-btn:hover, .fb-btn:focus-visible { background: rgba(237,230,216,0.1); outline: none; }
+.fb-btn svg { width: 22px; height: 22px; }
+.fb-btn[aria-pressed="false"] { color: #7D7668; }
+.fb-btn.cc { font-weight: 600; letter-spacing: 0.08em; }
+.fb-time { font-size: 12px; color: #9C9384; font-variant-numeric: tabular-nums; margin-left: 8px; letter-spacing: 0.04em; }
+
+.film-chapters { position: fixed; z-index: 35; right: max(16px, 2.5vw); bottom: calc(118px + env(safe-area-inset-bottom)); width: min(360px, calc(100vw - 32px)); max-height: min(70vh, 640px); overflow: auto; background: rgba(13,12,10,0.96); border: 1px solid rgba(237,230,216,0.14); border-radius: 12px; padding: 8px; font-family: var(--ui); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.film-chapters[hidden] { display: none; }
+.film-chapters button { display: flex; width: 100%; gap: 14px; align-items: baseline; text-align: left; border: 0; background: transparent; color: var(--ivory); padding: 10px 12px; border-radius: 8px; cursor: pointer; font: inherit; }
+.film-chapters button:hover, .film-chapters button:focus-visible { background: rgba(237,230,216,0.08); outline: none; }
+.film-chapters button.cur { background: rgba(201,161,90,0.14); }
+.film-chapters .n { font-size: 12px; color: var(--amber); letter-spacing: 0.12em; min-width: 22px; font-variant-numeric: tabular-nums; }
+.film-chapters .t { font-family: var(--display); font-size: 20px; flex: 1; }
+.film-chapters .d { font-size: 12px; color: #7D7668; font-variant-numeric: tabular-nums; }
+
+.film-end { position: fixed; inset: 0; z-index: 32; overflow-y: auto; color: var(--ivory); opacity: 0; pointer-events: none; transition: opacity 2s ease; background: transparent; }
+.film-end.on { opacity: 1; pointer-events: auto; }
+.film-end .e { font-family: var(--ui); font-size: 12px; letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); padding-left: 0.42em; }
+.film-end h2 { margin: 0; font-family: var(--display); font-weight: 300; text-transform: uppercase; letter-spacing: 0.14em; padding-left: 0.14em; font-size: clamp(30px, 6vw, 84px); line-height: 1.05; }
+.film-end .r { width: 120px; height: 1px; background: var(--amber); }
+.film-end .credits { font-family: var(--ui); font-size: 13px; line-height: 2; letter-spacing: 0.08em; color: #9C9384; }
+.film-end .credits b { color: var(--ivory); font-weight: 500; }
+.film-end .acts { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.film-end .acts button { font-family: var(--ui); font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; padding: 14px 22px; background: transparent; color: var(--ivory); border: 1px solid rgba(201,161,90,0.7); cursor: pointer; }
+.film-end .acts button.q { border-color: rgba(237,230,216,0.2); color: #B8AF9F; }
+.film-end .acts button:hover, .film-end .acts button:focus-visible { background: rgba(201,161,90,0.14); outline: none; }
+
+@media (max-width: 640px) {
+  .fb-btn.hide-sm, .fb-time { display: none; }
+  .film-ui { padding-top: 28px; }
+  .film-cc { bottom: calc(118px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { .film-ui, .film-cc, .film-end, .film-start { transition: none; } .film-start { scroll-behavior: auto; } }
+
+/* ---------- The range map: dots arrive along the survey's route, and name their city on hover ---------- */
+html.film #range .dot { animation: none; opacity: 0; }
+html.film #range.map-go .dot { animation: dot-pop .75s cubic-bezier(.2,1.5,.4,1) var(--d) both, twinkle 4.5s ease-in-out calc(var(--d) + .75s) infinite; }
+html.film #range.map-go.map-done .dot { animation: twinkle 4.5s ease-in-out infinite; animation-delay: calc(var(--d) * -1); opacity: 1; }
+html.film #range .dot::after { content: ""; position: absolute; left: -8px; top: -8px; width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(226,184,102,0.85); opacity: 0; pointer-events: none; }
+html.film #range.map-go:not(.map-done) .dot::after { animation: dot-ring 1.4s ease-out var(--d) both; }
+html.film #range .dot::before { content: ""; position: absolute; left: -7px; top: -7px; width: 28px; height: 28px; border-radius: 50%; }
+html.film #range .dot { cursor: default; transition: scale .2s ease, box-shadow .2s ease; }
+html.film #range .dot:hover, html.film #range .dot.hot { scale: 1.9; box-shadow: 0 0 0 3px rgba(13,12,10,0.6), 0 0 26px rgba(226,184,102,1) !important; z-index: 3; }
+@keyframes dot-pop { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+@keyframes dot-ring { 0% { opacity: 0.9; transform: scale(0.4); } 100% { opacity: 0; transform: scale(2.6); } }
+html.film #range .map-tip { position: absolute; z-index: 4; left: 0; top: 0; padding: 10px 16px; border-radius: 6px; background: rgba(13,12,10,0.94); border: 1px solid rgba(226,184,102,0.55); color: var(--ivory); font-family: var(--ui); font-size: 24px; letter-spacing: 0.02em; white-space: nowrap; pointer-events: none; opacity: 0; transform: translate(-50%, calc(-100% - 22px)); transition: opacity .15s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+html.film #range .map-tip.on { opacity: 1; }
+html.film #range .map-tip b { display: block; font-weight: 500; }
+html.film #range .map-tip span { display: block; margin-top: 2px; font-size: 17px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); }
+@media (prefers-reduced-motion: reduce) { html.film #range .dot, html.film #range.map-go .dot { animation: none; opacity: 1; } html.film #range .dot::after { display: none; } }
+
+/* ---------- Sharing ---------- */
+.lp-share { display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; color: var(--ivory); cursor: pointer; font-family: var(--ui); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; padding: 4px 0; border-bottom: 1px solid rgba(237,230,216,0.25); }
+.lp-share svg { width: 16px; height: 16px; }
+.lp-share:hover, .lp-share:focus-visible { border-color: var(--amber); outline: none; color: #fff; }
+.film-toast { position: fixed; left: 50%; top: 28px; z-index: 60; transform: translate(-50%, -12px); padding: 12px 18px; border-radius: 999px; background: rgba(13,12,10,0.96); border: 1px solid rgba(201,161,90,0.5); color: var(--ivory); font-family: var(--ui); font-size: 14px; letter-spacing: 0.02em; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; box-shadow: 0 12px 40px rgba(0,0,0,0.5); max-width: calc(100vw - 32px); }
+.film-toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- End card with the field journal ---------- */
+.fe-wrap { min-height: 100%; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); align-items: center; gap: 40px 80px; padding: 40px max(20px, 6vw); max-width: 1240px; margin: 0 auto; }
+.fe-main { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; text-align: left; }
+.fe-main h2 { font-size: clamp(30px, 4.2vw, 64px); padding-left: 0; white-space: nowrap; }
+.fe-journal { position: relative; padding: 30px 30px 26px; border: 1px solid rgba(237,230,216,0.14); border-radius: 10px; background: rgba(13,12,10,0.9); font-family: var(--ui); }
+.fe-journal::before { content: ""; position: absolute; left: 30px; top: 0; width: 56px; height: 2px; background: var(--amber); }
+.fj-e { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--amber); }
+.fe-journal h3 { margin: 8px 0 4px; font-family: var(--display); font-weight: 400; font-size: 32px; color: var(--ivory); }
+.fj-lede { margin: 0 0 12px; font-size: 14px; line-height: 1.55; color: #9C9384; }
+.fj-f { display: block; margin-bottom: 12px; }
+.fj-f span { display: block; margin-bottom: 6px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #B8AF9F; }
+.fj-f input, .fj-f textarea { width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid rgba(237,230,216,0.24); background: transparent; color: var(--ivory); padding: 6px 0; font-family: var(--display); font-size: 20px; line-height: 1.35; resize: none; border-radius: 0; transition: border-color .2s; }
+.fj-f input::placeholder, .fj-f textarea::placeholder { color: #5E584D; font-style: italic; }
+.fj-f input:focus, .fj-f textarea:focus { outline: none; border-color: var(--amber); }
+.fj-f.bad input { border-color: #D9775C; }
+.fj-sm input { font-size: 18px; }
+.fj-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.fj-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+.fj-go { font-family: var(--ui); font-size: 12px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; padding: 14px 26px; border: 0; border-radius: 999px; background: var(--ivory); color: #13110E; cursor: pointer; transition: background .2s, transform .2s; }
+.fj-go:hover:not(:disabled), .fj-go:focus-visible { background: #fff; transform: translateY(-1px); outline: none; }
+.fj-go:disabled { opacity: 0.5; cursor: default; }
+.fj-msg { font-size: 13px; color: #B8AF9F; line-height: 1.4; }
+.fe-journal.done .fj-f, .fe-journal.done .fj-go, .fe-journal.done .fj-lede { display: none; }
+.fe-journal.done .fj-msg { font-family: var(--display); font-size: 22px; color: var(--ivory); }
+@media (max-width: 860px) { .fe-wrap { grid-template-columns: 1fr; padding-top: 48px; } }
+body.film-ended .film-ui, body.film-ended .film-cc { opacity: 0 !important; pointer-events: none !important; }
+.fe-acts { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; margin-top: 10px; }
+.fe-share { display: inline-flex; align-items: center; gap: 14px; padding: 8px 24px 8px 8px; border: 0; border-radius: 999px; background: var(--ivory); color: #13110E; font-family: var(--ui); font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 40px rgba(201,161,90,0.22); transition: transform .25s ease, background .25s ease, box-shadow .25s ease; }
+.fe-share:hover, .fe-share:focus-visible { background: #fff; transform: translateY(-2px); box-shadow: 0 14px 50px rgba(201,161,90,0.38); outline: none; }
+.fe-share-i { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #13110E; color: var(--ivory); }
+.fe-share-i svg { width: 17px; height: 17px; }
+.fe-links { display: flex; gap: 24px; }
+.fe-link { display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; padding: 6px 0; color: #B8AF9F; font-family: var(--ui); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; border-bottom: 1px solid rgba(237,230,216,0.2); transition: color .2s, border-color .2s; }
+.fe-link svg { width: 16px; height: 16px; }
+.fe-link:hover, .fe-link:focus-visible { color: var(--ivory); border-color: var(--amber); outline: none; }
+</style>
 <title>The American Dive Bar</title>
+<script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400..600&display=swap">
@@ -282,9 +482,8 @@ body.on-title .pv-edit { visibility: hidden; }
 <div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_cover2.jpg" alt="A weathered brick corner bar called Lucky Star at night, a Pabst neon in the window and two regulars talking by the door" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
 <div style="position:absolute;left:820px;top:700px;width:1100px;height:380px;background:linear-gradient(180deg, rgba(13,12,10,0) 0%, rgba(13,12,10,0.7) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">01</p>
-<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;color:#C9A15A">Part I · The Habitat</p>
-<p style="font-size:68px;font-style:italic;font-weight:400;line-height:1.15;color:#EDE6D8;width:900px">Across the American landscape, beneath flickering neon, an extraordinary ecosystem survives.</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;color:#C9A15A">Part I</p>
+<p style="font-size:68px;font-style:italic;font-weight:400;line-height:1.15;color:#EDE6D8;width:900px">The Habitat</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:5px;text-transform:uppercase;color:#A89F8F">Corner bar · 9:47 PM · Field log 001</p>
 <aside>[0:20 to 0:29 · about 25 words]
 
@@ -296,79 +495,78 @@ VISUAL NOTE: The title card before this slide already names the talk, so this op
 </section>
 <section class="slide" id="range" data-scene="exterior" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:24px">
 <img src="img/americas.png" alt="Map of the Americas from Vancouver to Guayaquil, with 68 documented dive bar observations marked as points of light" style="position:absolute;left:560px;top:110px;width:1300px;height:900px;object-fit:contain">
-<div style="position:absolute;left:945px;top:202px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:942px;top:178px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:937px;top:229px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1373px;top:270px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1427px;top:236px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1433px;top:303px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1432px;top:322px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:994px;top:371px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1393px;top:521px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1363px;top:497px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1384px;top:542px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1389px;top:539px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1393px;top:526px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1183px;top:471px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1326px;top:338px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1352px;top:302px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1337px;top:292px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1052px;top:219px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:997px;top:265px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1049px;top:272px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:953px;top:399px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:919px;top:336px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1313px;top:351px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1363px;top:354px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1348px;top:346px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1108px;top:331px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1109px;top:344px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1271px;top:286px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1263px;top:289px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:955px;top:396px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1163px;top:628px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1283px;top:605px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1317px;top:600px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1441px;top:917px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1032px;top:570px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1465px;top:256px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1028px;top:245px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1258px;top:294px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1371px;top:315px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1304px;top:382px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1269px;top:398px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1404px;top:400px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1397px;top:407px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1338px;top:463px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1405px;top:332px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1460px;top:275px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1458px;top:283px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1423px;top:315px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1285px;top:467px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1023px;top:414px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1033px;top:433px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1042px;top:442px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:964px;top:417px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:964px;top:399px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:965px;top:420px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:965px;top:423px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:969px;top:430px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1342px;top:342px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1346px;top:345px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1459px;top:888px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1328px;top:329px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1272px;top:474px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1432px;top:275px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1406px;top:274px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1428px;top:532px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1155px;top:660px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1580px;top:605px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<div style="position:absolute;left:1375px;top:467px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%" class="dot"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">02</p>
+<div style="position:absolute;left:945px;top:202px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.50s" class="dot" data-city="Seattle, Washington" data-seq="40"></div>
+<div style="position:absolute;left:942px;top:178px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.64s" class="dot" data-city="Vancouver, British Columbia" data-seq="41"></div>
+<div style="position:absolute;left:937px;top:229px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.36s" class="dot" data-city="Portland, Oregon" data-seq="39"></div>
+<div style="position:absolute;left:1373px;top:270px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.84s" class="dot" data-city="Toronto, Ontario" data-seq="26"></div>
+<div style="position:absolute;left:1427px;top:236px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.98s" class="dot" data-city="Montreal, Quebec" data-seq="27"></div>
+<div style="position:absolute;left:1433px;top:303px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.00s" class="dot" data-city="New York, New York" data-seq="20"></div>
+<div style="position:absolute;left:1432px;top:322px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:4.86s" class="dot" data-city="Atlantic City, New Jersey" data-seq="19"></div>
+<div style="position:absolute;left:994px;top:371px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.10s" class="dot" data-city="Las Vegas, Nevada" data-seq="30"></div>
+<div style="position:absolute;left:1393px;top:521px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:3.32s" class="dot" data-city="Fort Lauderdale, Florida" data-seq="13"></div>
+<div style="position:absolute;left:1363px;top:497px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:3.18s" class="dot" data-city="Tampa, Florida" data-seq="12"></div>
+<div style="position:absolute;left:1384px;top:542px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:3.74s" class="dot" data-city="Marathon, Florida" data-seq="16"></div>
+<div style="position:absolute;left:1389px;top:539px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:3.60s" class="dot" data-city="Islamorada, Florida" data-seq="15"></div>
+<div style="position:absolute;left:1393px;top:526px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:3.46s" class="dot" data-city="Miami, Florida" data-seq="14"></div>
+<div style="position:absolute;left:1183px;top:471px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.02s" class="dot" data-city="Austin, Texas" data-seq="53"></div>
+<div style="position:absolute;left:1326px;top:338px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:0.80s" class="dot" data-city="Cincinnati, Ohio" data-seq="0"></div>
+<div style="position:absolute;left:1352px;top:302px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.78s" class="dot" data-city="Cleveland, Ohio" data-seq="7"></div>
+<div style="position:absolute;left:1337px;top:292px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.92s" class="dot" data-city="Detroit, Michigan" data-seq="8"></div>
+<div style="position:absolute;left:1052px;top:219px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:9.20s" class="dot" data-city="Great Falls, Montana" data-seq="45"></div>
+<div style="position:absolute;left:997px;top:265px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.78s" class="dot" data-city="Boise, Idaho" data-seq="42"></div>
+<div style="position:absolute;left:1049px;top:272px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.92s" class="dot" data-city="Victor, Idaho" data-seq="43"></div>
+<div style="position:absolute;left:953px;top:399px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.80s" class="dot" data-city="Redondo Beach, California" data-seq="35"></div>
+<div style="position:absolute;left:919px;top:336px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.22s" class="dot" data-city="San Francisco, California" data-seq="38"></div>
+<div style="position:absolute;left:1313px;top:351px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.64s" class="dot" data-city="Louisville, Kentucky" data-seq="6"></div>
+<div style="position:absolute;left:1363px;top:354px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.50s" class="dot" data-city="Beckley, West Virginia" data-seq="5"></div>
+<div style="position:absolute;left:1348px;top:346px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.36s" class="dot" data-city="Huntington, West Virginia" data-seq="4"></div>
+<div style="position:absolute;left:1108px;top:331px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:6.82s" class="dot" data-city="Denver, Colorado" data-seq="28"></div>
+<div style="position:absolute;left:1109px;top:344px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:6.96s" class="dot" data-city="Colorado Springs, Colorado" data-seq="29"></div>
+<div style="position:absolute;left:1271px;top:286px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.04s" class="dot" data-city="Madison, Wisconsin" data-seq="46"></div>
+<div style="position:absolute;left:1263px;top:289px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.18s" class="dot" data-city="Mineral Point, Wisconsin" data-seq="47"></div>
+<div style="position:absolute;left:955px;top:396px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.66s" class="dot" data-city="Los Angeles, California" data-seq="34"></div>
+<div style="position:absolute;left:1163px;top:628px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.00s" class="dot" data-city="Mexico City, Mexico" data-seq="60"></div>
+<div style="position:absolute;left:1283px;top:605px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.28s" class="dot" data-city="Mérida, Mexico" data-seq="62"></div>
+<div style="position:absolute;left:1317px;top:600px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.42s" class="dot" data-city="Cancún, Mexico" data-seq="63"></div>
+<div style="position:absolute;left:1441px;top:917px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.98s" class="dot" data-city="Guayaquil, Ecuador" data-seq="67"></div>
+<div style="position:absolute;left:1032px;top:570px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.86s" class="dot" data-city="Cabo San Lucas, Mexico" data-seq="59"></div>
+<div style="position:absolute;left:1465px;top:256px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.42s" class="dot" data-city="Portland, Maine" data-seq="23"></div>
+<div style="position:absolute;left:1028px;top:245px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:9.06s" class="dot" data-city="Jackson, Montana" data-seq="44"></div>
+<div style="position:absolute;left:1258px;top:294px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.32s" class="dot" data-city="Dubuque, Iowa" data-seq="48"></div>
+<div style="position:absolute;left:1371px;top:315px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:2.06s" class="dot" data-city="Pittsburgh, Pennsylvania" data-seq="9"></div>
+<div style="position:absolute;left:1304px;top:382px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.46s" class="dot" data-city="Nashville, Tennessee" data-seq="49"></div>
+<div style="position:absolute;left:1269px;top:398px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.60s" class="dot" data-city="Memphis, Tennessee" data-seq="50"></div>
+<div style="position:absolute;left:1404px;top:400px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.16s" class="dot" data-city="Wilmington, North Carolina" data-seq="54"></div>
+<div style="position:absolute;left:1397px;top:407px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.30s" class="dot" data-city="North Myrtle Beach, South Carolina" data-seq="55"></div>
+<div style="position:absolute;left:1338px;top:463px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:2.90s" class="dot" data-city="Tallahassee, Florida" data-seq="10"></div>
+<div style="position:absolute;left:1405px;top:332px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:4.58s" class="dot" data-city="Washington, D.C." data-seq="17"></div>
+<div style="position:absolute;left:1460px;top:275px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.28s" class="dot" data-city="Boston, Massachusetts" data-seq="22"></div>
+<div style="position:absolute;left:1458px;top:283px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.14s" class="dot" data-city="Providence, Rhode Island" data-seq="21"></div>
+<div style="position:absolute;left:1423px;top:315px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:4.72s" class="dot" data-city="Philadelphia, Pennsylvania" data-seq="18"></div>
+<div style="position:absolute;left:1285px;top:467px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.74s" class="dot" data-city="Biloxi, Mississippi" data-seq="51"></div>
+<div style="position:absolute;left:1023px;top:414px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.24s" class="dot" data-city="Phoenix, Arizona" data-seq="31"></div>
+<div style="position:absolute;left:1033px;top:433px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.38s" class="dot" data-city="Tucson, Arizona" data-seq="32"></div>
+<div style="position:absolute;left:1042px;top:442px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.52s" class="dot" data-city="Tombstone, Arizona" data-seq="33"></div>
+<div style="position:absolute;left:964px;top:417px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.08s" class="dot" data-city="San Diego, California" data-seq="37"></div>
+<div style="position:absolute;left:964px;top:399px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.94s" class="dot" data-city="Riverside, California" data-seq="36"></div>
+<div style="position:absolute;left:965px;top:420px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.44s" class="dot" data-city="Tijuana, Mexico" data-seq="56"></div>
+<div style="position:absolute;left:965px;top:423px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.58s" class="dot" data-city="Rosarito, Mexico" data-seq="57"></div>
+<div style="position:absolute;left:969px;top:430px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.72s" class="dot" data-city="Ensenada, Mexico" data-seq="58"></div>
+<div style="position:absolute;left:1342px;top:342px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.08s" class="dot" data-city="Portsmouth, Ohio" data-seq="2"></div>
+<div style="position:absolute;left:1346px;top:345px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.22s" class="dot" data-city="Ashland, Kentucky" data-seq="3"></div>
+<div style="position:absolute;left:1459px;top:888px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.84s" class="dot" data-city="Quito, Ecuador" data-seq="66"></div>
+<div style="position:absolute;left:1328px;top:329px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:0.94s" class="dot" data-city="Dayton, Ohio" data-seq="1"></div>
+<div style="position:absolute;left:1272px;top:474px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.88s" class="dot" data-city="New Orleans, Louisiana" data-seq="52"></div>
+<div style="position:absolute;left:1432px;top:275px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.56s" class="dot" data-city="Albany, New York" data-seq="24"></div>
+<div style="position:absolute;left:1406px;top:274px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.70s" class="dot" data-city="Syracuse, New York" data-seq="25"></div>
+<div style="position:absolute;left:1428px;top:532px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.56s" class="dot" data-city="Nassau, Bahamas" data-seq="64"></div>
+<div style="position:absolute;left:1155px;top:660px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.14s" class="dot" data-city="Acapulco, Mexico" data-seq="61"></div>
+<div style="position:absolute;left:1580px;top:605px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.70s" class="dot" data-city="San Juan, Puerto Rico" data-seq="65"></div>
+<div style="position:absolute;left:1375px;top:467px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:3.04s" class="dot" data-city="St. Augustine, Florida" data-seq="11"></div>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;letter-spacing:12px;text-transform:uppercase;color:#EDE6D8">Range</h2>
-<p style="font-size:32px;font-style:italic;line-height:1.3;color:#A89F8F;width:400px">Documented observations across the Americas</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">1999 – 2026</p>
-<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#C9A15A;width:520px">68 sites · survey ongoing</p>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#C9A15A;width:520px"><span class="map-count">68</span> sites · survey ongoing</p>
+<div class="map-tip" aria-hidden="true"></div>
 <aside>[0:29 to 0:43 · about 35 words]
 
 Sixty-eight documented research sites, from Vancouver to Guayaquil, spanning both American continents, yet the survey continues to this day.
@@ -430,7 +628,6 @@ VISUAL NOTE: This plate is an original engraving-style illustration in the manne
 SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars" and "brewery-branded mirrors and hardware" (Whiting-Robertsdale Historical Society, "The Tied House System That Left Its Mark on Whiting"). Federal Alcohol Administration Act of 1935, section 205(b) (27 U.S.C. 205): suppliers may not induce retailers with things of value (the "tied house" provision). Brewers Association, "Tied House Laws": temperance campaigners used "tied house" against brewer-controlled saloons, which helped bring Prohibition; federal rules bar suppliers from giving retailers cash, equipment or other goods, with exceptions for advertising materials. 27 CFR 6.102: outside signs must carry conspicuous advertising and cost no more than $400. 27 CFR 6.83: product displays are limited to $300 per brand at a time in one retail establishment. 27 CFR 6.84 lets industry members give retailers point-of-sale materials such as "inside signs," "back bar mats," "clocks, calendars" and menus, provided they carry conspicuous advertising. The Law of Accumulation and the Latin anatomy terms are our own invention, presented as such.</aside>
 </section>
 <section class="slide" id="lineage" data-scene="lastcall" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">04</p>
 <p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">Ancestral species</p>
 <h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Lineage</h2>
 <div style="position:absolute;left:959px;top:330px;width:1px;height:420px;background:#3A352D"></div>
@@ -438,13 +635,11 @@ SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars"
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#A89F8F">The Jim Crow South</p>
 <p style="font-size:60px;font-weight:400;line-height:1.1;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Juke Joint</p>
 <p style="font-size:40px;font-style:italic;text-align:center;color:#C9A15A">Diveus jukeus</p>
-<p style="font-size:32px;line-height:1.35;text-align:center;color:#D9D1C1;width:640px">Where the blues grew up, and where the jukebox got its name.</p>
 </div>
 <div style="position:absolute;left:1032px;top:340px;width:760px;display:flex;flex-direction:column;gap:14px;align-items:center">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#A89F8F">Cattle and oil towns of the Southwest</p>
 <p style="font-size:60px;font-weight:400;line-height:1.1;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Honky-Tonk</p>
 <p style="font-size:40px;font-style:italic;text-align:center;color:#C9A15A">Diveus honkytonkus</p>
-<p style="font-size:32px;line-height:1.35;text-align:center;color:#D9D1C1;width:640px">First recorded in print in 1874. Its name has no known origin.</p>
 </div>
 <p style="position:absolute;left:310px;top:830px;width:1300px;font-size:34px;font-style:italic;line-height:1.3;text-align:center;color:#EDE6D8">“The most important place in America.”</p>
 <p style="position:absolute;left:310px;top:884px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;text-align:center;color:#A89F8F">Zora Neale Hurston, on the juke joint’s place in American music</p>
@@ -467,19 +662,12 @@ SOURCES: Wikipedia, "Juke joint": juke joints were primarily operated by African
 <section class="slide" id="sp1" data-scene="neighborhood" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_neighborhood2.jpg" alt="A long, worn neighborhood bar on a snowy afternoon: the bartender talking with two regulars, an older man alone at a table by the window" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">05</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <p style="font-size:44px;color:#C9A15A;line-height:1">01</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Neighborhood Dive</h2>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus communalis</p>
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <div style="display:flex;flex-direction:column;gap:14px;font-family:Inter, Arial, sans-serif">
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#C9A15A">Community</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Range</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Nationwide</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Behavior</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Highly social</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Activity</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Primarily nocturnal</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Diet</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Domestic lager, fried foods</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Status</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Stable, locally vulnerable</p></div>
 </div>
 </div>
 <aside>[2:05 to 2:20 · about 35 words]
@@ -493,18 +681,16 @@ PHOTO DIRECTION: Your photo of a neighborhood bar on a snowy afternoon.</aside>
 <section class="slide" id="mcsorleys" data-scene="quiet" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_mcsorleys.jpg" alt="Inside McSorley's: a pot-bellied stove, sawdust on the floor, walls crowded with old photographs, and a bartender pouring dark and light ales" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;background:linear-gradient(180deg, rgba(13,12,10,0.9) 0%, rgba(13,12,10,0.84) 58%, rgba(13,12,10,0.3) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">06</p>
 <div style="position:absolute;left:128px;top:150px;width:780px;display:flex;flex-direction:column;gap:18px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Specimen · The Neighborhood Dive</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">McSorley’s Old Ale House</h2>
 <p style="font-size:40px;font-style:italic;line-height:1.2;color:#A89F8F">New York, New York</p>
 <hr style="width:80px;border-top:2px solid #C9A15A">
-<p style="font-size:34px;line-height:1.35;color:#D9D1C1;width:740px">Above the bar hang wishbones, said to have been left by soldiers heading to the First World War. The ones still hanging are said to belong to those who never came back.</p>
 </div>
 <div style="position:absolute;left:1040px;top:180px;width:752px;display:flex;flex-direction:column;gap:0px;border-left:1px solid #3A352D">
-<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1854</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">The year it claims. City records suggest a few years later.</p></div>
-<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1970</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">Women first served, after two lawyers sued and won.</p></div>
-<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1986</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">A ladies’ room is installed.</p></div>
+<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1854</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">Founded, by its own account</p></div>
+<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1970</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">Women first served</p></div>
+<div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1986</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">A ladies’ room arrives</p></div>
 </div>
 <aside>[2:20 to 2:45 · about 60 words]
 
@@ -520,20 +706,40 @@ PHOTO: Your photo of McSorley's, with the stove and sawdust floor, runs full-ble
 
 SOURCES: Wikipedia, "McSorley's Old Ale House": claimed founding 1854, evidence second-hand; the site appears vacant 1860 to 1861 and city records date the building no earlier than 1858; women first admitted August 10, 1970 after Seidenberg v. McSorley's Old Ale House (S.D.N.Y. 1970), brought by NOW attorneys Faith Seidenberg and Karen DeCrow; ladies' room installed 1986; wishbones traditionally said to be hung by men leaving for World War I, a story the page notes is disputed (Joseph Mitchell suggested the founder simply saved them).</aside>
 </section>
+<section class="slide" id="sp2" data-scene="working" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_working2.jpg" alt="A working-class bar at night: the bartender laughing with regulars at the bar, work jackets on the hooks, two men talking over bottles at a table" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
+<div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<p style="font-size:44px;color:#C9A15A;line-height:1">02</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Working-Class Dive</h2>
+<p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus laboriosus</p>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<div style="display:flex;flex-direction:column;gap:14px;font-family:Inter, Arial, sans-serif">
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;padding:24px 0px 0px 0px;border-top:1px solid #3A352D">
+</div>
+</div>
+<aside>[4:02 to 4:29 · about 65 words]
+
+In older industrial towns, we find a hardier relative. The Working-Class Dive. Diveus laboriosus.
+
+Its defining trait is routine. Activity peaks at shift change. Same people. Same stools. Same drinks. Same time.
+
+Researchers have observed individual specimens occupying the same stool for decades. Removing the stool could result in severe ecological disruption.
+
+Related species are glimpsed only briefly. The Sports Dive. The VFW post. The bowling-alley bar.
+
+PHOTO DIRECTION: Your photo of a working-class bar at night, with work jackets on the hooks by the door.</aside>
+</section>
 <section class="slide" id="sp3" data-scene="coast" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_jimbos.jpg" alt="Jimbo's Place on Virginia Key, Miami: a sandy lot of shipping containers, hand-painted signs and mismatched chairs under the palms" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">07</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
-<p style="font-size:44px;color:#C9A15A;line-height:1">02</p>
+<p style="font-size:44px;color:#C9A15A;line-height:1">03</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Destination Dive</h2>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus remotus</p>
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <div style="display:flex;flex-direction:column;gap:14px;font-family:Inter, Arial, sans-serif">
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#C9A15A">Isolation</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Habitat</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Coasts, back roads, deserts, mountains</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Behavior</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Draws intentional travel</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Adaptations</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">No bartender. An honor box. Pull your own beer.</p></div>
 </div>
 </div>
 <aside>[2:45 to 3:12 · about 65 words]
@@ -550,20 +756,37 @@ PHOTO DIRECTION: Your photo of Jimbo's Place on Virginia Key. It ties forward to
 
 JIMBO'S SOURCES: NBC Miami (March 15, 2012) and CBS Miami (March 20, 2012): James "Jimbo" Luznar opened Jimbo's on Virginia Key in 1954; the city closed it in March 2012.</aside>
 </section>
+<section class="slide" id="dollars" data-scene="coast" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_dollars2.jpg" alt="A coastal bar with every inch of its ceiling, walls and posts covered in dollar bills" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div style="position:absolute;left:0px;top:0px;width:1240px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0.94) 0%, rgba(13,12,10,0.86) 55%, rgba(13,12,10,0) 100%)"></div>
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">Specimen · The Destination Dive</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">The Currency Ceiling</h2>
+<div style="display:flex;flex-direction:column;gap:10px;width:760px;font-family:Inter, Arial, sans-serif">
+</div>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<p style="font-size:120px;font-weight:300;line-height:1;color:#E2B866">$13,961</p>
+<p style="font-size:30px;line-height:1.35;color:#D9D1C1;width:760px">Taken down from one bar’s walls and given to hurricane relief, 2019</p>
+<aside>[4:49 to 5:34 · about 115 words]
+
+Why money? Scientists remain divided.
+
+In California's Gold Country, regulars tell of miners who signed a bill and tacked it to the ceiling, so they would never come back too broke for a first drink. On the Florida coast, the story involves fishermen, betting a dollar on the day's catch. Aviators had a cousin of the custom. Signed bills called short snorters. Fail to produce yours, and you bought the round.
+
+The true origin may be unrecoverable.
+
+The money is not. In 2019, staff at the Siesta Key Oyster Bar pulled every bill off the walls. Thirteen thousand, nine hundred and sixty-one dollars. All of it sent to hurricane relief in the Bahamas.
+
+PHOTO DIRECTION: Your photo of a coastal bar papered floor to ceiling in dollar bills. It is an illustration of the habit, not a picture of the Siesta Key bar the slide cites.</aside>
+</section>
 <section class="slide" id="biker" data-scene="latenight" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_biker.jpg" alt="A long row of motorcycles parked outside a weathered desert roadhouse at sunset" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">08</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
-<p style="font-size:44px;color:#C9A15A;line-height:1">03</p>
+<p style="font-size:44px;color:#C9A15A;line-height:1">04</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Biker Bar</h2>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus motorcyclus</p>
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <div style="display:flex;flex-direction:column;gap:14px;font-family:Inter, Arial, sans-serif">
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Defining trait</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#C9A15A">Loyalty</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Habitat</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Highway shoulders, county lines</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Identification</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">A precise row of motorcycles out front</p></div>
-<div style="display:flex;gap:24px;align-items:baseline"><p style="width:260px;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#A89F8F">Field rule</p><p style="font-family:'Cormorant Garamond', Georgia, serif;font-size:32px;color:#EDE6D8">Admire the bikes. Never touch the bikes.</p></div>
 </div>
 </div>
 <aside>[3:12 to 3:27 · about 35 words]
@@ -578,33 +801,56 @@ AUDIO: In the web presentation, your own biker bar field recording starts on thi
 
 PHOTO DIRECTION: Your photo of the row of bikes outside a desert roadhouse at sunset.</aside>
 </section>
+<section class="slide" id="sp4" data-scene="latenight" style="background:#0B0B0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:start;gap:16px">
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/migration2.jpg" alt="Dark city street map with five golden migration paths converging on one glowing point" style="width:100%;height:100%;object-fit:cover"><div class="fx breathe" style="position:absolute;left:1000px;top:440px;width:300px;height:300px;background:radial-gradient(closest-side, rgba(255,200,120,0.55), rgba(255,170,80,0.15) 45%, rgba(255,170,80,0))"></div></div></div>
+<p style="font-size:44px;color:#C9A15A;line-height:1">05</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Late-Night Dive</h2>
+<p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus nocturnus</p>
+<p style="position:absolute;left:128px;top:548px;width:330px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Restaurants</p>
+<p style="position:absolute;left:128px;top:768px;width:270px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Concerts</p>
+<p style="position:absolute;left:790px;top:888px;width:320px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#EDE6D8">Weddings</p>
+<p style="position:absolute;left:1440px;top:364px;width:350px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Other bars, closed</p>
+<p style="position:absolute;left:1100px;top:888px;width:440px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:right;color:#EDE6D8">Hospitality workers</p>
+<p style="position:absolute;left:1000px;top:356px;width:300px;font-size:48px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#E2B866">Dive Bar</p>
+<p style="position:absolute;left:1000px;top:418px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:5px;text-align:center;color:#EDE6D8">1:17 AM</p>
+<aside>[5:58 to 6:38 · about 100 words]
+
+Our final species is rarely seen in daylight. The Late-Night Dive. Diveus nocturnus.
+
+As midnight approaches, scattered populations begin their nightly migration toward a common watering hole. Restaurant staff, finished with their shifts. Concertgoers. Wedding guests. Patrons of lesser bars that have already closed.
+
+By 1:17 a.m., they converge. Here, together, they will make increasingly questionable decisions.
+
+The migration has an earlier phase. Happy hour. The term began among sailors aboard the USS Arkansas in 1913, and caught on during Prohibition as a drink before dinner at the speakeasy. In Massachusetts, it has been illegal since 1984.
+
+Boston simply has hours.
+
+HAPPY HOUR SOURCES: Wikipedia, "Happy hour": by June 1913 the crew of USS Arkansas called regular onboard gatherings "happy hours"; the pre-dinner drink custom has roots in Prohibition-era speakeasies. Mondaq, "Are You Happy Now? The Status of Massachusetts Happy Hour Laws" (2019): Massachusetts became the first state to ban happy hours in 1984 (204 CMR 4), after a 1983 drunk-driving death. GBH News (June 10, 2026): the ban is still in place; Gov. Healey has said she would support removing it. The ban is statewide, not only Boston.
+
+VISUAL NOTE: The map is an abstract city, not a real one. If you want it to be your city, a dark-mode screenshot of a real street map works as a replacement. The labels are separate text boxes, so you can move them.</aside>
+</section>
 <section class="slide" id="fauna" data-scene="latenight" data-step-cue="3:woo" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">09</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:56px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Fauna of the American Dive</h2>
 <div style="display:flex;gap:48px">
 <div class="focus" data-k="0" data-label="The Regular" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_regular2.jpg" alt="An older regular in a worn ball cap and denim jacket, alone at the bar with a beer" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Regular</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo regularis</p>
-<p style="font-size:28px;line-height:1.3;color:#A89F8F">Territorial. Same stool, same drink.</p>
 </div>
 <div class="build focus" data-k="1" data-label="The Bartender" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_bartender2.jpg" alt="A tattooed bartender drying a glass behind a worn bar" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Bartender</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Minister potus</p>
-<p style="font-size:28px;line-height:1.3;color:#A89F8F">Apex species. Controls access to resources.</p>
 </div>
 <div class="build focus" data-k="2" data-label="The Tourist" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_tourist2.jpg" alt="A traveler holding a paper map, hesitating just inside the door of a desert bar" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Tourist</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo peregrinus</p>
-<p style="font-size:28px;line-height:1.3;color:#A89F8F">Identified by looking around too much.</p>
 </div>
 <div class="build focus" data-k="3" data-label="The Bachelorette Party" style="flex:1;display:flex;flex-direction:column;gap:12px">
 <img src="img/p_bachelorette2.jpg" alt="A bride-to-be in a veil laughing with a friend in a dive bar booth" style="width:380px;height:400px;object-fit:cover">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8;padding:8px 0px 0px 0px">The Bachelorette Party</p>
 <p style="font-size:32px;font-style:italic;color:#C9A15A">Homo celebrans</p>
-<p style="font-size:28px;line-height:1.3;color:#A89F8F">Highly vocal. Travels in packs.</p>
 </div>
 </div>
 <aside>[3:27 to 3:42 · about 40 words]
@@ -617,8 +863,36 @@ The Regular. Territorial. (click) The Bartender, the apex species, controlling a
 
 PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light. Real people need their permission. Silhouettes, hands on a bar, or a back-of-head shot also work and keep everyone anonymous. All four are your photos.</aside>
 </section>
+<section class="slide" id="local" data-scene="neighborhood" style="background:#13110E;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">Regional behavior</p>
+<h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Local Adaptations</h2>
+<div style="position:absolute;left:288px;top:320px;width:1344px;display:flex;gap:48px">
+<div class="focus" data-k="0" data-label="Chicago" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<img src="img/p_tiedhouse.jpg" alt="A brick corner tavern at dusk under a lit Old Style sign, Food, Cold Beer and Cocktails lettered over the windows" style="width:646px;height:270px;object-fit:cover;object-position:center 38%;margin:-36px -36px 10px -36px">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Chicago</p>
+<p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Tied House</p>
+<p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus domesticus</p>
+</div>
+<div class="build focus" data-k="1" data-label="Wisconsin" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
+<img src="img/p_dice.jpg" alt="A regular shaking a leather dice cup at a polished wooden bar, a beer at his elbow and the bartender watching" style="width:646px;height:270px;object-fit:cover;object-position:center 42%;margin:-36px -36px 10px -36px">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Wisconsin</p>
+<p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">Shake of the Day</p>
+<p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus aleator</p>
+</div>
+</div>
+<aside>[6:59 to 7:42 · about 105 words]
+
+Every population adapts to its environment.
+
+In Chicago, remember the tied houses? Between 1897 and 1905, Schlitz alone built fifty-seven saloons here. Beer on the ground floor, apartments upstairs, often the family who ran the place. Many still stand. Look for the brewery's belted globe on the brick. The local ritual is the Chicago Handshake. A shot of Malört, which tastes like a punishment, and an Old Style to recover.
+
+In Wisconsin, the dice cup lives on the bar. Shake of the Day: beat the bartender, and the next one's free. When three Milwaukee bars tried to ban the dice in 2016, the ban lasted two days.
+
+PHOTO DIRECTION: No photos needed. If you have your own shot of a Chicago corner tavern with apartments above, or a dice cup on a Wisconsin bar, any one of them could replace a card.
+
+SOURCES: Chicago Commission on Chicago Landmarks, "Five Brewery Tied Houses and One Brewery Stable" and "1393 W. Lake St. Schlitz Brewery Tied House" (2021): brewery ownership of Chicago saloons began in 1892; Schlitz built 57 tied houses in the city from 1897 to 1905; buildings followed a "store and flat" form with apartments above; upper-floor apartments "often housed the saloonkeeper and his family"; the belted-globe emblem derives from Richard Bock's Schlitz display at the 1893 World's Columbian Exposition; over forty brewery tied houses survive. WBEZ Curious City, "Why is Malört popular in Chicago?" (July 6, 2023): Carl Jeppson sold Swedish-style bitters in the 1920s marketed as a tonic; the Chicago Handshake is "the iconic pairing of a Malört shot with an Old Style beer," common at dive bars. Malört.com brand history: production returned to Chicago in 2019 under CH Distillery. Punch, "How Bar Dice Became a Wisconsin Institution" (2018): Shake of the Day is played against the bartender for the drink being ordered or a growing pot; bar historian Jim Draeger dates the game's popularity to at least the end of Prohibition. OnMilwaukee (Jan. 29, 2016): three bars' management discontinued bar dice on a Monday and reversed the ban by Wednesday.</aside>
+</section>
 <section class="slide" id="abroad" data-scene="neighborhood" style="background:#13110E;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">10</p>
 <p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">The genus beyond the border</p>
 <h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Related Populations</h2>
 <div style="position:absolute;left:288px;top:320px;width:1344px;display:flex;gap:48px">
@@ -627,16 +901,12 @@ PHOTO DIRECTION: Four tight portraits, one per type, in matching warm low light.
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Mexico</p>
 <p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Pulquería</p>
 <p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus pulquerius</p>
-<p style="font-size:30px;line-height:1.35;color:#D9D1C1">Serves pulque, the fermented agave drink the Aztecs held sacred.</p>
-<p style="font-size:30px;line-height:1.35;color:#A89F8F">Mexico City once counted about 1,100. By 2000, about 80 remained.</p>
 </div>
 <div class="build focus" data-k="1" data-label="The boteco" style="flex:1;display:flex;flex-direction:column;gap:14px;padding:36px 36px 40px;border:1px solid #3A352D;background:#0D0C0A">
 <img src="img/p_boteco.jpg" alt="A boteco in Rio at dusk: friends at yellow plastic tables with beer bottles in koozies and fried snacks, the barman laughing behind the counter" style="width:646px;height:270px;object-fit:cover;margin:-36px -36px 10px -36px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Brazil</p>
 <p style="font-size:48px;line-height:1.1;letter-spacing:2px;text-transform:uppercase;color:#EDE6D8">The Boteco</p>
 <p style="font-size:36px;font-style:italic;color:#C9A15A">Diveus botequinus</p>
-<p style="font-size:30px;line-height:1.35;color:#D9D1C1">Born in the warehouses of Rio’s port in the 1800s.</p>
-<p style="font-size:30px;line-height:1.35;color:#A89F8F">Each year, botecos in 25 cities compete on their snacks and on how cold the beer is.</p>
 </div>
 </div>
 <aside>[3:42 to 4:09 · about 70 words]
@@ -650,16 +920,15 @@ In Mexico, the pulquería, serving the fermented agave drink the Aztecs held sac
 SOURCES: Punch, "A Pulque Revolution Brews in Mexico City": pulque's Aztec ritual role; pulquerías "once estimated at 1,100" (the estimate is undated), about 80 by the start of the 21st century; decline tied to a decades-long campaign by beer companies and the government depicting pulque as "a crass, poor man's drink"; the stigma lasted into the 1990s. Rio de Janeiro by Cariocas: botecos began in 19th-century Rio with Portuguese port warehouses; Comida di Buteco, created in 1999 in Belo Horizonte, now has botecos in 25 cities competing, judged on snack, service, hygiene and drink temperature.</aside>
 </section>
 <section class="slide" id="third" data-scene="neighborhood" style="background:#15130F;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:start;gap:20px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">11</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#C9A15A">The third place</p>
-<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.15;color:#EDE6D8;width:1500px">Home is the first place. Work is the second.<br><i>The third is where a neighborhood meets itself.</i></h2>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.15;color:#EDE6D8;width:1500px"><i>Where a neighborhood meets itself</i></h2>
 <div style="position:absolute;left:128px;top:470px;width:720px;display:flex;flex-direction:column;gap:16px">
 <p style="font-size:240px;font-weight:300;line-height:0.9;color:#E2B866">48%</p>
-<p style="font-size:32px;line-height:1.3;color:#EDE6D8">of Americans with a regular neighborhood spot, where they recognize people, talk with someone they don’t know well at least monthly</p>
+<p style="font-size:32px;line-height:1.3;color:#EDE6D8">with a regular spot</p>
 </div>
 <div class="build" style="position:absolute;left:1000px;top:470px;width:720px;display:flex;flex-direction:column;gap:16px">
 <p style="font-size:240px;font-weight:300;line-height:0.9;color:#A89F8F">28%</p>
-<p style="font-size:32px;line-height:1.3;color:#A89F8F">of Americans with no regular place in their community</p>
+<p style="font-size:32px;line-height:1.3;color:#A89F8F">without one</p>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;color:#7E7668">Survey Center on American Life, American Community Life Survey, June–July 2020, n = 5,058</p>
 <aside>[4:09 to 4:28 · about 50 words]
@@ -677,19 +946,11 @@ SOURCES: Daniel A. Cox, Ryan Streeter, Samuel J. Abrams, Beatrice Lee and Dana P
 <section class="slide" id="falsedive" data-scene="lounge" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 1120px 128px 128px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <div class="kb" style="position:absolute;left:740px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_faux.jpg" alt="A perfect martini with two olives on a polished bar under Edison bulbs" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:740px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">12</p>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#C9A15A">Diveus artificialis</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The False Dive</h2>
-<p style="font-size:32px;line-height:1.3;color:#A89F8F">Not a true species. A mimic.</p>
+<p style="font-size:32px;line-height:1.3;color:#A89F8F">A mimic</p>
 <hr style="width:80px;border-top:2px solid #C9A15A">
 <div style="display:flex;flex-direction:column;gap:12px;padding:0px 0px 0px 28px;border-left:1px solid #5A5246;font-family:Inter, Arial, sans-serif">
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Edison bulbs</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Commissioned mural</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Custom neon</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Deliberately distressed finish</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">$17 cocktail</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">QR-code menu</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Social media manager</p>
 </div>
 <aside>[4:28 to 4:41 · about 35 words]
 
@@ -700,7 +961,6 @@ While attempts have been made to breed the false dive in captivity, they have la
 PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs, a coupe glass, subway tile, merch for sale by the door. Shoot it beautifully. The joke lands better if it looks good. Avoid showing a recognizable venue's name or logo. The current image is your martini-under-Edison-bulbs shot.</aside>
 </section>
 <section class="slide" id="test" data-scene="silence" style="background:#090908;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:36px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">13</p>
 <h1 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:104px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Did this accumulate?</h1>
 <p style="font-size:56px;font-style:italic;text-align:center;color:#A89F8F">or was it purchased?</p>
 <hr style="width:96px;border-top:2px solid #C9A15A">
@@ -714,19 +974,18 @@ Did this accumulate? Or was it purchased?
 </aside>
 </section>
 <section class="slide" id="protocol" data-scene="quiet" style="background:#13110E;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">14</p>
 <p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">Observing without disturbing</p>
 <h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Field Protocol</h2>
 <div style="position:absolute;left:208px;top:410px;width:1504px;display:flex;gap:96px">
 <div style="flex:1;display:flex;flex-direction:column;gap:40px">
-<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">01</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Four people or fewer. <span style="color:#A89F8F">A larger party disrupts the habitat.</span></p></div>
-<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">02</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">A beer, a shot, or two ingredients. <span style="color:#A89F8F">Never a fancy cocktail.</span></p></div>
-<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">03</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Read the room before the jukebox. <span style="color:#A89F8F">Never try to change the vibe.</span></p></div>
+<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">01</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Four people or fewer.</p></div>
+<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">02</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">A beer, a shot, or two ingredients.</p></div>
+<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">03</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Read the room before the jukebox.</p></div>
 </div>
 <div style="flex:1;display:flex;flex-direction:column;gap:40px">
-<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">04</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Note how seriously they play pool. <span style="color:#A89F8F">Mimic accordingly.</span></p></div>
-<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">05</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">The restroom is for number one. <span style="color:#A89F8F">Number two means it’s time to go home.</span></p></div>
-<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">06</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Bring cash. <span style="color:#A89F8F">If they don’t take plastic, be delighted. They are trying to survive.</span></p></div>
+<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">04</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Note how seriously they play pool.</p></div>
+<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">05</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">The restroom is for number one.</p></div>
+<div class="build" style="display:flex;gap:28px"><p style="width:56px;flex-shrink:0;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;color:#C9A15A;padding:10px 0px 0px">06</p><p style="font-size:36px;line-height:1.3;color:#EDE6D8">Bring cash.</p></div>
 </div>
 </div>
 <aside>[4:47 to 5:22 · about 90 words]
@@ -752,17 +1011,11 @@ VISUAL NOTE: These are your own field rules, presented as the researcher's opini
 <section class="slide" id="conservation" data-scene="lastcall" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_gary_wide.jpg" alt="An empty, worn wooden bar stool with a brass nameplate reading Gary" style="width:100%;height:100%;object-fit:cover"></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#EDE6D8;text-shadow:0px 1px 8px rgba(0,0,0,0.95)">15</p>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:24px">
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;color:#EDE6D8">Conservation</h2>
-<p style="font-size:32px;line-height:1.35;color:#D9D1C1">No one has ever counted America’s dive bars. The pressures on neighborhood gathering places are easier to name.</p>
 <div style="display:flex;flex-direction:column;gap:10px;padding:0px 0px 0px 28px;border-left:1px solid #5A5246;font-family:Inter, Arial, sans-serif">
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Rising rents</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Redevelopment</p>
-<p style="font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#EDE6D8">Fewer drinkers</p>
 </div>
 <hr style="width:80px;border-top:2px solid #C9A15A">
-<p style="font-size:44px;font-style:italic;line-height:1.25;color:#EDE6D8">You can open a bar tomorrow.<br><span style="color:#E2B866">You cannot open a seventy-year-old bar tomorrow.</span></p>
 </div>
 <aside>[5:22 to 5:40 · about 45 words]
 
@@ -781,7 +1034,6 @@ SOURCES: Gallup, 2025 Consumption Habits survey, 54% of U.S. adults say they dri
 <section class="slide" id="closing" data-scene="exterior" data-build-cue="door" data-build-scene="silence" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 144px;display:flex;flex-direction:column;justify-content:end;gap:24px">
 <div class="kb" style="position:absolute;left:820px;top:0px;width:1100px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_closing2.jpg" alt="An old brick corner tavern at dusk on a rain-wet street, warm light in the windows and two men talking at the open door" style="width:100%;height:100%;object-fit:cover"><div class="fx neon slow" style="position:absolute;left:770px;top:582px;width:220px;height:180px;background:radial-gradient(closest-side, rgba(255,72,48,0.32), rgba(0,0,0,0))"></div><div class="fx neon" style="position:absolute;left:46px;top:576px;width:200px;height:180px;background:radial-gradient(closest-side, rgba(90,130,255,0.22), rgba(0,0,0,0))"></div></div></div>
 <div style="position:absolute;left:820px;top:0px;width:560px;height:1080px;background:linear-gradient(90deg, #0D0C0A 0%, rgba(13,12,10,0) 100%)"></div>
-<p style="position:absolute;left:128px;top:64px;width:300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">16</p>
 <p style="font-size:96px;font-style:italic;font-weight:400;line-height:1.1;color:#EDE6D8">Diveus americanus</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#A89F8F">Conservation status   <span style="color:#E2B866">Threatened</span></p>
 <hr style="width:96px;border-top:2px solid #C9A15A">
@@ -863,7 +1115,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
     <h1><span>The American</span><span>Dive Bar</span></h1>
     <div class="rule" aria-hidden="true"></div>
     <div class="sub">An exploration of a fragile ecosystem</div>
-    <div class="credit">Observed and narrated by Ran Craycraft</div>
+    <div class="credit">A field study by Ran Craycraft</div>
     <div class="start"><div class="keys k1"></div><div class="keys k2"></div></div>
   </div>
 </div>
@@ -1189,6 +1441,22 @@ const Sound = (() => {
       src.onended = () => { if (voiceSrc === src) { voiceSrc = null; amb.gain.setTargetAtTime(AMB, ctx.currentTime, 0.9); } onEnd && onEnd(); };
     });
   }
+  // Film: play a clip and resolve with its length in seconds, or null when the file isn't there yet.
+  function play(url, onEnd) {
+    if (!ctx) return Promise.resolve(null);
+    return loadVoice(url).then(buf => {
+      if (!buf) return null;
+      stopVoice(0.2);
+      const t = ctx.currentTime + 0.05, src = ctx.createBufferSource(), g = ctx.createGain();
+      src.buffer = buf; g.gain.value = VOICE; src.connect(g); g.connect(master); src.start(t);
+      voiceSrc = src; voiceGain = g; duck(true);
+      src.onended = () => { if (voiceSrc === src) voiceSrc = null; onEnd && onEnd(); };
+      return buf.duration;
+    });
+  }
+  function duck(on) { if (!ctx) return; const t = ctx.currentTime; amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(on ? AMB_UNDER_VOICE : AMB, t, on ? 0.4 : 1.2); }
+  function pauseAll() { if (ctx && ctx.state === 'running') ctx.suspend(); }
+  function resumeAll() { if (ctx && ctx.state !== 'running') ctx.resume(); }
   function cue(name) { if (ctx && current && CUES[name]) CUES[name](current); }
   let neonLit = null, neonScene = null;
   function neon(on) {
@@ -1199,7 +1467,7 @@ const Sound = (() => {
   }
   function setVolume(v) { volume = v; if (master) master.gain.setTargetAtTime(muted ? 0 : v, ctx.currentTime, 0.1); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : volume, ctx.currentTime, 0.1); }
-  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
+  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, play, duck, pauseAll, resumeAll, get time() { return ctx ? ctx.currentTime : 0; }, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
 })();
 
 </script>
@@ -1222,7 +1490,7 @@ const Sound = (() => {
     if (nav && nav.type === 'reload' && saved && saved.started && ((saved.i | 0) > 0 || (saved.step | 0) > 0)) { i = saved.i | 0; step = saved.step | 0; resumed = true; }
   } catch (e) {}
   const presenter = location.hash === '#presenter';
-  let ch = null, applying = false; try { ch = new BroadcastChannel('dive-bar-deck'); } catch (e) {}
+  let ch = null, applying = false; if (!window.FILM) try { ch = new BroadcastChannel('dive-bar-deck'); } catch (e) {}
   const pvCur = document.getElementById('pvCur'), pvNextStage = document.getElementById('pvNextStage'), pvNextBox = document.getElementById('pvNextBox');
   if (presenter) { document.body.classList.add('presenter'); started = true; pvCur.appendChild(stage); document.title = 'Presenter · The American Dive Bar'; }
 
@@ -1232,7 +1500,9 @@ const Sound = (() => {
       pvNextStage.style.transform = `translate(-50%, -50%) scale(${pvNextBox.clientWidth / 1920})`;
       return;
     }
-    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080); stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+    // The film keeps a band free under the picture for captions, like a letterbox.
+    const band = window.FILM ? Math.max(84, Math.min(130, window.innerHeight * 0.13)) : 0;
+    const s = Math.min(window.innerWidth / 1920, (window.innerHeight - band) / 1080); stage.style.transform = `translate(-50%, calc(-50% - ${band / 2}px)) scale(${s})`;
   };
   window.addEventListener('resize', fit); fit();
 
@@ -1586,6 +1856,7 @@ const Sound = (() => {
     }
   }
   gate.addEventListener('click', () => {
+    if (window.FILM) return;
     if (!started) { begin(true); return; }
   });
   document.addEventListener('fullscreenchange', () => gate.classList.toggle('fs', !!document.fullscreenElement));
@@ -1626,14 +1897,15 @@ const Sound = (() => {
   }
   document.addEventListener('fullscreenchange', () => { if (ch && !presenter) ch.postMessage({ type: 'fs', from: 'audience', on: !!document.fullscreenElement }); });
   function openPresenter() {
-    if (presenter) return;
+    if (presenter || window.FILM) return;
     const w = window.open(location.href.split('#')[0] + '#presenter', 'dive-bar-presenter', 'popup,width=1280,height=820');
     if (!w) toast('Your browser blocked the notes window. Allow pop-ups for this site, then press P. Or open this page in another window with #presenter at the end of the address.');
   }
   document.getElementById('pvBtn').addEventListener('click', openPresenter);
 
-  viewport.addEventListener('click', e => { if (!started) return; if (!Sound.started) { Sound.init(); Sound.setVolume(+vol.value); Sound.setMuted(false); render(false); sendSound(); return; } const r = viewport.getBoundingClientRect(); (e.clientX - r.left < r.width * 0.25) ? prev() : next(); });
+  viewport.addEventListener('click', e => { if (window.FILM || !started) return; if (!Sound.started) { Sound.init(); Sound.setVolume(+vol.value); Sound.setMuted(false); render(false); sendSound(); return; } const r = viewport.getBoundingClientRect(); (e.clientX - r.left < r.width * 0.25) ? prev() : next(); });
   window.addEventListener('keydown', e => {
+    if (window.FILM) return;
     const k = e.key;
     if (document.activeElement && (document.activeElement.isContentEditable || /INPUT|TEXTAREA/.test(document.activeElement.tagName) && document.activeElement.type !== 'range')) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -1693,8 +1965,404 @@ const Sound = (() => {
   fit();
   if (ch && presenter) ch.postMessage({ type: 'hello', from: 'presenter' });
   if (ch && !presenter) { ch.postMessage({ type: 'ping', from: 'audience' }); ch.postMessage({ type: 'title', from: 'audience', on: titleOn, voiced: titleVoiced }); sendSound(); }
+  window.Deck = { next, prev, go, begin, restart, showTitle, slides, get i() { return i; }, get step() { return step; }, get titleOn() { return titleOn; } };
 })();
 </script>
 
+<div class="film-start" id="filmStart">
+  <section class="lp-hero">
+    <img class="lp-bg" id="lpBg" src="img/p_hero.jpg" alt="" aria-hidden="true" fetchpriority="high">
+    <div class="lp-shade" aria-hidden="true"></div>
+    <div class="lp-bars" aria-hidden="true"></div>
+    <div class="lp-copy">
+      <div class="lp-eyebrow">A field film by Ran Craycraft</div>
+      <h1 class="lp-title"><span>The American</span><span>Dive Bar</span></h1>
+      <div class="lp-rule" aria-hidden="true"></div>
+      <p class="lp-sub">An exploration of a fragile ecosystem</p>
+      <p class="lp-log">Across the American landscape, beneath flickering neon, an extraordinary ecosystem survives. Told as a nature documentary, this field study follows the dive bar through its anatomy, its ancestors, its five living species and the pressures it faces today.</p>
+      <ul class="lp-meta" id="lpMeta"><li id="lpLen">12 minutes</li><li>20 chapters</li><li>Narrated</li><li>Captions</li></ul>
+      <div class="lp-acts">
+        <button type="button" class="lp-play" id="filmBegin" disabled><span class="lp-play-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></span><span>Watch the film</span></button>
+        <a class="lp-more" href="#lpInside">Choose a chapter</a>
+        <button type="button" class="lp-share" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"/><path d="M5 12v7.5h14V12"/></svg><span>Share</span></button>
+      </div>
+      <p class="lp-note">Best with sound on, and headphones if you have them.</p>
+    </div>
+    <a class="lp-scroll" href="#lpInside" aria-label="See what is inside the film"><span>Inside the film</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a>
+  </section>
+  <section class="lp-inside" id="lpInside">
+    <div class="lp-head"><div class="lp-eyebrow">Inside the field study</div><h2>Twenty chapters, one habitat</h2></div>
+    <div class="lp-cards" id="lpCards"></div>
+    <div class="lp-how">
+      <div><b>It plays on its own.</b> Sit back like you would for a film. The narrator, the pictures and the room sound move together.</div>
+      <div><b>Go at your pace.</b> Pause any time, skip ahead, or jump straight to a chapter.</div>
+      <div><b>Sound makes it.</b> Headphones bring the room in around you. Captions are on if you need them.</div>
+    </div>
+    <footer class="lp-foot">Field research by Ran Craycraft · Narration voiced with ElevenLabs</footer>
+  </section>
+</div>
+<div class="film-cc" id="filmCC" aria-hidden="true"><span></span></div>
+<div class="film-ui" id="filmUi" hidden>
+  <div class="fb-now"><span class="n" id="fbNum">00</span><span class="t" id="fbTitle">Opening</span></div>
+  <div class="fb-track" id="fbTrack" role="group" aria-label="Chapters"></div>
+  <div class="fb-row">
+    <button type="button" class="fb-btn" id="fbPlay" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/><path class="i-play" d="M8 5v14l11-7z" style="display:none"/></svg></button>
+    <button type="button" class="fb-btn" id="fbPrev" aria-label="Previous chapter"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.2v14H6zM19 5v14L9.5 12z"/></svg></button>
+    <button type="button" class="fb-btn" id="fbNext" aria-label="Next chapter"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.8 5H18v14h-2.2zM5 5l9.5 7L5 19z"/></svg></button>
+    <span class="fb-time" id="fbTime"></span>
+    <span class="sp"></span>
+    <button type="button" class="fb-btn cc" id="fbCC" aria-pressed="true" aria-label="Captions">CC</button>
+    <button type="button" class="fb-btn" id="fbChap" aria-expanded="false" aria-controls="filmChapters">Chapters</button>
+    <button type="button" class="fb-btn" data-share aria-label="Share the film"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"/><path d="M5 12v7.5h14V12"/></svg></button>
+    <button type="button" class="fb-btn" id="fbMute" aria-label="Mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/><path class="i-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="i-off" d="M16 9.5l5 5M21 9.5l-5 5" style="display:none"/></svg></button>
+    <button type="button" class="fb-btn hide-sm" id="fbFs" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
+  </div>
+</div>
+<div class="film-chapters" id="filmChapters" hidden role="dialog" aria-label="Chapters"></div>
+<div class="film-end" id="filmEnd" aria-hidden="true">
+  <div class="fe-wrap">
+    <div class="fe-main">
+      <div class="e">End of field study</div>
+      <h2>The American<br>Dive Bar</h2>
+      <div class="r"></div>
+      <div class="credits"><b>Field research</b> Ran Craycraft<br><b>Narration</b> voiced with ElevenLabs</div>
+      <div class="fe-acts"><button type="button" class="fe-share" data-share><span class="fe-share-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"/><path d="M5 12v7.5h14V12"/></svg></span><span>Share with a friend</span></button><div class="fe-links"><button type="button" class="fe-link" id="feAgain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg><span>Watch again</span></button><button type="button" class="fe-link" id="feChap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/></svg><span>Chapters</span></button></div></div>
+    </div>
+    <form class="fe-journal" id="fieldNotes" novalidate>
+      <div class="fj-e">Field journal</div>
+      <h3>Add to the survey</h3>
+      <p class="fj-lede">The study is ongoing. Tell us about a habitat you know.</p>
+      <label class="fj-f"><span>Your favorite dive bar</span><input name="bar" maxlength="120" autocomplete="off" placeholder="Name of the bar" required></label>
+      <label class="fj-f"><span>Where it lives</span><input name="city" maxlength="120" autocomplete="off" placeholder="City, state or country"></label>
+      <label class="fj-f"><span>One protocol every visitor should follow</span><textarea name="protocol" maxlength="400" rows="2" placeholder="Tip the jukebox, not just the bartender."></textarea></label>
+      <label class="fj-f"><span>Anything else a field researcher should know</span><textarea name="tip" maxlength="600" rows="1" placeholder="Ask for the story behind the thing on the wall."></textarea></label>
+      <label class="fj-f fj-sm"><span>Signed</span><input name="name" maxlength="60" autocomplete="given-name" placeholder="First name, optional"></label>
+      <label class="fj-hp" aria-hidden="true">Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label>
+      <div class="fj-row"><button type="submit" class="fj-go">Log it</button><span class="fj-msg" id="fjMsg" role="status" aria-live="polite"></span></div>
+    </form>
+  </div>
+</div>
+<div class="film-toast" id="filmToast" role="status" aria-live="polite"></div>
+<script>
+// ---------- Film mode ----------
+// The narration in narration/clips.json drives the deck: each scene plays its clips in order, reveals land on the
+// [*] marks, and the scene moves on by itself. Everything is timed on the audio clock, so pausing the sound pauses
+// the whole film. A clip that has not been recorded yet plays as a caption, timed to its length in words.
+(() => {
+  const D = window.Deck, $ = id => document.getElementById(id);
+  const gate = $('gate'), video = $('introVideo'), ccEl = $('filmCC').firstElementChild;
+  const INTRO_OUT = 16.6, INTRO_TITLE = 16.9, INTRO_LEN = 20.45, INTRO_TAIL = 1.8, LEAD = 0.9, WORDS_PER_SEC = 2.5;
+  // The title card builds over about eight seconds (eyebrow, title, rule, subtitle, credit), then stays up long
+  // enough to read every line before the first chapter begins.
+  const TITLE_HOLD = 13;
+  const introEnd = d => Math.max(d + INTRO_TAIL, INTRO_TITLE + TITLE_HOLD);
+  // Each recording's fingerprint from narration/recorded.json, so a re-recorded line is never served from an old cache.
+  let VER = {};
+  const clipUrl = c => c.file + (VER[c.file] ? '?v=' + VER[c.file] : '');
+  let DATA = null, cur = -1, playing = false, started = false, token = 0, events = [], sceneT0 = 0, idleT = null;
+
+  // ---------- the clock ----------
+  const now = () => Sound.time;
+  function at(delay, fn) { events.push({ t: now() + delay, fn, tok: token }); }
+  setInterval(() => {
+    if (!playing || !events.length) return;
+    const t = now(), due = events.filter(e => e.t <= t);
+    if (!due.length) return;
+    events = events.filter(e => e.t > t);
+    due.sort((a, b) => a.t - b.t).forEach(e => { if (e.tok === token) e.fn(); });
+    tick();
+  }, 40);
+  function cancel() { token++; events = []; Sound.stopVoice(0.35); caption(''); }
+
+  // ---------- text helpers ----------
+  const clean = t => t.replace(/\[\*\]/g, '').replace(/\s+/g, ' ').trim();
+  const words = t => t.trim().split(/\s+/).filter(w => w && w !== '[*]');
+  const estimate = t => words(t).length / WORDS_PER_SEC + 0.4;
+  const clipLen = c => c.dur != null ? c.dur : estimate(c.text);
+  const sceneLen = s => LEAD + s.clips.reduce((a, c) => a + clipLen(c) + c.gap, 0) + s.hold;
+  function chunks(text) {
+    // Caption lines: one sentence at a time, long sentences split at a comma near the middle.
+    const out = [];
+    clean(text).split(/(?<=[.?!])\s+(?=[A-Z"“$0-9])/).forEach(s => {
+      if (s.length <= 120) { out.push(s); return; }
+      const mid = s.length / 2; let best = -1;
+      for (let k = s.indexOf(','); k > -1; k = s.indexOf(',', k + 1)) if (best < 0 || Math.abs(k - mid) < Math.abs(best - mid)) best = k;
+      if (best > 30 && best < s.length - 20) { out.push(s.slice(0, best + 1)); out.push(s.slice(best + 2)); } else out.push(s);
+    });
+    return out;
+  }
+
+  // ---------- captions ----------
+  let ccOn = true; try { ccOn = localStorage.getItem('dive-film-cc') !== 'off'; } catch (e) {}
+  function caption(t) { ccEl.textContent = t || ''; }
+  function setCC(on) { ccOn = on; document.body.classList.toggle('cc-off', !on); $('fbCC').setAttribute('aria-pressed', String(on)); try { localStorage.setItem('dive-film-cc', on ? 'on' : 'off'); } catch (e) {} }
+
+  // ---------- the opening ----------
+  function playIntro() {
+    cancel(); endCard(false); cur = -1; D.restart();
+    gate.classList.remove('play', 'intro');
+    Sound.setScene(D.slides[0].dataset.scene, 4);
+    requestAnimationFrame(() => requestAnimationFrame(() => gate.classList.add('intro')));
+    try { video.currentTime = 0; } catch (e) {}
+    video.play().catch(() => {});
+    at(INTRO_OUT, () => gate.classList.remove('intro'));
+    at(INTRO_OUT + 1.4, () => video.pause());
+    at(INTRO_TITLE, () => gate.classList.add('play'));
+    sceneT0 = now(); markChapter();
+    const tok = token;
+    const t0 = now();
+    Sound.play(DATA.intro.file).then(d => { if (tok === token) at(introEnd(d == null ? INTRO_LEN : d) - (now() - t0), () => startScene(0)); });
+  }
+
+  // ---------- scenes ----------
+  function startScene(k) {
+    cancel(); endCard(false); cur = k;
+    video.pause();
+    if (D.titleOn) D.showTitle(false);
+    D.go(k);
+    sceneT0 = now(); markChapter();
+    if (D.slides[k].id === 'range') mapIn(); else mapOut();
+    preload(k); preload(k + 1);
+    at(LEAD, () => playClip(0));
+  }
+  // ---------- the range map ----------
+  // Dots arrive along the survey's route (each carries its delay in --d), the count climbs with them,
+  // and hovering a dot names its city.
+  const range = document.getElementById('range');
+  function mapIn() {
+    if (!range) return;
+    range.classList.remove('map-go', 'map-done'); void range.offsetWidth; range.classList.add('map-go');
+    const dots = [...range.querySelectorAll('.dot')], count = range.querySelector('.map-count');
+    const times = dots.map(d => parseFloat(d.style.getPropertyValue('--d')) || 0).sort((a, b) => a - b);
+    if (count) { count.textContent = '0'; times.forEach((t, n) => at(t + 0.2, () => { count.textContent = String(n + 1); })); }
+    at(times[times.length - 1] + 1.6, () => range.classList.add('map-done'));
+  }
+  function mapOut() { if (range) range.classList.remove('map-go', 'map-done'); }
+  if (range) {
+    const tip = range.querySelector('.map-tip');
+    const show = d => {
+      const [city, place] = d.dataset.city.split(/,\s*/);
+      tip.innerHTML = '<b></b><span></span>'; tip.firstChild.textContent = city; tip.lastChild.textContent = place || '';
+      tip.style.left = (d.offsetLeft + d.offsetWidth / 2) + 'px'; tip.style.top = d.offsetTop + 'px';
+      const right = d.offsetLeft > 1500; tip.style.transform = right ? 'translate(-100%, calc(-100% - 22px)) translateX(30px)' : '';
+      tip.classList.add('on');
+    };
+    range.querySelectorAll('.dot').forEach(d => {
+      d.addEventListener('mouseenter', () => show(d));
+      d.addEventListener('mouseleave', () => tip.classList.remove('on'));
+      d.addEventListener('click', e => { e.stopPropagation(); show(d); });
+    });
+  }
+  function preload(k) { const s = DATA.scenes[k]; if (s) s.clips.forEach(c => Sound.loadVoice(clipUrl(c))); }
+  function playClip(n) {
+    const scene = DATA.scenes[cur], clip = scene.clips[n];
+    if (!clip) {
+      Sound.duck(false);
+      at(scene.hold, () => cur < DATA.scenes.length - 1 ? startScene(cur + 1) : finish());
+      return;
+    }
+    const tok = token;
+    Sound.play(clipUrl(clip), () => { if (tok === token) at(clip.gap, () => playClip(n + 1)); }).then(d => {
+      if (tok !== token) return;
+      if (d == null) { d = estimate(clip.text); Sound.duck(true); at(d + clip.gap, () => playClip(n + 1)); }
+      clip.dur = d; layoutTrack();
+      arm(clip, d);
+    });
+  }
+  function arm(clip, d) {
+    // Reveals at their words, captions one line at a time, both placed by how far into the clip the words fall.
+    const all = clip.text.replace(/\[\*\]/g, ' [*] ').trim().split(/\s+/), total = words(clip.text).length || 1;
+    let seen = 0;
+    all.forEach(w => { if (w === '[*]') { const f = seen / total; at(0.05 + f * d, reveal); } else seen++; });
+    let before = 0;
+    chunks(clip.text).forEach(line => { const f = before / total; at(0.05 + f * d, () => caption(line)); before += words(line).length; });
+    at(0.05 + d + Math.min(clip.gap, 0.5), () => caption(''));
+  }
+  function reveal() {
+    const el = D.slides[cur];
+    if (el && D.i === cur && D.step < el.querySelectorAll('.build').length) D.next();
+  }
+  function finish() {
+    cur = DATA.scenes.length - 1;
+    at(0.1, () => D.next());           // the screen fades to black
+    at(3.6, () => endCard(true));
+  }
+  function endCard(on) { const e = $('filmEnd'); e.classList.toggle('on', on); document.body.classList.toggle('film-ended', on); e.setAttribute('aria-hidden', String(!on)); if (on) { setIdle(false); $('feAgain').focus({ preventScroll: true }); } }
+
+  // ---------- transport ----------
+  function setPlaying(p) {
+    playing = p; document.body.classList.toggle('film-paused', !p);
+    if (p) { Sound.resumeAll(); if (cur === -1 && gate.classList.contains('intro')) video.play().catch(() => {}); }
+    else { Sound.pauseAll(); video.pause(); }
+    const b = $('fbPlay'); b.setAttribute('aria-label', p ? 'Pause' : 'Play');
+    b.querySelector('.i-pause').style.display = p ? '' : 'none'; b.querySelector('.i-play').style.display = p ? 'none' : '';
+    wake();
+  }
+  function jump(k) {
+    closeChapters(); if (!playing) setPlaying(true);
+    if (k < 0) playIntro(); else startScene(Math.min(k, DATA.scenes.length - 1));
+  }
+  function nextChapter() { if (cur < DATA.scenes.length - 1) jump(cur + 1); }
+  function prevChapter() { jump(now() - sceneT0 > 3 ? cur : cur - 1); }
+
+  // ---------- chapters and progress ----------
+  const titles = () => [DATA.intro.title].concat(DATA.scenes.map(s => s.title));
+  const lens = () => [introEnd(INTRO_LEN)].concat(DATA.scenes.map(sceneLen));
+  const fmt = s => { s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  function layoutTrack() {
+    const tr = $('fbTrack'), L = lens();
+    if (tr.children.length !== L.length) {
+      tr.innerHTML = '';
+      titles().forEach((t, k) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'fb-seg'; b.setAttribute('aria-label', 'Chapter ' + k + ', ' + t);
+        b.innerHTML = '<i></i><span class="tip"></span>'; b.querySelector('.tip').textContent = (k ? String(k).padStart(2, '0') + ' · ' : '') + t;
+        b.addEventListener('click', e => { e.stopPropagation(); jump(k - 1); }); tr.appendChild(b);
+      });
+    }
+    [...tr.children].forEach((b, k) => b.style.flexGrow = L[k]);
+    const list = $('filmChapters');
+    list.innerHTML = '';
+    titles().forEach((t, k) => {
+      const b = document.createElement('button'); b.type = 'button'; if (k - 1 === cur) b.className = 'cur';
+      b.innerHTML = '<span class="n"></span><span class="t"></span><span class="d"></span>';
+      b.querySelector('.n').textContent = String(k).padStart(2, '0'); b.querySelector('.t').textContent = t; b.querySelector('.d').textContent = fmt(L[k]);
+      b.addEventListener('click', () => jump(k - 1)); list.appendChild(b);
+    });
+  }
+  function markChapter() {
+    $('fbNum').textContent = String(cur + 1).padStart(2, '0');
+    $('fbTitle').textContent = titles()[cur + 1];
+    document.title = (cur >= 0 ? DATA.scenes[cur].title + ' · ' : '') + 'The American Dive Bar';
+    layoutTrack(); tick();
+  }
+  function tick() {
+    if (!DATA) return;
+    const L = lens(), segs = $('fbTrack').children, k = cur + 1, f = Math.max(0, Math.min(1, (now() - sceneT0) / L[k]));
+    for (let j = 0; j < segs.length; j++) segs[j].firstElementChild.style.width = (j < k ? 100 : j === k ? f * 100 : 0) + '%';
+    const done = L.slice(0, k).reduce((a, b) => a + b, 0) + f * L[k], all = L.reduce((a, b) => a + b, 0);
+    $('fbTime').textContent = fmt(done) + ' / ' + fmt(all);
+  }
+  setInterval(() => { if (playing) tick(); }, 250);
+  function openChapters() { layoutTrack(); $('filmChapters').hidden = false; $('fbChap').setAttribute('aria-expanded', 'true'); wake(); $('filmChapters').querySelector('.cur, button')?.focus({ preventScroll: true }); }
+  function closeChapters() { $('filmChapters').hidden = true; $('fbChap').setAttribute('aria-expanded', 'false'); }
+
+  // ---------- controls hide while watching ----------
+  function setIdle(on) { document.body.classList.toggle('film-idle', on); }
+  function wake() {
+    setIdle(false); clearTimeout(idleT);
+    idleT = setTimeout(() => { if (playing && $('filmChapters').hidden && !$('filmUi').matches(':hover')) setIdle(true); }, 2800);
+  }
+  ['mousemove', 'touchstart', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (started) wake(); }, { passive: true }));
+
+  // ---------- wiring ----------
+  // ---------- sharing ----------
+  // The phone's share sheet where there is one, otherwise the link goes on the clipboard.
+  const shareUrl = () => location.href.split('#')[0];
+  let toastT = null;
+  function toast(t) { const e = $('filmToast'); e.textContent = t; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 2600); }
+  async function share() {
+    const data = { title: 'The American Dive Bar', text: 'A twelve-minute field film about the American dive bar, told as a nature documentary.', url: shareUrl() };
+    if (navigator.share) { try { await navigator.share(data); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+    try { await navigator.clipboard.writeText(data.url); toast('Link copied. Send it to a friend.'); }
+    catch (e) { window.prompt('Copy this link to share the film', data.url); }
+  }
+  document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); share(); }));
+
+  // ---------- the field journal ----------
+  // Viewers add a favorite bar and a protocol of their own. Answers go to a Supabase table that only accepts
+  // new rows (see supabase/field_notes.sql), so nothing anyone writes is shown on the site.
+  const FIELD_NOTES = { url: 'https://vaoccsecgfqgstdbijkv.supabase.co', key: 'sb_publishable_8hbI-DeTzCfi1eJk-CgjkQ_hHnEe3Qd' };   // Supabase project URL and its publishable key
+  const form = $('fieldNotes'), msg = $('fjMsg');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = new FormData(form), row = {};
+    ['bar', 'city', 'protocol', 'tip', 'name'].forEach(k => { const v = String(f.get(k) || '').trim(); if (v) row[k] = v; });
+    const barField = form.querySelector('[name="bar"]').closest('.fj-f');
+    if (!row.bar) { barField.classList.add('bad'); msg.textContent = 'Start with the name of a bar.'; form.querySelector('[name="bar"]').focus(); return; }
+    barField.classList.remove('bad');
+    if (String(f.get('website') || '')) { form.classList.add('done'); msg.textContent = 'Logged. Thank you for your contribution to science.'; return; }
+    if (!FIELD_NOTES.url || !FIELD_NOTES.key) { msg.textContent = 'The field journal is not connected yet.'; return; }
+    const go = form.querySelector('.fj-go'); go.disabled = true; msg.textContent = 'Logging…';
+    try {
+      const r = await fetch(FIELD_NOTES.url.replace(/\/$/, '') + '/rest/v1/field_notes', { method: 'POST',
+        headers: Object.assign({ apikey: FIELD_NOTES.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, FIELD_NOTES.key.startsWith('sb_') ? {} : { Authorization: 'Bearer ' + FIELD_NOTES.key }),
+        body: JSON.stringify(row) });
+      if (!r.ok) throw new Error(r.status);
+      form.classList.add('done'); msg.textContent = 'Logged. Thank you for your contribution to science.';
+    } catch (err) { go.disabled = false; msg.textContent = 'That did not go through. Try once more?'; }
+  });
+  form.addEventListener('click', e => e.stopPropagation());
+  form.querySelectorAll('textarea').forEach(t => t.addEventListener('input', () => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }));
+
+  // ---------- the landing page ----------
+  const TEASERS = {
+    anatomy: ['img/plate_base.jpg', 'The eight organs every healthy dive shares.'],
+    mcsorleys: ['img/p_mcsorleys.jpg', 'The Neighborhood Dive in its oldest form.'],
+    sp3: ['img/p_jimbos.jpg', "Jimbo's Place, at the end of things."],
+    dollars: ['img/p_dollars2.jpg', 'Why so many bars are papered in dollar bills.'],
+    biker: ['img/p_biker.jpg', 'Admire the bikes. Never touch the bikes.'],
+    fauna: ['img/p_bartender2.jpg', 'The Regular, the Bartender, the Tourist, and one disturbance.'],
+    falsedive: ['img/p_faux.jpg', 'How to spot an impostor.'],
+    conservation: ['img/p_gary_wide.jpg', 'What it takes to make a seventy-year-old bar.'],
+  };
+  function landingCards() {
+    const box = $('lpCards'); box.innerHTML = '';
+    DATA.scenes.forEach((s, k) => {
+      const t = TEASERS[s.id]; if (!t) return;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'lp-card';
+      b.setAttribute('aria-label', 'Watch from chapter ' + (k + 1) + ', ' + s.title);
+      b.innerHTML = '<div class="ph"><img alt="" loading="lazy"><span class="n"></span><span class="pl" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></span></div><div class="tx"><div class="t"></div><div class="d"></div></div>';
+      b.querySelector('img').src = t[0]; b.querySelector('.n').textContent = String(k + 1).padStart(2, '0');
+      b.querySelector('.t').textContent = s.title; b.querySelector('.d').textContent = t[1];
+      b.addEventListener('click', () => start(k)); box.appendChild(b);
+    });
+  }
+  const lpBg = $('lpBg');
+  const showBg = () => requestAnimationFrame(() => lpBg.classList.add('on'));
+  if (lpBg.complete) showBg(); else { lpBg.addEventListener('load', showBg, { once: true }); setTimeout(showBg, 2000); }
+  function start(k) {
+    if (!DATA || started) return; started = true;
+    $('filmStart').classList.add('gone'); $('filmUi').hidden = false;
+    D.begin(true); Sound.resumeAll(); setCC(ccOn); layoutTrack();
+    setPlaying(true);
+    if (k == null || k < 0) playIntro(); else startScene(k);
+  }
+  $('filmBegin').addEventListener('click', () => start(-1));
+  $('fbPlay').addEventListener('click', () => setPlaying(!playing));
+  $('fbPrev').addEventListener('click', prevChapter);
+  $('fbNext').addEventListener('click', nextChapter);
+  $('fbCC').addEventListener('click', () => setCC(!ccOn));
+  $('fbChap').addEventListener('click', () => $('filmChapters').hidden ? openChapters() : closeChapters());
+  $('fbMute').addEventListener('click', () => { Sound.setMuted(!Sound.muted); const m = Sound.muted; $('fbMute').setAttribute('aria-label', m ? 'Unmute' : 'Mute'); $('fbMute').querySelector('.i-on').style.display = m ? 'none' : ''; $('fbMute').querySelector('.i-off').style.display = m ? '' : 'none'; });
+  $('fbFs').addEventListener('click', () => { const d = document; d.fullscreenElement ? d.exitFullscreen?.() : d.documentElement.requestFullscreen?.().catch(() => {}); });
+  $('feAgain').addEventListener('click', () => { if (!playing) setPlaying(true); playIntro(); });
+  $('feChap').addEventListener('click', () => { endCard(false); openChapters(); });
+  document.getElementById('viewport').addEventListener('click', () => { if (started && !$('filmEnd').classList.contains('on')) { if (!$('filmChapters').hidden) closeChapters(); else setPlaying(!playing); } });
+  gate.addEventListener('click', () => { if (started) setPlaying(!playing); });
+  window.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target && e.target.closest && e.target.closest('input, textarea, select')) return;
+    const k = e.key;
+    if (!started) return;
+    if (k === ' ' || k === 'k' || k === 'K') { if (document.activeElement && document.activeElement.tagName === 'BUTTON' && k === ' ') return; e.preventDefault(); setPlaying(!playing); }
+    else if (k === 'ArrowRight' || k === 'l' || k === 'L') { e.preventDefault(); nextChapter(); }
+    else if (k === 'ArrowLeft' || k === 'j' || k === 'J') { e.preventDefault(); prevChapter(); }
+    else if (k === 'c' || k === 'C') setCC(!ccOn);
+    else if (k === 'm' || k === 'M') $('fbMute').click();
+    else if (k === 'f' || k === 'F') $('fbFs').click();
+    else if (k === 'Escape') closeChapters();
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && playing && started) setPlaying(false); });
+
+  fetch('narration/clips.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+    DATA = d; $('filmBegin').disabled = false;
+    fetch('narration/recorded.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : {}).then(v => { VER = v || {}; }).catch(() => {});
+    const all = lens().reduce((a, b) => a + b, 0); $('lpLen').textContent = Math.round(all / 60) + ' minutes';
+    landingCards();
+  }).catch(() => {
+    const m = document.createElement('p'); m.className = 'fs-err'; m.textContent = 'The narration could not load. Open this page through a web server, such as GitHub Pages.'; document.querySelector('.lp-copy').appendChild(m);
+  });
+})();
+</script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 {
   "note": "The film's narration. Edit the text here, then regenerate the clips with narration/generate.py. [*] marks a reveal on the slide at that word. gap is the silence after a clip, hold the pause before the next scene.",
+  "voiceId": "L1aJrPa7pLJEyYlh3Ilq",
   "voiceSettings": {
     "model_id": "eleven_multilingual_v2",
     "stability": 0.5,
