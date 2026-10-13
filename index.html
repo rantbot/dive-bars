@@ -223,10 +223,10 @@ html.film #viewport, html.film body { background: #000; }
 /* ---------- Film stock: grain, dust and a little exposure flicker over the photographs and footage ---------- */
 /* The textures are drawn once in the script and stepped through like frames. Only the texture moves, never the frame. */
 html.film .slide-fx::after, html.film .gate .grain-layer { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background-image: var(--film-grain, none); background-size: 220px 220px; mix-blend-mode: soft-light; opacity: 0.2;
+  background-image: var(--film-grain, none); background-size: 220px 220px; mix-blend-mode: soft-light; opacity: 0.12;
   animation: film-grain 0.42s steps(1) infinite; }
 html.film .slide-fx::before, html.film .gate .grain-layer::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background-image: var(--film-dust, none); background-size: 900px 600px; opacity: 0.55;
+  background-image: var(--film-dust, none); background-size: 900px 600px; opacity: 0.35;
   animation: film-dust 1.25s steps(1) infinite, film-flicker 4.6s steps(1) infinite; }
 html.film .grain-layer { overflow: hidden; }
 html.film .slide .grain-layer { display: none; }
@@ -236,9 +236,14 @@ html.film .film-fx { position: absolute; inset: 0; width: 100%; height: 100%; z-
 html:not(.film) .film-fx { display: none; }
 @keyframes film-grain { 0% { background-position: 0 0; } 14% { background-position: -71px 39px; } 28% { background-position: 53px -88px; } 42% { background-position: -120px -17px; } 57% { background-position: 97px 64px; } 71% { background-position: -33px 112px; } 85% { background-position: 140px -51px; } }
 @keyframes film-dust { 0% { background-position: 0 0; } 20% { background-position: -410px 230px; } 40% { background-position: 260px -370px; } 60% { background-position: -150px -120px; } 80% { background-position: 520px 310px; } }
-@keyframes film-flicker { 0%, 100% { opacity: 0.55; } 9% { opacity: 0.35; } 10% { opacity: 0.6; } 47% { opacity: 0.45; } 48% { opacity: 0.62; } 73% { opacity: 0.4; } 74% { opacity: 0.55; } }
+@keyframes film-flicker { 0%, 100% { opacity: 0.35; } 9% { opacity: 0.22; } 10% { opacity: 0.38; } 47% { opacity: 0.28; } 48% { opacity: 0.4; } 73% { opacity: 0.25; } 74% { opacity: 0.35; } }
 body.film-paused .slide-fx::after, body.film-paused .slide-fx::before, body.film-paused .grain-layer, body.film-paused .grain-layer::before { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { html.film .slide-fx::after, html.film .slide-fx::before, html.film .grain-layer, html.film .grain-layer::before { animation: none; } }
+
+/* A slower, deeper push on the photographs: more zoom and more travel than the talk uses. */
+@keyframes drift-a { from { transform: scale(1.04) translate(1.2%, 0.8%); } to { transform: scale(1.17) translate(-2.2%, -1.4%); } }
+@keyframes drift-b { from { transform: scale(1.17) translate(-1.8%, 1%); } to { transform: scale(1.04) translate(1.2%, -0.8%); } }
+html.film .slide.active .kb-in, html.film .slide.leaving .kb-in { animation-duration: 24s; animation-timing-function: cubic-bezier(.33,.18,.45,1); }
 /* ---------- the bathroom wall: what viewers wrote in the field journal ---------- */
 .bw { position: fixed; inset: 0; z-index: 70; background: #0d0b08; color: var(--ivory); opacity: 0; transition: opacity .9s ease; overscroll-behavior: none; }
 .bw.on { opacity: 1; }
@@ -2568,14 +2573,14 @@ const Sound = (() => {
   function frame(hst, n) {
     const { g } = hst, W = hst.w, H = hst.h; g.clearRect(0, 0, W, H);
     // exposure breathes a little from frame to frame
-    const e = R(-1, 1); g.fillStyle = e < 0 ? `rgba(0,0,0,${(-e * 0.07).toFixed(3)})` : `rgba(255,238,205,${(e * 0.045).toFixed(3)})`; g.fillRect(0, 0, W, H);
+    const e = R(-1, 1); g.fillStyle = e < 0 ? `rgba(0,0,0,${(-e * 0.04).toFixed(3)})` : `rgba(255,238,205,${(e * 0.025).toFixed(3)})`; g.fillRect(0, 0, W, H);
     // vertical scratches that live for a few frames and wander
-    if (Math.random() < 0.09) hst.scratches.push({ x: R(0.05, 0.95) * W, life: Math.round(R(3, 16)), wd: R(0.6, 1.8), dark: Math.random() < 0.35, top: Math.random() < 0.3 ? R(0, H * 0.6) : 0, len: Math.random() < 0.5 ? H : R(H * 0.2, H * 0.7) });
+    if (Math.random() < 0.045) hst.scratches.push({ x: R(0.05, 0.95) * W, life: Math.round(R(3, 16)), wd: R(0.6, 1.8), dark: Math.random() < 0.35, top: Math.random() < 0.3 ? R(0, H * 0.6) : 0, len: Math.random() < 0.5 ? H : R(H * 0.2, H * 0.7) });
     hst.scratches = hst.scratches.filter(s => s.life-- > 0);
-    hst.scratches.forEach(s => { s.x += R(-1.2, 1.2); g.strokeStyle = s.dark ? `rgba(0,0,0,${R(0.25, 0.5)})` : `rgba(255,248,232,${R(0.2, 0.55)})`; g.lineWidth = s.wd;
+    hst.scratches.forEach(s => { s.x += R(-1.2, 1.2); g.strokeStyle = s.dark ? `rgba(0,0,0,${R(0.15, 0.35)})` : `rgba(255,248,232,${R(0.12, 0.35)})`; g.lineWidth = s.wd;
       g.beginPath(); g.moveTo(s.x, s.top); g.lineTo(s.x + R(-2, 2), s.top + s.len); g.stroke(); });
     // specks, one frame each
-    for (let k = 0, m = Math.floor(R(0, 4)); k < m; k++) { const r = R(0.8, 3.2); g.fillStyle = Math.random() < 0.6 ? `rgba(0,0,0,${R(0.3, 0.7)})` : `rgba(255,250,235,${R(0.3, 0.7)})`;
+    for (let k = 0, m = Math.random() < 0.5 ? 0 : Math.floor(R(1, 3)); k < m; k++) { const r = R(0.8, 3.2); g.fillStyle = Math.random() < 0.6 ? `rgba(0,0,0,${R(0.3, 0.7)})` : `rgba(255,250,235,${R(0.3, 0.7)})`;
       g.beginPath(); g.ellipse(R(0, W), R(0, H), r, r * R(0.5, 1.4), R(0, 3), 0, 7); g.fill(); }
     // a hair caught in the gate now and then
     if (!hst.hair && Math.random() < 0.006) hst.hair = { x: R(0.1, 0.9) * W, y: R(0.1, 0.9) * H, life: Math.round(R(5, 14)), k: [R(-40, 40), R(20, 60), R(-50, 50), R(40, 110)] };
@@ -2607,7 +2612,7 @@ const Sound = (() => {
     if (anyLive !== wasLive) { wasLive = anyLive; if (!anyLive) hosts.forEach(h => { h.g.clearRect(0, 0, h.w, h.h); h.pic.forEach(p => p.style.translate = ''); }); }
     if (!anyLive) return;
     if (!reduce) { nextGlitch -= dt;
-      if (!glitch && nextGlitch <= 0) { glitch = { kind: KINDS[Math.floor(Math.random() * KINDS.length)], f: 0, a: R(2, 5), y: R(0.15, 0.85) }; sfx(glitch.kind); nextGlitch = R(4, 10); } }
+      if (!glitch && nextGlitch <= 0) { glitch = { kind: KINDS[Math.floor(Math.random() * KINDS.length)], f: 0, a: R(2, 5), y: R(0.15, 0.85) }; sfx(glitch.kind); nextGlitch = R(7, 15); } }
     on.forEach(hst => {
       const w = Math.round(hst.el.clientWidth / 2), h = Math.round(hst.el.clientHeight / 2);
       if (w && (w !== hst.w || h !== hst.h)) { hst.w = hst.c.width = w; hst.h = hst.c.height = h; }
