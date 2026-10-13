@@ -299,6 +299,16 @@ body.film-paused .pz > img { animation-play-state: paused; }
 @keyframes bk-mask { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 body.film-paused .slide#biker * { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) { .walker, .bk-car { display: none; } }
+
+/* ---------- phones held upright: ask for landscape ---------- */
+.film-rotate { position: fixed; inset: 0; z-index: 65; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px; text-align: center; background: rgba(9,8,7,0.94); color: var(--ivory); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+body.rot-ask .film-rotate { display: flex; }
+.film-rotate h3 { margin: 18px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 32px; letter-spacing: 0.04em; }
+.film-rotate p { margin: 0; max-width: 300px; font-family: var(--ui); font-size: 15px; line-height: 1.55; color: #B8AF9F; }
+.film-rotate button { margin-top: 18px; border: 0; background: transparent; color: #9C9384; font-family: var(--ui); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; padding: 10px; border-bottom: 1px solid rgba(237,230,216,0.2); cursor: pointer; }
+.rot-phone { width: 72px; height: 72px; color: var(--amber); animation: rot-turn 2.6s cubic-bezier(.6,0,.3,1) infinite; }
+@keyframes rot-turn { 0%, 25% { transform: rotate(0deg); } 55%, 85% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+@media (prefers-reduced-motion: reduce) { .rot-phone { animation: none; transform: rotate(-90deg); } }
 /* ---------- the bathroom wall: what viewers wrote in the field journal ---------- */
 .bw { position: fixed; inset: 0; z-index: 70; background: #0d0b08; color: var(--ivory); opacity: 0; transition: opacity .9s ease; overscroll-behavior: none; }
 .bw.on { opacity: 1; }
@@ -2240,6 +2250,12 @@ const Sound = (() => {
     </form>
   </div>
 </div>
+<div class="film-rotate" id="filmRotate" role="dialog" aria-label="Turn your phone sideways">
+  <svg class="rot-phone" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="20" y="8" width="24" height="44" rx="4"/><path d="M29 46h6"/></svg>
+  <h3>Turn your phone sideways</h3>
+  <p>The film is made for a wide screen. It will pick up right where it left off.</p>
+  <button type="button" id="rotOk">Watch upright instead</button>
+</div>
 <div class="film-toast" id="filmToast" role="status" aria-live="polite"></div>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rock+Salt&family=Gochi+Hand&family=Caveat+Brush&family=Covered+By+Your+Grace&family=Reenie+Beanie&family=Sedgwick+Ave&family=Just+Another+Hand&family=Nanum+Pen+Script&display=swap">
 <div class="bw" id="barWall" hidden role="dialog" aria-modal="true" aria-labelledby="bwTitle">
@@ -2555,12 +2571,29 @@ const Sound = (() => {
   if (lpBg.complete) showBg(); else { lpBg.addEventListener('load', showBg, { once: true }); setTimeout(showBg, 2000); }
   function start(k) {
     if (!DATA || started) return; started = true;
+    document.body.classList.add('film-started');
+    // On a phone, go full screen and ask for landscape where the browser allows it (Android does, iPhone shows the prompt below).
+    if (matchMedia('(pointer: coarse)').matches) { const el = document.documentElement; Promise.resolve(el.requestFullscreen && el.requestFullscreen()).then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {}); }
     $('filmStart').classList.add('gone'); $('filmUi').hidden = false;
     D.begin(true); Sound.resumeAll(); setCC(ccOn); layoutTrack();
     setPlaying(true);
     if (k == null || k < 0) playIntro(); else startScene(k);
   }
   $('filmBegin').addEventListener('click', () => start(-1));
+  // ---------- turn the phone sideways ----------
+  // Held upright, the film pauses and asks to be turned. Turning it plays on. "Watch upright" keeps going as is.
+  const upright = matchMedia('(orientation: portrait) and (max-width: 900px)');
+  let rotPaused = false, rotOk = false;
+  function rotCheck() {
+    const ask = started && upright.matches && !rotOk && !document.body.classList.contains('film-ended');
+    document.body.classList.toggle('rot-ask', ask);
+    if (ask && playing) { rotPaused = true; setPlaying(false); }
+    else if (!ask && rotPaused) { rotPaused = false; setPlaying(true); }
+  }
+  upright.addEventListener ? upright.addEventListener('change', rotCheck) : upright.addListener(rotCheck);
+  addEventListener('resize', rotCheck);
+  $('rotOk').addEventListener('click', () => { rotOk = true; rotCheck(); });
+  setInterval(rotCheck, 1000);
   $('fbPlay').addEventListener('click', () => setPlaying(!playing));
   $('fbPrev').addEventListener('click', prevChapter);
   $('fbNext').addEventListener('click', nextChapter);
