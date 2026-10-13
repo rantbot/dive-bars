@@ -223,10 +223,10 @@ html.film #viewport, html.film body { background: #000; }
 /* ---------- Film stock: grain, dust and a little exposure flicker over the photographs and footage ---------- */
 /* The textures are drawn once in the script and stepped through like frames. Only the texture moves, never the frame. */
 html.film .slide-fx::after, html.film .gate .grain-layer { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background-image: var(--film-grain, none); background-size: 220px 220px; mix-blend-mode: soft-light; opacity: 0.12;
+  background-image: var(--film-grain, none); background-size: 220px 220px; mix-blend-mode: soft-light; opacity: 0.08;
   animation: film-grain 0.42s steps(1) infinite; }
 html.film .slide-fx::before, html.film .gate .grain-layer::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background-image: var(--film-dust, none); background-size: 900px 600px; opacity: 0.35;
+  background-image: var(--film-dust, none); background-size: 900px 600px; opacity: 0.22;
   animation: film-dust 1.25s steps(1) infinite, film-flicker 4.6s steps(1) infinite; }
 html.film .grain-layer { overflow: hidden; }
 html.film .slide .grain-layer { display: none; }
@@ -236,7 +236,7 @@ html.film .film-fx { position: absolute; inset: 0; width: 100%; height: 100%; z-
 html:not(.film) .film-fx { display: none; }
 @keyframes film-grain { 0% { background-position: 0 0; } 14% { background-position: -71px 39px; } 28% { background-position: 53px -88px; } 42% { background-position: -120px -17px; } 57% { background-position: 97px 64px; } 71% { background-position: -33px 112px; } 85% { background-position: 140px -51px; } }
 @keyframes film-dust { 0% { background-position: 0 0; } 20% { background-position: -410px 230px; } 40% { background-position: 260px -370px; } 60% { background-position: -150px -120px; } 80% { background-position: 520px 310px; } }
-@keyframes film-flicker { 0%, 100% { opacity: 0.35; } 9% { opacity: 0.22; } 10% { opacity: 0.38; } 47% { opacity: 0.28; } 48% { opacity: 0.4; } 73% { opacity: 0.25; } 74% { opacity: 0.35; } }
+@keyframes film-flicker { 0%, 100% { opacity: 0.22; } 9% { opacity: 0.14; } 10% { opacity: 0.24; } 47% { opacity: 0.18; } 48% { opacity: 0.25; } 73% { opacity: 0.16; } 74% { opacity: 0.22; } }
 body.film-paused .slide-fx::after, body.film-paused .slide-fx::before, body.film-paused .grain-layer, body.film-paused .grain-layer::before { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { html.film .slide-fx::after, html.film .slide-fx::before, html.film .grain-layer, html.film .grain-layer::before { animation: none; } }
 
@@ -245,8 +245,60 @@ body.film-paused .slide-fx::after, body.film-paused .slide-fx::before, body.film
 @keyframes drift-b { from { transform: scale(1.17) translate(-1.8%, 1%); } to { transform: scale(1.04) translate(1.2%, -0.8%); } }
 html.film .slide.active .kb-in, html.film .slide.leaving .kb-in { animation-duration: 24s; animation-timing-function: cubic-bezier(.33,.18,.45,1); }
 
-/* Anatomy: the engraved plate, and highlight rings drawn by hand in red pencil */
-html.film #anatomy .spot { border: 0 !important; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><g fill='none' stroke='%238C2F23' stroke-linecap='round'><path d='M87.20,25.65 L88.80,28.52 L90.42,31.36 L91.59,34.40 L92.64,37.45 L93.74,40.51 L94.75,43.64 L95.21,46.87 L95.51,50.14 L95.30,53.41 L95.32,56.73 L94.77,60.00 L94.05,63.25 L93.06,66.46 L91.88,69.63 L90.70,72.86 L88.84,75.76 L86.73,78.52 L84.38,81.08 L81.58,83.20 L78.84,85.34 L75.99,87.33 L72.90,88.98 L69.70,90.37 L66.38,91.46 L62.87,91.89 L59.54,92.73 L56.12,93.11 L52.69,93.14 L49.29,92.89 L45.91,92.77 L42.60,92.10 L39.19,91.88 L35.92,91.01 L32.75,89.82 L29.65,88.49 L26.40,87.36 L23.50,85.59 L20.50,83.89 L17.74,81.84 L15.28,79.46 L12.92,76.98 L10.64,74.39 L8.78,71.51 L7.24,68.46 L5.79,65.37 L4.45,62.21 L4.10,58.80 L3.65,55.46 L3.21,52.11 L3.57,48.74 L3.90,45.41 L4.68,42.15 L5.75,38.99 L6.63,35.80 L8.49,32.96 L10.02,30.05 L11.93,27.36 L13.71,24.61 L15.99,22.21 L18.23,19.80 L20.51,17.39 L23.23,15.44 L25.86,13.36 L28.63,11.38 L31.81,10.13 L34.92,8.72 L38.13,7.43 L41.41,6.18 L44.87,5.55 L48.39,5.33 L51.92,5.15 L55.45,5.41 L58.98,5.75 L62.37,6.75 L65.84,7.51 L69.13,8.80 L72.25,10.42 L75.12,12.40 L77.94,14.41 L80.15,17.09 L82.58,19.42 L84.99,21.78 L86.85,24.56 L88.42,27.48 L90.22,30.25 L91.42,33.30 L92.69,36.31 L93.39,39.48 L94.13,42.64 L94.86,45.81' stroke-width='2.6' vector-effect='non-scaling-stroke' stroke-opacity='.85'/><path d='M96.50,45.53 L96.94,47.23 L97.51,48.94 L97.32,50.69 L97.24,52.43 L97.29,54.18 L97.32,55.94 L97.54,57.76 L97.10,59.48 L96.78,61.23 L96.31,62.95 L96.34,64.83 L95.51,66.45 L94.78,68.09 L94.01,69.72 L93.22,71.34 L92.42,72.96 L91.72,74.66 L90.45,76.01 L89.31,77.43 L88.35,78.98 L87.00,80.24 L86.02,81.81 L84.30,82.70 L83.04,84.03 L81.67,85.23 L80.02,86.11 L78.66,87.33 L76.89,88.00 L75.19,88.73 L73.59,89.57 L71.81,90.09 L70.21,90.91 L68.46,91.39 L66.86,92.23 L65.10,92.65 L63.28,92.87 L61.46,92.96 L59.73,93.36 L57.97,93.59 L56.20,93.74 L54.44,93.89 L52.69,94.31 L50.90,93.95 L49.14,93.88 L47.36,94.30 L45.60,93.99 L43.80,94.07 L42.09,93.54 L40.28,93.56 L38.55,93.12 L36.78,92.84 L35.04,92.41 L33.36,91.81 L31.73,91.10 L30.00,90.58 L28.14,90.27 L26.46,89.59 L24.79,88.84 L23.35,87.74 L21.66,87.00 L20.04,86.11 L18.58,85.03 L17.04,84.02 L15.72,82.76 L14.29,81.60 L12.95,80.34 L11.88,78.87 L10.39,77.70 L9.24,76.26 L8.62,74.51 L7.20,73.22 L6.30,71.63 L5.63,69.93 L5.23,68.14 L4.13,66.63 L3.98,64.78 L3.04,63.18 L2.82,61.38 L2.85,59.54 L2.57,57.79 L2.16,56.06 L2.14,54.28 L2.06,52.51 L2.05,50.75 L2.62,48.99 L2.99,47.27 L2.77,45.51 L3.66,43.86 L3.60,42.11 L4.52,40.52' stroke-width='1.4' vector-effect='non-scaling-stroke' stroke-opacity='.5'/></g></svg>") center / 100% 100% no-repeat; }
+/* Anatomy: the organ under discussion blooms into hand-tinted colour, like a coloured plate in an old atlas */
+html.film #anatomy .spot.organ { border: 0; box-shadow: none; border-radius: 0; transition: opacity 1.4s ease; }
+
+/* ---------- Late-Night Dive: the map holds still, the routes draw in, patrons keep walking ---------- */
+html.film #sp4 .kb-in { animation: none !important; transform: none !important; }
+html.film #sp4 .routes, html.film #sp4 .walkers { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+.routes .rt-glow { fill: none; stroke: #E2A84E; stroke-opacity: .5; stroke-width: 10; stroke-linejoin: round; filter: url(#rtglow); stroke-dasharray: 1; stroke-dashoffset: 1; }
+.routes .rt-line { fill: none; stroke: #E9BE6E; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.routes .rt-head { fill: #F0C77A; opacity: 0; }
+.routes .rt-start { fill: #F3D79C; opacity: 0; }
+.routes .rt-ring { fill: none; stroke: #E2B866; stroke-opacity: .5; stroke-width: 2; opacity: 0; }
+.walkers .walker { position: absolute; left: 0; top: 0; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: #FFE9B8; box-shadow: 0 0 10px 3px rgba(255,200,110,.75); offset-rotate: 0deg; offset-distance: 0%; opacity: 0; }
+.slide.active#sp4 .rt-line, .slide.active#sp4 .rt-glow { animation: rt-draw 2.6s cubic-bezier(.45,.1,.3,1) forwards; animation-delay: calc(5.5s + var(--i) * 1.5s); }
+.slide.active#sp4 .rt-start, .slide.active#sp4 .rt-ring { animation: rt-pop .6s ease-out forwards; animation-delay: calc(5.3s + var(--i) * 1.5s); }
+.slide.active#sp4 .rt-head { animation: rt-pop .4s ease-out forwards; animation-delay: calc(7.9s + var(--i) * 1.5s); }
+.slide.active#sp4 .walker { animation: walk var(--dur) linear infinite; animation-delay: calc(8.3s + var(--i) * 1.5s + var(--k) * var(--dur) / 3); }
+@keyframes rt-draw { to { stroke-dashoffset: 0; } }
+@keyframes rt-pop { to { opacity: 1; } }
+@keyframes walk { 0% { offset-distance: 0%; opacity: 0; } 8% { opacity: 1; } 88% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+body.film-paused .slide#sp4 * { animation-play-state: paused !important; }
+
+/* ---------- Photos that sit in the layout (cards, inserts, full-bleed stills) drift slowly too ---------- */
+html.film .pz { overflow: hidden; }
+html.film .pz > img { display: block; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%; will-change: transform; }
+html.film .slide.active .pz > img, html.film .slide.leaving .pz > img { animation: pz-in 20s cubic-bezier(.3,.2,.5,1) both; }
+html.film .slide.active .pz.alt > img, html.film .slide.leaving .pz.alt > img { animation-name: pz-out; }
+@keyframes pz-in { from { transform: scale(1.02) translate(0.6%, 0.4%); } to { transform: scale(1.1) translate(-1%, -0.6%); } }
+@keyframes pz-out { from { transform: scale(1.1) translate(-0.8%, 0.5%); } to { transform: scale(1.02) translate(0.6%, -0.3%); } }
+body.film-paused .pz > img { animation-play-state: paused; }
+
+/* ---------- The Biker Bar: a car on the far road, lanterns on the porch, the sun going down ---------- */
+.bk { position: absolute; pointer-events: none; border-radius: 50%; }
+.bk-sun { left: -120px; top: 100px; width: 300px; height: 280px; background: radial-gradient(closest-side, rgba(255,214,140,.55), rgba(255,150,60,.18) 55%, rgba(255,150,60,0)); mix-blend-mode: screen; }
+.bk-lamp { width: 70px; height: 70px; margin: -35px 0 0 -35px; background: radial-gradient(closest-side, rgba(255,190,100,.85), rgba(255,140,50,.25) 50%, rgba(255,140,50,0)); mix-blend-mode: screen; }
+.bk-car { left: 0; top: 0; width: 10px; height: 4px; offset-path: path('M600,360 C560,366 520,372 470,380 S300,412 120,448'); offset-rotate: 0deg; opacity: 0; }
+.bk-car i { position: absolute; top: 0; width: 4px; height: 4px; border-radius: 50%; background: #fff6dc; box-shadow: 0 0 6px 3px rgba(255,236,190,.8); }
+.bk-car i:first-child { left: 0; } .bk-car i:last-child { left: 7px; }
+.bk-row { position: absolute; left: 0; top: 0; width: 1180px; height: 1080px; overflow: visible; pointer-events: none; }
+.bk-row path { fill: none; stroke: #F1D9A8; stroke-width: 2.5; stroke-dasharray: 2 10; stroke-linecap: round; opacity: .85; }
+.bk-row line { stroke: #F1D9A8; stroke-width: 2.5; stroke-linecap: round; opacity: 0; }
+.bk-row text { fill: #F1D9A8; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 30px; opacity: 0; }
+.slide.active#biker .bk-sun { animation: bk-breathe 7s ease-in-out infinite; }
+.slide.active#biker .bk-lamp { animation: bk-flicker 3.1s steps(1) infinite; }
+.slide.active#biker .bk-lamp:nth-child(odd) { animation-duration: 4.3s; }
+.slide.active#biker .bk-car { animation: bk-drive 9s linear 1.5s infinite; }
+.slide.active#biker .bk-row path { stroke-dashoffset: 0; animation: bk-mask 2.4s ease-out 2.2s both; }
+.slide.active#biker .bk-row line { animation: rt-pop .3s ease-out both; animation-delay: calc(2.4s + var(--n) * .28s); }
+.slide.active#biker .bk-row text { animation: rt-pop 1s ease-out 4.2s both; }
+@keyframes bk-breathe { 50% { opacity: .7; transform: scale(1.06); } }
+@keyframes bk-flicker { 0%, 100% { opacity: 1; } 31% { opacity: .78; } 33% { opacity: 1; } 62% { opacity: .88; } 64% { opacity: .7; } 66% { opacity: 1; } }
+@keyframes bk-drive { 0% { offset-distance: 0%; opacity: 0; transform: scale(.5); } 10% { opacity: 1; } 85% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; transform: scale(1.6); } }
+@keyframes bk-mask { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+body.film-paused .slide#biker * { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { .walker, .bk-car { display: none; } }
 /* ---------- the bathroom wall: what viewers wrote in the field journal ---------- */
 .bw { position: fixed; inset: 0; z-index: 70; background: #0d0b08; color: var(--ivory); opacity: 0; transition: opacity .9s ease; overscroll-behavior: none; }
 .bw.on { opacity: 1; }
@@ -694,14 +746,14 @@ The word itself was never a compliment.</aside>
 </section>
 <section class="slide" id="anatomy" data-scene="quiet" style="background:#E8DFCC;color:#2A2119;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <img src="img/plate_engraved.jpg" alt="Engraved anatomical illustration of a dive bar interior in lateral section, with numbered leader lines pointing to its neon sign, lamp, bottles, stools, clock, mounted fish, photo wall and jukebox" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
-<div class="build spot" data-k="1" style="position:absolute;left:709px;top:273px;width:170px;height:140px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
-<div class="build spot" data-k="2" style="position:absolute;left:477px;top:345px;width:230px;height:250px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
-<div class="build spot" data-k="3" style="position:absolute;left:535px;top:460px;width:500px;height:120px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
-<div class="build spot" data-k="4" style="position:absolute;left:556px;top:702px;width:660px;height:120px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
-<div class="build spot" data-k="5" style="position:absolute;left:1314px;top:290px;width:120px;height:120px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
-<div class="build spot" data-k="6" style="position:absolute;left:1273px;top:403px;width:180px;height:100px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
-<div class="build spot" data-k="7" style="position:absolute;left:1041px;top:375px;width:250px;height:300px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
-<div class="build spot" data-k="8" style="position:absolute;left:1294px;top:592px;width:150px;height:240px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
+<img class="build spot organ" data-k="1" src="img/anatomy/organ1.webp" alt="" style="position:absolute;left:726px;top:290px;width:138px;height:107px">
+<img class="build spot organ" data-k="2" src="img/anatomy/organ2.webp" alt="" style="position:absolute;left:471px;top:340px;width:812px;height:208px">
+<img class="build spot organ" data-k="3" src="img/anatomy/organ3.webp" alt="" style="position:absolute;left:547px;top:485px;width:485px;height:89px">
+<img class="build spot organ" data-k="4" src="img/anatomy/organ4.webp" alt="" style="position:absolute;left:587px;top:697px;width:597px;height:119px">
+<img class="build spot organ" data-k="5" src="img/anatomy/organ5.webp" alt="" style="position:absolute;left:1326px;top:303px;width:94px;height:94px">
+<img class="build spot organ" data-k="6" src="img/anatomy/organ6.webp" alt="" style="position:absolute;left:1285px;top:414px;width:154px;height:78px">
+<img class="build spot organ" data-k="7" src="img/anatomy/organ7.webp" alt="" style="position:absolute;left:1059px;top:393px;width:228px;height:281px">
+<img class="build spot organ" data-k="8" src="img/anatomy/organ8.webp" alt="" style="position:absolute;left:1301px;top:606px;width:138px;height:208px">
 
 <p style="position:absolute;left:100px;top:84px;width:420px;font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440">Plate III</p>
 <p style="position:absolute;left:560px;top:84px;width:800px;text-align:center;font-family:Inter, Arial, sans-serif;font-size:15px;letter-spacing:5px;text-transform:uppercase;color:#6B5440">A Natural History of the American Dive</p>
@@ -890,7 +942,7 @@ The money is not. In 2019, staff at the Siesta Key Oyster Bar pulled every bill 
 PHOTO DIRECTION: Your photo of a coastal bar papered floor to ceiling in dollar bills. It is an illustration of the habit, not a picture of the Siesta Key bar the slide cites.</aside>
 </section>
 <section class="slide" id="biker" data-scene="latenight" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
-<div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_biker.jpg" alt="A long row of motorcycles parked outside a weathered desert roadhouse at sunset" style="width:100%;height:100%;object-fit:cover"></div></div>
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1180px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/p_biker.jpg" alt="A long row of motorcycles parked outside a weathered desert roadhouse at sunset" style="width:100%;height:100%;object-fit:cover"><div class="bk bk-sun"></div><div class="bk bk-lamp" style="left:770px;top:300px"></div><div class="bk bk-lamp" style="left:965px;top:278px"></div><div class="bk bk-lamp" style="left:1047px;top:283px"></div><div class="bk bk-car"><i></i><i></i></div><svg class="bk-row" viewBox="0 0 1180 1080" aria-hidden="true"><path d="M70,1002 C350,930 600,855 850,752 S1080,640 1172,610"/><line x1="110" y1="998" x2="110" y2="980" style="--n:0"/><line x1="600" y1="860" x2="600" y2="842" style="--n:1"/><line x1="850" y1="760" x2="850" y2="742" style="--n:2"/><line x1="1010" y1="698" x2="1010" y2="680" style="--n:3"/><line x1="1095" y1="653" x2="1095" y2="635" style="--n:4"/><line x1="1160" y1="620" x2="1160" y2="602" style="--n:5"/><text x="300" y="900" transform="rotate(-17 300 900)">a precise row</text></svg></div></div>
 <div style="position:absolute;left:700px;top:0px;width:480px;height:1080px;background:linear-gradient(90deg, rgba(13,12,10,0) 0%, #0D0C0A 100%)"></div>
 <div style="position:absolute;left:1120px;top:128px;width:672px;height:824px;display:flex;flex-direction:column;justify-content:center;gap:20px">
 <p style="font-size:44px;color:#C9A15A;line-height:1">04</p>
@@ -913,7 +965,7 @@ AUDIO: In the web presentation, your own biker bar field recording starts on thi
 PHOTO DIRECTION: Your photo of the row of bikes outside a desert roadhouse at sunset.</aside>
 </section>
 <section class="slide" id="sp4" data-scene="latenight" style="background:#0B0B0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px 128px 128px;display:flex;flex-direction:column;justify-content:start;gap:16px">
-<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/migration3.jpg" alt="Dark street map of a city at night, five golden routes walking the streets to one corner bar" style="width:100%;height:100%;object-fit:cover"><div class="fx breathe" style="position:absolute;left:1000px;top:440px;width:300px;height:300px;background:radial-gradient(closest-side, rgba(255,200,120,0.55), rgba(255,170,80,0.15) 45%, rgba(255,170,80,0))"></div></div></div>
+<div class="kb" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;overflow:hidden"><div class="kb-in"><img src="img/migration_streets.jpg" alt="Dark street map of a city at night, five golden routes walking the streets to one corner bar" style="width:100%;height:100%;object-fit:cover"><svg class="routes" viewBox="0 0 1920 1080" aria-hidden="true"><defs><filter id="rtglow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="6"/></filter></defs><g class="rt" style="--i:0"><path class="rt-glow" d="M480,590 L650,590 L650,505 L880,505 L880,590 L1110,590" pathLength="1"/><path class="rt-line" d="M480,590 L650,590 L650,505 L880,505 L880,590 L1110,590" pathLength="1"/><polygon class="rt-head" points="1114.0,590.0 1096.7,598.9 1096.7,581.1"/><circle class="rt-start" cx="480" cy="590" r="7"/><circle class="rt-ring" cx="480" cy="590" r="13"/></g><g class="rt" style="--i:1"><path class="rt-glow" d="M420,785 L545,785 L545,690 L1150,690 L1150,630" pathLength="1"/><path class="rt-line" d="M420,785 L545,785 L545,690 L1150,690 L1150,630" pathLength="1"/><polygon class="rt-head" points="1150.0,626.0 1158.9,643.3 1141.1,643.3"/><circle class="rt-start" cx="420" cy="785" r="7"/><circle class="rt-ring" cx="420" cy="785" r="13"/></g><g class="rt" style="--i:2"><path class="rt-glow" d="M760,905 L760,785 L1040,785 L1040,690 L1150,690 L1150,630" pathLength="1"/><path class="rt-line" d="M760,905 L760,785 L1040,785 L1040,690 L1150,690 L1150,630" pathLength="1"/><polygon class="rt-head" points="1150.0,626.0 1158.9,643.3 1141.1,643.3"/><circle class="rt-start" cx="760" cy="905" r="7"/><circle class="rt-ring" cx="760" cy="905" r="13"/></g><g class="rt" style="--i:3"><path class="rt-glow" d="M1560,905 L1590,905 L1590,690 L1370,690 L1370,590 L1190,590" pathLength="1"/><path class="rt-line" d="M1560,905 L1590,905 L1590,690 L1370,690 L1370,590 L1190,590" pathLength="1"/><polygon class="rt-head" points="1186.0,590.0 1203.3,581.1 1203.3,598.9"/><circle class="rt-start" cx="1560" cy="905" r="7"/><circle class="rt-ring" cx="1560" cy="905" r="13"/></g><g class="rt" style="--i:4"><path class="rt-glow" d="M1700,420 L1700,505 L1150,505 L1150,550" pathLength="1"/><path class="rt-line" d="M1700,420 L1700,505 L1150,505 L1150,550" pathLength="1"/><polygon class="rt-head" points="1150.0,554.0 1141.1,536.7 1158.9,536.7"/><circle class="rt-start" cx="1700" cy="420" r="7"/><circle class="rt-ring" cx="1700" cy="420" r="13"/></g></svg><div class="walkers" aria-hidden="true"><i class="walker" style="offset-path:path('M480,590 L650,590 L650,505 L880,505 L880,590 L1110,590');--i:0;--dur:6.7s;--k:0"></i><i class="walker" style="offset-path:path('M480,590 L650,590 L650,505 L880,505 L880,590 L1110,590');--i:0;--dur:6.7s;--k:1"></i><i class="walker" style="offset-path:path('M480,590 L650,590 L650,505 L880,505 L880,590 L1110,590');--i:0;--dur:6.7s;--k:2"></i><i class="walker" style="offset-path:path('M420,785 L545,785 L545,690 L1150,690 L1150,630');--i:1;--dur:7.4s;--k:0"></i><i class="walker" style="offset-path:path('M420,785 L545,785 L545,690 L1150,690 L1150,630');--i:1;--dur:7.4s;--k:1"></i><i class="walker" style="offset-path:path('M420,785 L545,785 L545,690 L1150,690 L1150,630');--i:1;--dur:7.4s;--k:2"></i><i class="walker" style="offset-path:path('M760,905 L760,785 L1040,785 L1040,690 L1150,690 L1150,630');--i:2;--dur:5.5s;--k:0"></i><i class="walker" style="offset-path:path('M760,905 L760,785 L1040,785 L1040,690 L1150,690 L1150,630');--i:2;--dur:5.5s;--k:1"></i><i class="walker" style="offset-path:path('M760,905 L760,785 L1040,785 L1040,690 L1150,690 L1150,630');--i:2;--dur:5.5s;--k:2"></i><i class="walker" style="offset-path:path('M1560,905 L1590,905 L1590,690 L1370,690 L1370,590 L1190,590');--i:3;--dur:6.2s;--k:0"></i><i class="walker" style="offset-path:path('M1560,905 L1590,905 L1590,690 L1370,690 L1370,590 L1190,590');--i:3;--dur:6.2s;--k:1"></i><i class="walker" style="offset-path:path('M1560,905 L1590,905 L1590,690 L1370,690 L1370,590 L1190,590');--i:3;--dur:6.2s;--k:2"></i><i class="walker" style="offset-path:path('M1700,420 L1700,505 L1150,505 L1150,550');--i:4;--dur:5.7s;--k:0"></i><i class="walker" style="offset-path:path('M1700,420 L1700,505 L1150,505 L1150,550');--i:4;--dur:5.7s;--k:1"></i><i class="walker" style="offset-path:path('M1700,420 L1700,505 L1150,505 L1150,550');--i:4;--dur:5.7s;--k:2"></i></div><div class="fx breathe" style="position:absolute;left:1000px;top:440px;width:300px;height:300px;background:radial-gradient(closest-side, rgba(255,200,120,0.55), rgba(255,170,80,0.15) 45%, rgba(255,170,80,0))"></div></div></div>
 <p style="font-size:44px;color:#C9A15A;line-height:1">05</p>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:60px;font-weight:400;line-height:1.1;letter-spacing:6px;text-transform:uppercase;color:#EDE6D8">The Late-Night Dive</h2>
 <p style="font-size:44px;font-style:italic;line-height:1.2;color:#D9D1C1">Diveus nocturnus</p>
@@ -1086,7 +1138,8 @@ While attempts have been made to breed the false dive in captivity, they have la
 PHOTO DIRECTION: The most suspiciously perfect "dive" you can find. Edison bulbs, a coupe glass, subway tile, merch for sale by the door. Shoot it beautifully. The joke lands better if it looks good. Avoid showing a recognizable venue's name or logo. The current image is your martini-under-Edison-bulbs shot.</aside>
 </section>
 <section class="slide" id="test" data-scene="silence" style="background:#090908;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:36px">
-<h1 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:104px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Did this accumulate?</h1>
+<p style="font-family:Inter, Arial, sans-serif;font-size:22px;letter-spacing:6px;text-transform:uppercase;text-align:center;color:#C9A15A">The walls, the clutter, the whole feel of the place</p>
+<h1 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:104px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Did it accumulate?</h1>
 <p style="font-size:56px;font-style:italic;text-align:center;color:#A89F8F">or was it purchased?</p>
 <hr style="width:96px;border-top:2px solid #C9A15A">
 <aside>[4:41 to 4:47 · about 15 words]
@@ -2570,6 +2623,15 @@ const Sound = (() => {
   }
   const paused = () => document.body.classList.contains('film-paused') || !document.documentElement.classList.contains('film');
 
+  // ---------- photos in the layout drift slowly inside their frames ----------
+  document.querySelectorAll('.slide img[src^="img/p_"]').forEach((img, n) => {
+    if (img.closest('.kb')) return;
+    const w = document.createElement('div'); w.className = 'pz' + (n % 2 ? ' alt' : '');
+    w.style.cssText = img.style.cssText; w.style.overflow = 'hidden';
+    img.parentNode.insertBefore(w, img); w.appendChild(img);
+    img.style.cssText = 'object-position:' + (img.style.objectPosition || '50% 50%');
+  });
+
   // ---------- picture ----------
   let glitch = null, nextGlitch = R(2.5, 5), lastT = performance.now(), wasLive = false;
   const KINDS = ['slip', 'slip', 'flash', 'splice', 'jitter', 'burn', 'jitter'];
@@ -2578,9 +2640,9 @@ const Sound = (() => {
     // exposure breathes a little from frame to frame
     const e = R(-1, 1); g.fillStyle = e < 0 ? `rgba(0,0,0,${(-e * 0.04).toFixed(3)})` : `rgba(255,238,205,${(e * 0.025).toFixed(3)})`; g.fillRect(0, 0, W, H);
     // vertical scratches that live for a few frames and wander
-    if (Math.random() < 0.045) hst.scratches.push({ x: R(0.05, 0.95) * W, life: Math.round(R(3, 16)), wd: R(0.6, 1.8), dark: Math.random() < 0.35, top: Math.random() < 0.3 ? R(0, H * 0.6) : 0, len: Math.random() < 0.5 ? H : R(H * 0.2, H * 0.7) });
+    if (Math.random() < 0.03) hst.scratches.push({ x: R(0.05, 0.95) * W, life: Math.round(R(3, 16)), wd: R(0.6, 1.8), dark: Math.random() < 0.35, top: Math.random() < 0.3 ? R(0, H * 0.6) : 0, len: Math.random() < 0.5 ? H : R(H * 0.2, H * 0.7) });
     hst.scratches = hst.scratches.filter(s => s.life-- > 0);
-    hst.scratches.forEach(s => { s.x += R(-1.2, 1.2); g.strokeStyle = s.dark ? `rgba(0,0,0,${R(0.15, 0.35)})` : `rgba(255,248,232,${R(0.12, 0.35)})`; g.lineWidth = s.wd;
+    hst.scratches.forEach(s => { s.x += R(-1.2, 1.2); g.strokeStyle = s.dark ? `rgba(0,0,0,${R(0.1, 0.25)})` : `rgba(255,248,232,${R(0.08, 0.25)})`; g.lineWidth = s.wd;
       g.beginPath(); g.moveTo(s.x, s.top); g.lineTo(s.x + R(-2, 2), s.top + s.len); g.stroke(); });
     // specks, one frame each
     for (let k = 0, m = Math.random() < 0.5 ? 0 : Math.floor(R(1, 3)); k < m; k++) { const r = R(0.8, 3.2); g.fillStyle = Math.random() < 0.6 ? `rgba(0,0,0,${R(0.3, 0.7)})` : `rgba(255,250,235,${R(0.3, 0.7)})`;
@@ -2615,7 +2677,7 @@ const Sound = (() => {
     if (anyLive !== wasLive) { wasLive = anyLive; if (!anyLive) hosts.forEach(h => { h.g.clearRect(0, 0, h.w, h.h); h.pic.forEach(p => p.style.translate = ''); }); }
     if (!anyLive) return;
     if (!reduce) { nextGlitch -= dt;
-      if (!glitch && nextGlitch <= 0) { glitch = { kind: KINDS[Math.floor(Math.random() * KINDS.length)], f: 0, a: R(2, 5), y: R(0.15, 0.85) }; sfx(glitch.kind); nextGlitch = R(7, 15); } }
+      if (!glitch && nextGlitch <= 0) { glitch = { kind: KINDS[Math.floor(Math.random() * KINDS.length)], f: 0, a: R(2, 5), y: R(0.15, 0.85) }; sfx(glitch.kind); nextGlitch = R(10, 20); } }
     on.forEach(hst => {
       const w = Math.round(hst.el.clientWidth / 2), h = Math.round(hst.el.clientHeight / 2);
       if (w && (w !== hst.w || h !== hst.h)) { hst.w = hst.c.width = w; hst.h = hst.c.height = h; }
@@ -2650,7 +2712,7 @@ const Sound = (() => {
   let bedOn = false;
   function bed(on) {
     const a = audio(); if (!a || on === bedOn) return; bedOn = on;
-    const t = a.ctx.currentTime; bedG.gain.cancelScheduledValues(t); bedG.gain.setTargetAtTime(on ? 0.05 : 0, t, on ? 0.8 : 0.3);
+    const t = a.ctx.currentTime; bedG.gain.cancelScheduledValues(t); bedG.gain.setTargetAtTime(on ? 0.035 : 0, t, on ? 0.8 : 0.3);
   }
   function burst(ctx, out, t, dur, f, q, vol, type) {
     const n = Math.floor(ctx.sampleRate * dur), b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0);
