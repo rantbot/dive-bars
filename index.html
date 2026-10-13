@@ -2549,8 +2549,8 @@ const Sound = (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const gate = document.getElementById('gate');
   const R = (a, b) => a + Math.random() * (b - a);
-  // One layer of film over each whole slide that holds a photograph, and one over the opening footage.
-  const layers = [...new Set([...document.querySelectorAll('.slide .kb, .slide .grain-layer')].map(el => el.closest('.slide')))].map(sl => {
+  // One layer of film over every slide, so the whole film feels like one reel, and one over the opening footage.
+  const layers = [...document.querySelectorAll('.slide')].map(sl => {
     const fx = document.createElement('div'); fx.className = 'slide-fx'; fx.setAttribute('aria-hidden', 'true'); sl.appendChild(fx); return { el: fx, pic: [sl] };
   });
   const gl = document.querySelector('#gate .grain-layer'); if (gl) layers.push({ el: gl, pic: [gl.previousElementSibling].filter(Boolean) });
