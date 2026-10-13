@@ -204,9 +204,12 @@ body.film-ended .film-ui, body.film-ended .film-cc { opacity: 0 !important; poin
 .fe-link svg { width: 16px; height: 16px; }
 .fe-link:hover, .fe-link:focus-visible { color: var(--ivory); border-color: var(--amber); outline: none; }
 
-/* Still photographs in the film: no drifting zoom and no moving grain. */
-html.film .slide .kb-in { animation: none !important; transform: none !important; }
+/* The picture's frame stays put: the grain layer is gone and nothing spills past the edges of the stage. */
 html.film .grain { display: none !important; }
+html.film #stage { overflow: hidden; }
+html.film #viewport, html.film body { background: #000; }
+.film-end .credits a, .lp-foot a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(201,161,90,0.5); transition: color .2s, border-color .2s; }
+.film-end .credits a:hover, .film-end .credits a:focus-visible, .lp-foot a:hover, .lp-foot a:focus-visible { color: var(--ivory); border-color: var(--amber); outline: none; }
 </style>
 <title>The American Dive Bar</title>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
@@ -645,7 +648,7 @@ VISUAL NOTE: This plate is an original engraving-style illustration in the manne
 
 SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars" and "brewery-branded mirrors and hardware" (Whiting-Robertsdale Historical Society, "The Tied House System That Left Its Mark on Whiting"). Federal Alcohol Administration Act of 1935, section 205(b) (27 U.S.C. 205): suppliers may not induce retailers with things of value (the "tied house" provision). Brewers Association, "Tied House Laws": temperance campaigners used "tied house" against brewer-controlled saloons, which helped bring Prohibition; federal rules bar suppliers from giving retailers cash, equipment or other goods, with exceptions for advertising materials. 27 CFR 6.102: outside signs must carry conspicuous advertising and cost no more than $400. 27 CFR 6.83: product displays are limited to $300 per brand at a time in one retail establishment. 27 CFR 6.84 lets industry members give retailers point-of-sale materials such as "inside signs," "back bar mats," "clocks, calendars" and menus, provided they carry conspicuous advertising. The Law of Accumulation and the Latin anatomy terms are our own invention, presented as such.</aside>
 </section>
-<section class="slide" id="lineage" data-scene="lastcall" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<section class="slide" id="lineage" data-scene="neighborhood" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">Ancestral species</p>
 <h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Lineage</h2>
 <div class="focus" data-k="0" data-label="The Juke Joint" style="position:absolute;left:128px;top:300px;width:760px;display:flex;flex-direction:column;gap:14px;align-items:center">
@@ -1157,7 +1160,7 @@ const Sound = (() => {
   let current = null, currentKey = null, volume = 0.7, muted = false;
   const R = (a, b) => a + Math.random() * (b - a);
   // Mix levels. The room sits well under the talk, and drops further while the narrator speaks.
-  const AMB = 0.3, AMB_UNDER_VOICE = 0.07, VOICE = 1.7;
+  const AMB = 0.3, AMB_UNDER_VOICE = 0.12, VOICE = 1.7;
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
 
@@ -1472,16 +1475,34 @@ const Sound = (() => {
     });
   }
   // Film: play a clip and resolve with its length in seconds, or null when the file isn't there yet.
+  // Each recording is trimmed to its speech: breaths before the first word, the noise floor after the last,
+  // and the click some MP3s carry in their final frames are left out, and the edges get short fades.
+  const spans = new WeakMap();
+  function speechSpan(buf) {
+    if (spans.has(buf)) return spans.get(buf);
+    const d = buf.getChannelData(0), sr = buf.sampleRate, win = Math.round(sr * 0.01), n = Math.floor(d.length / win);
+    const db = new Float32Array(n);
+    for (let w = 0; w < n; w++) { let s = 0; for (let i = w * win; i < (w + 1) * win; i++) s += d[i] * d[i]; db[w] = 10 * Math.log10(s / win + 1e-12); }
+    const last = Math.max(0, n - 4);
+    let a = 0; while (a < last && db[a] < -30) a++;
+    let b = last - 1; while (b > a && db[b] < -34) b--;
+    const span = (b <= a) ? { start: 0, end: buf.duration } : { start: Math.max(0, a * 0.01 - 0.06), end: Math.min(buf.duration - 0.04, (b + 1) * 0.01 + 0.22) };
+    spans.set(buf, span); return span;
+  }
   function play(url, onEnd) {
     if (!ctx) return Promise.resolve(null);
     return loadVoice(url).then(buf => {
       if (!buf) return null;
       stopVoice(0.2);
+      const { start, end } = speechSpan(buf), len = end - start;
       const t = ctx.currentTime + 0.05, src = ctx.createBufferSource(), g = ctx.createGain();
-      src.buffer = buf; g.gain.value = VOICE; src.connect(g); g.connect(master); src.start(t);
+      src.buffer = buf; src.connect(g); g.connect(master);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(VOICE, t + 0.03);
+      g.gain.setValueAtTime(VOICE, t + Math.max(0.03, len - 0.08)); g.gain.linearRampToValueAtTime(0, t + len);
+      src.start(t, start, len + 0.01);
       voiceSrc = src; voiceGain = g; duck(true);
       src.onended = () => { if (voiceSrc === src) voiceSrc = null; onEnd && onEnd(); };
-      return buf.duration;
+      return len;
     });
   }
   function duck(on) { if (!ctx) return; const t = ctx.currentTime; amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(on ? AMB_UNDER_VOICE : AMB, t, on ? 0.4 : 1.2); }
@@ -2028,7 +2049,7 @@ const Sound = (() => {
       <div><b>Go at your pace.</b> Pause any time, skip ahead, or jump straight to a chapter.</div>
       <div><b>Sound makes it.</b> Headphones bring the room in around you. Captions are on if you need them.</div>
     </div>
-    <footer class="lp-foot">Field research by Ran Craycraft · Narration voiced with ElevenLabs</footer>
+    <footer class="lp-foot">Field research by <a href="https://rancraycraft.com" target="_blank" rel="noopener">Ran Craycraft</a> · Narration voiced with ElevenLabs</footer>
   </section>
 </div>
 <div class="film-cc" id="filmCC" aria-hidden="true"><span></span></div>
@@ -2055,7 +2076,7 @@ const Sound = (() => {
       <div class="e">End of field study</div>
       <h2>The American<br>Dive Bar</h2>
       <div class="r"></div>
-      <div class="credits"><b>Field research</b> Ran Craycraft<br><b>Narration</b> voiced with ElevenLabs</div>
+      <div class="credits"><b>Field research</b> <a href="https://rancraycraft.com" target="_blank" rel="noopener">Ran Craycraft</a><br><b>Narration</b> voiced with ElevenLabs</div>
       <div class="fe-acts"><button type="button" class="fe-share" data-share><span class="fe-share-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"/><path d="M5 12v7.5h14V12"/></svg></span><span>Share with a friend</span></button><div class="fe-links"><button type="button" class="fe-link" id="feAgain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg><span>Watch again</span></button><button type="button" class="fe-link" id="feChap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/></svg><span>Chapters</span></button></div></div>
     </div>
     <form class="fe-journal" id="fieldNotes" novalidate>
