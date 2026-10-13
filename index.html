@@ -1301,7 +1301,7 @@ PHOTO DIRECTION: Your photo of a brick corner tavern at dusk, with a brewery's n
 <script>
 // Field audio engine: synthesized layers, field recordings and narration, mixed with Web Audio.
 const Sound = (() => {
-  let ctx = null, master = null, amb = null, verb = null, noise = {}, recs = {}, voices = {}, voiceSrc = null, voiceGain = null;
+  let ambTrim = null, ctx = null, master = null, amb = null, verb = null, noise = {}, recs = {}, voices = {}, voiceSrc = null, voiceGain = null;
   let current = null, currentKey = null, volume = 0.7, muted = false;
   const R = (a, b) => a + Math.random() * (b - a);
   // Mix levels. The room sits well under the talk, and drops further while the narrator speaks.
@@ -1342,7 +1342,7 @@ const Sound = (() => {
     const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -8; comp.ratio.value = 12; comp.knee.value = 4; comp.attack.value = 0.003; comp.release.value = 0.25;
     master = ctx.createGain(); master.gain.value = muted ? 0 : volume;
     master.connect(comp); comp.connect(ctx.destination);
-    amb = ctx.createGain(); amb.gain.value = AMB; amb.connect(master);
+    amb = ctx.createGain(); amb.gain.value = AMB; ambTrim = ctx.createGain(); amb.connect(ambTrim); ambTrim.connect(master);
     verb = ctx.createConvolver(); verb.buffer = makeIR(2.2, 3.2);
     const vg = ctx.createGain(); vg.gain.value = 0.5; verb.connect(vg); vg.connect(amb);
     noise = { white: makeNoise('white'), pink: makeNoise('pink'), brown: makeNoise('brown') };
@@ -1651,6 +1651,8 @@ const Sound = (() => {
     });
   }
   function duck(on) { if (!ctx) return; const t = ctx.currentTime; amb.gain.cancelScheduledValues(t); amb.gain.setTargetAtTime(on ? AMB_UNDER_VOICE : AMB, t, on ? 0.4 : 1.2); }
+  // Film: turn the synthesised room down while a recorded room or song plays under a chapter.
+  function trimAmb(v, secs = 2) { if (ctx && ambTrim) { ambTrim.gain.cancelScheduledValues(ctx.currentTime); ambTrim.gain.setTargetAtTime(v, ctx.currentTime, secs / 3); } }
   function pauseAll() { if (ctx && ctx.state === 'running') ctx.suspend(); }
   function resumeAll() { if (ctx && ctx.state !== 'running') ctx.resume(); }
   function cue(name) { if (ctx && current && CUES[name]) CUES[name](current); }
@@ -1663,7 +1665,7 @@ const Sound = (() => {
   }
   function setVolume(v) { volume = v; if (master) master.gain.setTargetAtTime(muted ? 0 : v, ctx.currentTime, 0.1); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : volume, ctx.currentTime, 0.1); }
-  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, play, duck, pauseAll, resumeAll, get time() { return ctx ? ctx.currentTime : 0; }, get ctx() { return ctx; }, get out() { return master; }, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
+  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, play, duck, pauseAll, resumeAll, trimAmb, get time() { return ctx ? ctx.currentTime : 0; }, get ctx() { return ctx; }, get out() { return master; }, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
 })();
 
 </script>
@@ -2733,6 +2735,64 @@ const Sound = (() => {
     else if (kind === 'jitter') for (let k = 0; k < 5; k++) burst(ctx, out, t + k * 0.05 + R(0, 0.015), 0.025, R(1800, 4200), 1, R(0.05, 0.1));
     else if (kind === 'burn') burst(ctx, out, t, 0.7, 900, 0.4, 0.05, 'lowpass');
   }
+})();
+</script>
+<script>
+// ---------- room sound and music under each chapter ----------
+// narration/soundscapes.json names a recorded room (or a song) for each chapter, and the reveal it starts on.
+// They crossfade as chapters change, sit low under the narrator, and loop with an overlap so there is no seam.
+(() => {
+  let SPEC = null, VER = {}, cur = null, bus = null, last = '';
+  const cache = {};
+  fetch('narration/soundscapes.json').then(r => r.ok ? r.json() : null).then(d => { SPEC = d; }).catch(() => {});
+  fetch('snd/scenes/made.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : {}).then(v => { VER = v || {}; }).catch(() => {});
+  const S = () => (typeof Sound !== 'undefined' ? Sound : null);
+  function load(ctx, f) {
+    if (!cache[f]) cache[f] = fetch(f + (VER[f] ? '?v=' + VER[f] : '')).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); })
+      .then(b => new Promise((ok, bad) => ctx.decodeAudioData(b, ok, bad))).catch(() => null);
+    return cache[f];
+  }
+  function stop(b, secs) {
+    if (!b) return; const ctx = S().ctx, t = ctx.currentTime; b.dead = true; clearTimeout(b.timer);
+    b.g.gain.cancelScheduledValues(t); b.g.gain.setValueAtTime(b.g.gain.value, t); b.g.gain.linearRampToValueAtTime(0, t + secs);
+    b.srcs.forEach(s => { try { s.stop(t + secs + 0.1); } catch (e) {} });
+  }
+  function start(bed) {
+    const snd = S(), ctx = snd && snd.ctx; if (!ctx) return null;
+    if (!bus) { bus = ctx.createGain(); bus.gain.value = 1; bus.connect(snd.out); }
+    const b = { bed, g: ctx.createGain(), srcs: [], dead: false };
+    b.g.gain.value = 0; b.g.connect(bus);
+    load(ctx, bed.file).then(buf => {
+      if (!buf || b.dead) return;
+      const XF = Math.min(3, buf.duration / 4);
+      const loop = when => {           // each pass fades in over the end of the one before
+        if (b.dead) return;
+        const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = buf; src.connect(g); g.connect(b.g);
+        g.gain.setValueAtTime(0, when); g.gain.linearRampToValueAtTime(1, when + XF);
+        g.gain.setValueAtTime(1, when + buf.duration - XF); g.gain.linearRampToValueAtTime(0, when + buf.duration);
+        src.start(when); src.stop(when + buf.duration + 0.05); b.srcs.push(src); if (b.srcs.length > 3) b.srcs.shift();
+        const next = when + buf.duration - XF;
+        b.timer = setTimeout(() => loop(next), Math.max(0, (next - ctx.currentTime - 1) * 1000));
+      };
+      loop(ctx.currentTime + 0.05);
+      const t = ctx.currentTime; b.g.gain.setTargetAtTime(bed.level == null ? 0.35 : bed.level, t, 0.9);
+    });
+    return b;
+  }
+  function pick() {
+    const slide = document.querySelector('html.film .slide.active');
+    if (!SPEC || !slide || document.body.classList.contains('film-ended')) return null;
+    const beds = SPEC.beds[slide.id]; if (!beds) return null;
+    const step = (window.Deck && Deck.step) || 0;
+    return beds.filter(b => (b.step || 0) <= step).sort((a, b) => (b.step || 0) - (a.step || 0))[0] || null;
+  }
+  setInterval(() => {
+    const snd = S(); if (!snd || !snd.ctx) return;
+    const bed = pick(), id = bed ? bed.file : '';
+    if (id === last) return; last = id;
+    stop(cur, 2.4); cur = bed ? start(bed) : null;
+    if (snd.trimAmb) snd.trimAmb(bed ? 0.25 : 1, 2.4);
+  }, 250);
 })();
 </script>
 <script>

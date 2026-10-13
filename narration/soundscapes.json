@@ -1,0 +1,34 @@
+{
+  "note": "The room sound and music under each chapter, made with ElevenLabs. Edit a prompt and push, and the GitHub Action makes just that one again. kind is sfx (up to 30 seconds, loops) or music. step is the reveal it starts on, so a chapter can change rooms partway through. level is how loud it sits under the narrator, from 0 to 1.",
+  "beds": {
+    "range": [{"file": "snd/scenes/range.mp3", "kind": "sfx", "seconds": 22, "level": 0.35, "prompt": "Wind across an empty two-lane highway at dusk, crickets, a distant truck passing, wide open country"}],
+    "origin": [{"file": "snd/scenes/origin.mp3", "kind": "sfx", "seconds": 24, "level": 0.4, "prompt": "City sidewalk at night after rain, light drizzle, a heavy basement bar door opening below the street, muffled jukebox and voices from downstairs"}],
+    "anatomy": [{"file": "snd/scenes/anatomy.mp3", "kind": "sfx", "seconds": 24, "level": 0.35, "prompt": "Quiet dive bar in the afternoon, the low hum of a beer cooler, faint buzz of an old neon sign, an occasional ice clink in a glass, a wall clock ticking"}],
+    "lineage": [
+      {"file": "snd/scenes/juke-joint.mp3", "kind": "music", "seconds": 50, "step": 0, "level": 0.32, "prompt": "A 1930s rural juke joint on a hot Saturday night. Raw acoustic Delta blues with slide guitar and harmonica, stomping feet on a wooden floor, people clapping and whooping, a lively crowd. Recorded live in a small wooden room, warm and lo-fi."},
+      {"file": "snd/scenes/honky-tonk.mp3", "kind": "music", "seconds": 50, "step": 1, "level": 0.32, "prompt": "A 1950s Texas honky-tonk dance hall. A rowdy two-step shuffle with fiddle, pedal steel guitar, twangy electric guitar, upright bass and brushed snare. Boots on a wooden dance floor, a loud happy crowd. Recorded live in the room."}
+    ],
+    "sp1": [{"file": "snd/scenes/neighborhood.mp3", "kind": "sfx", "seconds": 24, "level": 0.38, "prompt": "Neighborhood bar on a weeknight, a ballgame murmuring on an old TV, pool balls clacking, relaxed conversation, glasses set down on a wooden bar"}],
+    "mcsorleys": [{"file": "snd/scenes/ale-house.mp3", "kind": "sfx", "seconds": 24, "level": 0.38, "prompt": "Crowded old New York ale house, lively chatter, heavy glass mugs clinking together, footsteps on a sawdust floor, a bartender calling out light or dark"}],
+    "sp2": [{"file": "snd/scenes/working.mp3", "kind": "sfx", "seconds": 24, "level": 0.38, "prompt": "After-shift bar in an old industrial town, low tired conversation, a cash register drawer, a distant freight train horn, a slow country ballad on a jukebox far across the room"}],
+    "sp3": [{"file": "snd/scenes/waterfront.mp3", "kind": "sfx", "seconds": 24, "level": 0.4, "prompt": "Ramshackle waterfront shack bar on a Florida key, wind, gulls, water lapping against wooden pilings, oysters sizzling on a burning barrel, a few people laughing"}],
+    "dollars": [{"file": "snd/scenes/oyster-bar.mp3", "kind": "sfx", "seconds": 24, "level": 0.38, "prompt": "Beachside oyster bar in the afternoon, ceiling fans turning, a cheerful crowd, ice rattling in plastic cups, waves in the distance"}],
+    "biker": [{"file": "snd/scenes/biker.mp3", "kind": "sfx", "seconds": 26, "level": 0.42, "prompt": "Desert roadhouse at sunset, a row of big V-twin motorcycles idling, one revs and rides off down the highway, desert wind, muffled rock music from inside the bar"}],
+    "sp4": [{"file": "snd/scenes/late-night.mp3", "kind": "sfx", "seconds": 24, "level": 0.38, "prompt": "Downtown street at one in the morning, a distant siren, footsteps on wet pavement, a group laughing, a bar door swings open and loud music spills out, then closes"}],
+    "happyhour": [{"file": "snd/scenes/happy-hour.mp3", "kind": "sfx", "seconds": 24, "level": 0.38, "prompt": "After-work happy hour in a busy tavern, laughter, toasts, glasses clinking, a ballgame on the TV above the bar"}],
+    "fauna": [{"file": "snd/scenes/fauna.mp3", "kind": "sfx", "seconds": 24, "level": 0.36, "prompt": "Dive bar at night heard from a stool at the bar, the bartender pulling a draft beer, bottle caps popping, a regular talking low, a group celebrating loudly in the corner"}],
+    "local": [
+      {"file": "snd/scenes/chicago.mp3", "kind": "sfx", "seconds": 24, "step": 0, "level": 0.38, "prompt": "Old Chicago corner tavern in winter, wind outside, a radiator clanking, low chatter, an elevated train rumbling past overhead"},
+      {"file": "snd/scenes/wisconsin.mp3", "kind": "sfx", "seconds": 24, "step": 1, "level": 0.38, "prompt": "Wisconsin tavern, a leather dice cup shaken hard and slammed on the bar, dice rolling, friendly cheers, a polka playing faintly on a radio"}
+    ],
+    "abroad": [
+      {"file": "snd/scenes/pulqueria.mp3", "kind": "music", "seconds": 45, "step": 0, "level": 0.3, "prompt": "A crowded Mexico City pulqueria. A small cantina band plays a lively ranchera with accordion, acoustic guitars and bass, people singing along, laughing and clinking glasses. Recorded live in the room."},
+      {"file": "snd/scenes/boteco.mp3", "kind": "music", "seconds": 45, "step": 1, "level": 0.3, "prompt": "A Rio de Janeiro boteco on a warm night. An informal samba circle at a sidewalk table with pandeiro, cavaquinho and acoustic guitar, friends singing and chatting, bottles clinking. Recorded live outdoors."}
+    ],
+    "third": [{"file": "snd/scenes/third-place.mp3", "kind": "sfx", "seconds": 24, "level": 0.36, "prompt": "Friendly neighborhood bar full of regulars talking and laughing, pool balls breaking, a jukebox playing soft old soul music"}],
+    "falsedive": [{"file": "snd/scenes/faux.mp3", "kind": "music", "seconds": 40, "level": 0.28, "prompt": "A slick, expensive cocktail lounge pretending to be a dive bar. Smooth, polished downtempo lounge music, a cocktail shaker rattling, polite quiet chatter. Clean, glossy and a little sterile."}],
+    "protocol": [{"file": "snd/scenes/protocol.mp3", "kind": "sfx", "seconds": 24, "level": 0.36, "prompt": "Dive bar at night, an old jukebox clicking as a record is chosen, a pool table rack and break, a bartender wiping down the bar, low chatter"}],
+    "conservation": [{"file": "snd/scenes/closing-time.mp3", "kind": "sfx", "seconds": 24, "level": 0.36, "prompt": "Empty bar at closing time, chairs being stacked on tables, a broom sweeping a wooden floor, a lone bar stool creaking, a clock ticking"}],
+    "closing": [{"file": "snd/scenes/last-call.mp3", "kind": "sfx", "seconds": 24, "level": 0.36, "prompt": "A last call bell rings in a bar, people say goodnight and shuffle out, the door closes, then a quiet city street at night"}]
+  }
+}

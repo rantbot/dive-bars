@@ -1,11 +1,12 @@
-# Records the film's narration with ElevenLabs whenever narration/clips.json changes on main.
+# Records the film's narration, and the room sound and music under each chapter, with ElevenLabs
+# whenever narration/clips.json or narration/soundscapes.json changes on main.
 # Only lines whose words changed are recorded. The new MP3s are committed back to the repo.
 # One-time setup: Settings, Secrets and variables, Actions, New repository secret, named ELEVEN_API_KEY.
 name: Record narration
 on:
   push:
     branches: [main]
-    paths: ['narration/clips.json']
+    paths: ['narration/clips.json', 'narration/soundscapes.json']
   workflow_dispatch:
 permissions:
   contents: write
@@ -21,11 +22,15 @@ jobs:
         env:
           ELEVEN_API_KEY: ${{ secrets.ELEVEN_API_KEY }}
         run: python3 narration/generate.py
+      - name: Make room sound and music
+        env:
+          ELEVEN_API_KEY: ${{ secrets.ELEVEN_API_KEY }}
+        run: python3 narration/soundscapes.py
       - name: Commit the recordings
         run: |
           git config user.name "Narration bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add snd/film narration/recorded.json narration/clips.json
+          git add snd/film snd/scenes narration/recorded.json narration/clips.json
           if git diff --cached --quiet; then echo "Nothing new to record."; exit 0; fi
           git commit -m "Record narration"
           git pull --rebase origin main

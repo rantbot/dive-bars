@@ -27,6 +27,10 @@ At the end, a field journal asks viewers for a favorite dive bar and a protocol 
 
 Until a clip is recorded, the film shows its line as a caption and moves on after about as long as it would take to say it, so the film can be watched from start to finish at any point.
 
+### Room sound and music
+
+Each chapter can have its own room sound or song under the narrator, like a juke joint's blues or a honky-tonk two-step. They're described in plain words in `narration/soundscapes.json` and made with ElevenLabs by the same GitHub Action that records the narration, so editing a prompt and pushing is all it takes. Only the ones that changed are made again, and a song that fails never holds up the narration. `step` lets a chapter change rooms partway through, and `level` sets how loud it sits under the voice.
+
 ## What's in here
 
 - `lightning/index.html` holds the talk's slides, styles, and the sound engine. The film is built from it, so the two share the same slides. Most ambience is synthesized live with the Web Audio API.
