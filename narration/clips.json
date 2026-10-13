@@ -1,0 +1,542 @@
+{
+  "note": "The film's narration. Edit the text here, then regenerate the clips with narration/generate.py. [*] marks a reveal on the slide at that word. gap is the silence after a clip, hold the pause before the next scene.",
+  "voiceSettings": {
+    "model_id": "eleven_multilingual_v2",
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.2,
+    "use_speaker_boost": true
+  },
+  "say": {
+    "$17 cocktail": "seventeen-dollar cocktail",
+    "1:17 a.m.": "one seventeen a.m.",
+    "about 1,100 pulquerías": "about eleven hundred pulquerías",
+    "Today, only 80 pulquerías": "Today, only eighty pulquerías"
+  },
+  "intro": {
+    "file": "snd/intro.mp3",
+    "title": "Opening"
+  },
+  "scenes": [
+    {
+      "id": "cover",
+      "title": "Habitat",
+      "direction": "Warm and unhurried. The first line after the title. A hint of a smile on the last sentence.",
+      "hold": 1.4,
+      "clips": [
+        {
+          "file": "snd/film/01-cover-1.mp3",
+          "text": "Since the late 1900s, our researcher has conducted extensive field research into this fragile habitat. Most of it at night. All of it involving beer.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "range",
+      "title": "Range",
+      "direction": "Matter-of-fact, like reading from a field log.",
+      "hold": 1.2,
+      "clips": [
+        {
+          "file": "snd/film/02-range-1.mp3",
+          "text": "Sixty-eight documented research sites, from Vancouver to Guayaquil, spanning both American continents, yet the survey continues to this day.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/02-range-2.mp3",
+          "text": "The U.S. government counts drinking places. However, it has no category for a dive. Diveus americanus remains today, unrecognized by science.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/02-range-3.mp3",
+          "text": "The word itself was never a compliment. By the late 1860s, American newspapers were calling a disreputable drinking den a \"dive,\" possibly because so many of them sat a flight below the street.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "anatomy",
+      "title": "Anatomy",
+      "direction": "An anatomy lecture. Each organ is its own short clip, so give each one a small beat of weight.",
+      "hold": 1.6,
+      "clips": [
+        {
+          "file": "snd/film/03-anatomy-1.mp3",
+          "text": "Let us examine a specimen up close. Every healthy dive shares eight organs.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/03-anatomy-2.mp3",
+          "text": "[*]An old neon sign.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/03-anatomy-3.mp3",
+          "text": "[*]Light dim enough to forgive you, and what you might've seen.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/03-anatomy-4.mp3",
+          "text": "[*]Beer at exactly one temperature.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/03-anatomy-5.mp3",
+          "text": "[*]A stool that belongs to someone, even when they're not sitting on it.",
+          "gap": 1.0
+        },
+        {
+          "file": "snd/film/03-anatomy-6.mp3",
+          "text": "[*]The beer clock. After Prohibition, Congress barred brewers from giving bar owners anything of value... unless it carried the brewer's name on it. A free clock would be a bribe. A free clock with a beer's name on it... is marketing.",
+          "gap": 1.0
+        },
+        {
+          "file": "snd/film/03-anatomy-7.mp3",
+          "text": "Then hanging on the wall, there is also [*]the thing nobody can explain, [*]there are personal objects left behind as gifts from patrons, and of course, [*]an analog jukebox to create the unique soundtrack found only in this dive.",
+          "gap": 1.2
+        },
+        {
+          "file": "snd/film/03-anatomy-8.mp3",
+          "text": "A real dive is not decorated. It accumulates.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "lineage",
+      "title": "Ancestors",
+      "direction": "Slower and straight. This is the one place where the history carries more weight than the joke.",
+      "hold": 1.6,
+      "clips": [
+        {
+          "file": "snd/film/04-lineage-1.mp3",
+          "text": "Every known species has ancestors.",
+          "gap": 1.2
+        },
+        {
+          "file": "snd/film/04-lineage-2.mp3",
+          "text": "For the dive bar, it may be the juke joint. In the Jim Crow South, Black workers were shut out of white establishments, so they built their own. An unassuming shack at a crossroads. Music, food, and dancing after a long week.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/04-lineage-3.mp3",
+          "text": "Some historians call this the first private space Black Americans had in this country. The blues grew up there. When record machines came to bars, they took its name. The jukebox.",
+          "gap": 1.8
+        },
+        {
+          "file": "snd/film/04-lineage-4.mp3",
+          "text": "Out west, the honky-tonk was born. Country music is said to have gone electric partly so it could be heard over the rowdy noise.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "sp1",
+      "title": "The Neighborhood Dive",
+      "direction": "Affectionate. Dry on \"Others, the keg.\"",
+      "hold": 1.2,
+      "clips": [
+        {
+          "file": "snd/film/05-sp1-1.mp3",
+          "text": "Our research has identified five remaining species today.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/05-sp1-2.mp3",
+          "text": "The most widespread is the Neighborhood Dive. Its defining trait is community. The bartender may even start pouring before your order is complete. Some regulars have been observed changing the music. Others, the keg.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "mcsorleys",
+      "title": "McSorley's",
+      "direction": "Respectful. Let the last line land quietly.",
+      "hold": 2.6,
+      "clips": [
+        {
+          "file": "snd/film/06-mcsorleys-1.mp3",
+          "text": "Here is the Neighborhood Dive in its oldest form. McSorley's Old Ale House in New York's East Village. It claims a birth in 1854 and historic patrons, Abraham Lincoln, Ulysses S. Grant, Teddy Roosevelt, and William Jefferson Clinton.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/06-mcsorleys-2.mp3",
+          "text": "It served men only until 1970, when two lawyers sued and won.",
+          "gap": 1.0
+        },
+        {
+          "file": "snd/film/06-mcsorleys-3.mp3",
+          "text": "Above the bar hang wishbones, said to have been left by soldiers heading to the First World War. The ones still hanging are said to belong to those who never came back.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "sp2",
+      "title": "The Working-Class Dive",
+      "direction": "Plain and steady, like the routine it describes. Deadpan on the last line.",
+      "hold": 1.2,
+      "clips": [
+        {
+          "file": "snd/film/07-sp2-1.mp3",
+          "text": "In older industrial towns, we find a hardier relative. The Working-Class Dive. Diveus laboriosus.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/07-sp2-2.mp3",
+          "text": "Its defining trait is routine. Activity peaks at shift change. Same people. Same stools. Same drinks. Same time.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/07-sp2-3.mp3",
+          "text": "Researchers have observed individual specimens occupying the same stool for decades. Removing the stool could result in severe ecological disruption.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "sp3",
+      "title": "The Destination Dive",
+      "direction": "A memory. Warm, a little wistful.",
+      "hold": 1.2,
+      "clips": [
+        {
+          "file": "snd/film/08-sp3-1.mp3",
+          "text": "The Destination Dive. Found on back roads, coastlines, and generally, at the ends of things.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/08-sp3-2.mp3",
+          "text": "This is Jimbo's Place, tucked behind a water treatment plant on Virginia Key in Miami. When our researcher first encountered Jimbo's over two decades ago, they kept no bartender, only a caretaker who occasionally surfaced to restore the habitat, and an old fisherman grilling fresh oysters for guests over a burning barrel. You paid in cash through a slot in a lockbox and pulled your own beer from the cooler.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/08-sp3-3.mp3",
+          "text": "That's not a business. That's a community.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "dollars",
+      "title": "The Currency Ceiling",
+      "direction": "Curious, a little conspiratorial. Land the dollar figure clearly.",
+      "hold": 1.6,
+      "clips": [
+        {
+          "file": "snd/film/09-dollars-1.mp3",
+          "text": "Some habitats are papered in dollar bills. Why money? Scientists remain divided.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/09-dollars-2.mp3",
+          "text": "In California's Gold Country, regulars tell of miners who signed a bill and tacked it to the ceiling, so they would never come back too broke for a first drink. On the Florida coast, the story involves fishermen, betting a dollar on the day's catch.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/09-dollars-3.mp3",
+          "text": "Aviators had a cousin of the custom. Signed bills called short snorters. Fail to produce yours, and you bought the round.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/09-dollars-4.mp3",
+          "text": "The true origin may be unrecoverable. The money is not. In 2019, staff at the Siesta Key Oyster Bar pulled every bill off the walls. Thirteen thousand, nine hundred and sixty-one dollars. All of it sent to hurricane relief in the Bahamas.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "biker",
+      "title": "The Biker Bar",
+      "direction": "Respectful distance. The last line is a firm, friendly warning.",
+      "hold": 1.2,
+      "clips": [
+        {
+          "file": "snd/film/10-biker-1.mp3",
+          "text": "The Biker Bar. Identified by the precise row of motorcycles out front.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/10-biker-2.mp3",
+          "text": "Despite its reputation, Diveus motorcyclus is among the most courteous habitats on the continent.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/10-biker-3.mp3",
+          "text": "Researchers are advised to admire the bikes. Never touch the bikes.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "sp4",
+      "title": "The Late-Night Dive",
+      "direction": "Nature documentary migration voice. Build through the list, then drop to deadpan for Boston.",
+      "hold": 1.6,
+      "clips": [
+        {
+          "file": "snd/film/11-sp4-1.mp3",
+          "text": "Our final species is rarely seen in daylight. The Late-Night Dive. Diveus nocturnus.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/11-sp4-2.mp3",
+          "text": "As midnight approaches, scattered populations begin their nightly migration toward a common watering hole. Restaurant staff, finished with their shifts. Concertgoers. Wedding guests. Patrons of lesser bars that have already closed.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/11-sp4-3.mp3",
+          "text": "By 1:17 a.m., they converge. Here, together, they will make increasingly questionable decisions.",
+          "gap": 1.0
+        },
+        {
+          "file": "snd/film/11-sp4-4.mp3",
+          "text": "The migration has an earlier phase. Happy hour. The term began among sailors aboard the USS Arkansas in 1913, and caught on during Prohibition. In Massachusetts, it has been illegal since 1984.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/11-sp4-5.mp3",
+          "text": "Boston simply has hours.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "fauna",
+      "title": "Fauna",
+      "direction": "Field guide. One beat per species. The last one is the joke.",
+      "hold": 1.4,
+      "clips": [
+        {
+          "file": "snd/film/12-fauna-1.mp3",
+          "text": "Every habitat supports its fauna.",
+          "gap": 0.6
+        },
+        {
+          "file": "snd/film/12-fauna-2.mp3",
+          "text": "The Regular. Territorial.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/12-fauna-3.mp3",
+          "text": "[*]The Bartender, the apex species, controlling access to all resources.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/12-fauna-4.mp3",
+          "text": "[*]The Tourist, identified by looking around too much.",
+          "gap": 1.2
+        },
+        {
+          "file": "snd/film/12-fauna-5.mp3",
+          "text": "[*]And the Bachelorette Party. Native species are known to retreat until the disturbance has passed.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "title": "Local Adaptations",
+      "direction": "Lively, a travel guide with an inside joke.",
+      "hold": 1.4,
+      "clips": [
+        {
+          "file": "snd/film/13-local-1.mp3",
+          "text": "Every population adapts to its environment.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/13-local-2.mp3",
+          "text": "In Chicago, before Prohibition, brewers built saloons of their own. Between 1897 and 1905, Schlitz alone built fifty-seven here. Beer on the ground floor. Upstairs, often, the family who ran the place. Many still stand.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/13-local-3.mp3",
+          "text": "The local ritual is the Chicago Handshake. A shot of Malört, which tastes like a punishment, and an Old Style to recover.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/13-local-4.mp3",
+          "text": "In Wisconsin, the dice cup lives on the bar. Shake of the Day. Beat the bartender, and the next one's free. When three Milwaukee bars tried to ban the dice in 2016, the ban lasted two days.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "abroad",
+      "title": "Related Populations",
+      "direction": "Admiring. Say the Spanish and Portuguese words with care.",
+      "hold": 1.4,
+      "clips": [
+        {
+          "file": "snd/film/14-abroad-1.mp3",
+          "text": "The genus doesn't stop at the United States border.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/14-abroad-2.mp3",
+          "text": "In Mexico, the pulquería, serving the fermented agave drink the Aztecs held sacred long before the invention of tequila and mezcal. Mexico City once counted about 1,100 pulquerías. Until beer companies and the government spent decades disparaging pulque as unclean and a poor man's drink. Today, only 80 pulquerías remain.",
+          "gap": 1.0
+        },
+        {
+          "file": "snd/film/14-abroad-3.mp3",
+          "text": "[*]In Brazil, the boteco, where bars in 25 cities compete every year in the Comida di Buteco, to name Brazil's best snack and coldest beer.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "third",
+      "title": "Third Places",
+      "direction": "Thoughtful. Let the two numbers contrast.",
+      "hold": 1.6,
+      "clips": [
+        {
+          "file": "snd/film/15-third-1.mp3",
+          "text": "Sociologist Ray Oldenburg defines these as third places. Home is the first. Work is the second.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/15-third-2.mp3",
+          "text": "In a national survey, Americans who identified with a regular spot were far more likely to talk with someone they don't know well. Forty-eight percent.",
+          "gap": 1.0
+        },
+        {
+          "file": "snd/film/15-third-3.mp3",
+          "text": "[*]Versus only twenty-eight percent for those with no regular third place at all.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "falsedive",
+      "title": "The False Dive",
+      "direction": "A warning about an impostor. Dry.",
+      "hold": 1.4,
+      "clips": [
+        {
+          "file": "snd/film/16-falsedive-1.mp3",
+          "text": "In your explorations, beware Diveus artificialis, the False Dive. Its camouflage can be quickly identified by its Edison bulbs, its custom neon signs with clever phrases. And of course, a signature $17 cocktail.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/16-falsedive-2.mp3",
+          "text": "While attempts have been made to breed the false dive in captivity, they have largely failed.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "test",
+      "title": "The Diagnostic",
+      "direction": "Quiet. Ask the two questions slowly. Silence follows.",
+      "hold": 3.8,
+      "clips": [
+        {
+          "file": "snd/film/17-test-1.mp3",
+          "text": "Today, there is one simple diagnostic for a dive bar.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/17-test-2.mp3",
+          "text": "Did this accumulate? Or was it purchased?",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "protocol",
+      "title": "Field Protocol",
+      "direction": "Practical advice from a seasoned guide. Each rule is its own clip.",
+      "hold": 1.6,
+      "clips": [
+        {
+          "file": "snd/film/18-protocol-1.mp3",
+          "text": "If your curiosity takes over and you decide to explore a dive bar for yourself, here are a few protocols to observe.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/18-protocol-2.mp3",
+          "text": "[*]Arrive with no more than three other people.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/18-protocol-3.mp3",
+          "text": "[*]A beer, a shot, or a drink with two ingredients. Never order a fancy cocktail.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/18-protocol-4.mp3",
+          "text": "[*]Read the room before you touch the jukebox.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/18-protocol-5.mp3",
+          "text": "[*]Watch how seriously they play pool. Mimic accordingly.",
+          "gap": 0.7
+        },
+        {
+          "file": "snd/film/18-protocol-6.mp3",
+          "text": "[*]The restroom is only for number one. Number two means it's time to go home.",
+          "gap": 1.6
+        },
+        {
+          "file": "snd/film/18-protocol-7.mp3",
+          "text": "[*]And finally, always bring cash. If they don't take cards, be delighted. You have just encountered one of the last remaining American dive bars.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "conservation",
+      "title": "Conservation",
+      "direction": "Sincere. The stool line is gentle, almost a whisper.",
+      "hold": 2.0,
+      "clips": [
+        {
+          "file": "snd/film/19-conservation-1.mp3",
+          "text": "No one has ever counted all of America's dive bars, while many have tried. But the pressures today are real. Rising rents. Redevelopment. Fewer drinkers.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/19-conservation-2.mp3",
+          "text": "You can open a bar tomorrow. But you cannot open a seventy-year-old bar tomorrow.",
+          "gap": 1.8
+        },
+        {
+          "file": "snd/film/19-conservation-3.mp3",
+          "text": "Do you see that stool over there? That's Gary's seat. It took him decades to earn it.",
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "closing",
+      "title": "Respect the Habitat",
+      "direction": "The sign-off. Build to \"And whatever you do...\", hold, then deliver the last line deadpan.",
+      "hold": 2.4,
+      "clips": [
+        {
+          "file": "snd/film/20-closing-1.mp3",
+          "text": "A great dive bar isn't designed. It evolves.",
+          "gap": 0.8
+        },
+        {
+          "file": "snd/film/20-closing-2.mp3",
+          "text": "So if you find one in the wild, approach it respectfully. Order something simple.",
+          "gap": 0.9
+        },
+        {
+          "file": "snd/film/20-closing-3.mp3",
+          "text": "And whatever you do...",
+          "gap": 1.1
+        },
+        {
+          "file": "snd/film/20-closing-4.mp3",
+          "text": "[*]Respect the habitat. Don't sit in Gary's seat.",
+          "gap": 0.4
+        }
+      ]
+    }
+  ]
+}
