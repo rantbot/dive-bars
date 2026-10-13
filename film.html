@@ -125,7 +125,7 @@ body.film-idle .film-ui { opacity: 0; transform: translateY(12px); pointer-event
 .film-chapters .t { font-family: var(--display); font-size: 20px; flex: 1; }
 .film-chapters .d { font-size: 12px; color: #7D7668; font-variant-numeric: tabular-nums; }
 
-.film-end { position: fixed; inset: 0; z-index: 32; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px 16px; text-align: center; color: var(--ivory); background: rgba(0,0,0,0.0); opacity: 0; pointer-events: none; transition: opacity 2s ease; }
+.film-end { position: fixed; inset: 0; z-index: 32; overflow-y: auto; color: var(--ivory); opacity: 0; pointer-events: none; transition: opacity 2s ease; background: transparent; }
 .film-end.on { opacity: 1; pointer-events: auto; }
 .film-end .e { font-family: var(--ui); font-size: 12px; letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); padding-left: 0.42em; }
 .film-end h2 { margin: 0; font-family: var(--display); font-weight: 300; text-transform: uppercase; letter-spacing: 0.14em; padding-left: 0.14em; font-size: clamp(30px, 6vw, 84px); line-height: 1.05; }
@@ -167,6 +167,34 @@ html.film #range .map-tip span { display: block; margin-top: 2px; font-size: 17p
 .lp-share:hover, .lp-share:focus-visible { border-color: var(--amber); outline: none; color: #fff; }
 .film-toast { position: fixed; left: 50%; top: 28px; z-index: 60; transform: translate(-50%, -12px); padding: 12px 18px; border-radius: 999px; background: rgba(13,12,10,0.96); border: 1px solid rgba(201,161,90,0.5); color: var(--ivory); font-family: var(--ui); font-size: 14px; letter-spacing: 0.02em; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; box-shadow: 0 12px 40px rgba(0,0,0,0.5); max-width: calc(100vw - 32px); }
 .film-toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- End card with the field journal ---------- */
+.fe-wrap { min-height: 100%; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); align-items: center; gap: 40px 80px; padding: 40px max(20px, 6vw); max-width: 1240px; margin: 0 auto; }
+.fe-main { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; text-align: left; }
+.fe-main h2 { font-size: clamp(30px, 4.2vw, 64px); padding-left: 0; white-space: nowrap; }
+.fe-main .acts { justify-content: flex-start; }
+.fe-journal { position: relative; padding: 30px 30px 26px; border: 1px solid rgba(237,230,216,0.14); border-radius: 10px; background: rgba(13,12,10,0.9); font-family: var(--ui); }
+.fe-journal::before { content: ""; position: absolute; left: 30px; top: 0; width: 56px; height: 2px; background: var(--amber); }
+.fj-e { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--amber); }
+.fe-journal h3 { margin: 8px 0 4px; font-family: var(--display); font-weight: 400; font-size: 32px; color: var(--ivory); }
+.fj-lede { margin: 0 0 12px; font-size: 14px; line-height: 1.55; color: #9C9384; }
+.fj-f { display: block; margin-bottom: 12px; }
+.fj-f span { display: block; margin-bottom: 6px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #B8AF9F; }
+.fj-f input, .fj-f textarea { width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid rgba(237,230,216,0.24); background: transparent; color: var(--ivory); padding: 6px 0; font-family: var(--display); font-size: 20px; line-height: 1.35; resize: none; border-radius: 0; transition: border-color .2s; }
+.fj-f input::placeholder, .fj-f textarea::placeholder { color: #5E584D; font-style: italic; }
+.fj-f input:focus, .fj-f textarea:focus { outline: none; border-color: var(--amber); }
+.fj-f.bad input { border-color: #D9775C; }
+.fj-sm input { font-size: 18px; }
+.fj-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.fj-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+.fj-go { font-family: var(--ui); font-size: 12px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; padding: 14px 26px; border: 0; border-radius: 999px; background: var(--ivory); color: #13110E; cursor: pointer; transition: background .2s, transform .2s; }
+.fj-go:hover:not(:disabled), .fj-go:focus-visible { background: #fff; transform: translateY(-1px); outline: none; }
+.fj-go:disabled { opacity: 0.5; cursor: default; }
+.fj-msg { font-size: 13px; color: #B8AF9F; line-height: 1.4; }
+.fe-journal.done .fj-f, .fe-journal.done .fj-go, .fe-journal.done .fj-lede { display: none; }
+.fe-journal.done .fj-msg { font-family: var(--display); font-size: 22px; color: var(--ivory); }
+@media (max-width: 860px) { .fe-wrap { grid-template-columns: 1fr; padding-top: 48px; } }
+body.film-ended .film-ui, body.film-ended .film-cc { opacity: 0 !important; pointer-events: none !important; }
 </style>
 <title>The American Dive Bar</title>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
@@ -1984,11 +2012,27 @@ const Sound = (() => {
 </div>
 <div class="film-chapters" id="filmChapters" hidden role="dialog" aria-label="Chapters"></div>
 <div class="film-end" id="filmEnd" aria-hidden="true">
-  <div class="e">End of field study</div>
-  <h2>The American<br>Dive Bar</h2>
-  <div class="r"></div>
-  <div class="credits"><b>Field research</b> Ran Craycraft<br><b>Narration</b> voiced with ElevenLabs</div>
-  <div class="acts"><button type="button" data-share>Share with a friend</button><button type="button" class="q" id="feAgain">Watch again</button><button type="button" class="q" id="feChap">Chapters</button></div>
+  <div class="fe-wrap">
+    <div class="fe-main">
+      <div class="e">End of field study</div>
+      <h2>The American<br>Dive Bar</h2>
+      <div class="r"></div>
+      <div class="credits"><b>Field research</b> Ran Craycraft<br><b>Narration</b> voiced with ElevenLabs</div>
+      <div class="acts"><button type="button" data-share>Share with a friend</button><button type="button" class="q" id="feAgain">Watch again</button><button type="button" class="q" id="feChap">Chapters</button></div>
+    </div>
+    <form class="fe-journal" id="fieldNotes" novalidate>
+      <div class="fj-e">Field journal</div>
+      <h3>Add to the survey</h3>
+      <p class="fj-lede">The study is ongoing. Tell us about a habitat you know.</p>
+      <label class="fj-f"><span>Your favorite dive bar</span><input name="bar" maxlength="120" autocomplete="off" placeholder="Name of the bar" required></label>
+      <label class="fj-f"><span>Where it lives</span><input name="city" maxlength="120" autocomplete="off" placeholder="City, state or country"></label>
+      <label class="fj-f"><span>One protocol every visitor should follow</span><textarea name="protocol" maxlength="400" rows="2" placeholder="Tip the jukebox, not just the bartender."></textarea></label>
+      <label class="fj-f"><span>Anything else a field researcher should know</span><textarea name="tip" maxlength="600" rows="1" placeholder="Ask for the story behind the thing on the wall."></textarea></label>
+      <label class="fj-f fj-sm"><span>Signed</span><input name="name" maxlength="60" autocomplete="given-name" placeholder="First name, optional"></label>
+      <label class="fj-hp" aria-hidden="true">Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label>
+      <div class="fj-row"><button type="submit" class="fj-go">Log it</button><span class="fj-msg" id="fjMsg" role="status" aria-live="polite"></span></div>
+    </form>
+  </div>
 </div>
 <div class="film-toast" id="filmToast" role="status" aria-live="polite"></div>
 <script>
@@ -2132,7 +2176,7 @@ const Sound = (() => {
     at(0.1, () => D.next());           // the screen fades to black
     at(3.6, () => endCard(true));
   }
-  function endCard(on) { const e = $('filmEnd'); e.classList.toggle('on', on); e.setAttribute('aria-hidden', String(!on)); if (on) { setIdle(false); $('feAgain').focus({ preventScroll: true }); } }
+  function endCard(on) { const e = $('filmEnd'); e.classList.toggle('on', on); document.body.classList.toggle('film-ended', on); e.setAttribute('aria-hidden', String(!on)); if (on) { setIdle(false); $('feAgain').focus({ preventScroll: true }); } }
 
   // ---------- transport ----------
   function setPlaying(p) {
@@ -2213,6 +2257,32 @@ const Sound = (() => {
   }
   document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); share(); }));
 
+  // ---------- the field journal ----------
+  // Viewers add a favorite bar and a protocol of their own. Answers go to a Supabase table that only accepts
+  // new rows (see supabase/field_notes.sql), so nothing anyone writes is shown on the site.
+  const FIELD_NOTES = { url: 'https://vaoccsecgfqgstdbijkv.supabase.co', key: 'sb_publishable_8hbI-DeTzCfi1eJk-CgjkQ_hHnEe3Qd' };   // Supabase project URL and its publishable key
+  const form = $('fieldNotes'), msg = $('fjMsg');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = new FormData(form), row = {};
+    ['bar', 'city', 'protocol', 'tip', 'name'].forEach(k => { const v = String(f.get(k) || '').trim(); if (v) row[k] = v; });
+    const barField = form.querySelector('[name="bar"]').closest('.fj-f');
+    if (!row.bar) { barField.classList.add('bad'); msg.textContent = 'Start with the name of a bar.'; form.querySelector('[name="bar"]').focus(); return; }
+    barField.classList.remove('bad');
+    if (String(f.get('website') || '')) { form.classList.add('done'); msg.textContent = 'Logged. Thank you for your contribution to science.'; return; }
+    if (!FIELD_NOTES.url || !FIELD_NOTES.key) { msg.textContent = 'The field journal is not connected yet.'; return; }
+    const go = form.querySelector('.fj-go'); go.disabled = true; msg.textContent = 'Logging…';
+    try {
+      const r = await fetch(FIELD_NOTES.url.replace(/\/$/, '') + '/rest/v1/field_notes', { method: 'POST',
+        headers: Object.assign({ apikey: FIELD_NOTES.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, FIELD_NOTES.key.startsWith('sb_') ? {} : { Authorization: 'Bearer ' + FIELD_NOTES.key }),
+        body: JSON.stringify(row) });
+      if (!r.ok) throw new Error(r.status);
+      form.classList.add('done'); msg.textContent = 'Logged. Thank you for your contribution to science.';
+    } catch (err) { go.disabled = false; msg.textContent = 'That did not go through. Try once more?'; }
+  });
+  form.addEventListener('click', e => e.stopPropagation());
+  form.querySelectorAll('textarea').forEach(t => t.addEventListener('input', () => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }));
+
   // ---------- the landing page ----------
   const TEASERS = {
     anatomy: ['img/plate_base.jpg', 'The eight organs every healthy dive shares.'],
@@ -2260,6 +2330,7 @@ const Sound = (() => {
   gate.addEventListener('click', () => { if (started) setPlaying(!playing); });
   window.addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target && e.target.closest && e.target.closest('input, textarea, select')) return;
     const k = e.key;
     if (!started) return;
     if (k === ' ' || k === 'k' || k === 'K') { if (document.activeElement && document.activeElement.tagName === 'BUTTON' && k === ' ') return; e.preventDefault(); setPlaying(!playing); }

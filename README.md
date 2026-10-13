@@ -18,6 +18,8 @@ Refreshing a tab keeps you on the same slide. Opening the site fresh starts at t
 - `narration/recording-script.md` is the same script laid out for recording, with direction and pronunciation.
 - `narration/generate.py` records every clip with ElevenLabs into `snd/film/`. See the top of that file.
 
+At the end, a field journal asks viewers for a favorite dive bar and a protocol of their own. To switch it on, create a free Supabase project, run `supabase/field_notes.sql` in its SQL editor, and put the project URL and its public anon key into `FIELD_NOTES` near the top of the film script. Viewers can only add notes, never read them. You read them in Supabase's Table editor.
+
 Until a clip is recorded, the film shows its line as a caption and moves on after about as long as it would take to say it, so the film can be watched from start to finish at any point.
 
 ## What's in here
