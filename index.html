@@ -223,12 +223,14 @@ html.film #viewport, html.film body { background: #000; }
 /* ---------- Film stock: grain, dust and a little exposure flicker over the photographs and footage ---------- */
 /* The textures are drawn once in the script and stepped through like frames. Only the texture moves, never the frame. */
 html.film .kb::after, html.film .grain-layer { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background-image: var(--film-grain, none); background-size: 220px 220px; mix-blend-mode: overlay; opacity: 0.42;
+  background-image: var(--film-grain, none); background-size: 220px 220px; mix-blend-mode: soft-light; opacity: 0.3;
   animation: film-grain 0.42s steps(1) infinite; }
 html.film .kb::before, html.film .grain-layer::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background-image: var(--film-dust, none); background-size: 900px 600px; opacity: 0.55;
   animation: film-dust 1.25s steps(1) infinite, film-flicker 4.6s steps(1) infinite; }
 html.film .grain-layer { overflow: hidden; }
+html.film .film-fx { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
+html:not(.film) .film-fx { display: none; }
 @keyframes film-grain { 0% { background-position: 0 0; } 14% { background-position: -71px 39px; } 28% { background-position: 53px -88px; } 42% { background-position: -120px -17px; } 57% { background-position: 97px 64px; } 71% { background-position: -33px 112px; } 85% { background-position: 140px -51px; } }
 @keyframes film-dust { 0% { background-position: 0 0; } 20% { background-position: -410px 230px; } 40% { background-position: 260px -370px; } 60% { background-position: -150px -120px; } 80% { background-position: 520px 310px; } }
 @keyframes film-flicker { 0%, 100% { opacity: 0.55; } 9% { opacity: 0.35; } 10% { opacity: 0.6; } 47% { opacity: 0.45; } 48% { opacity: 0.62; } 73% { opacity: 0.4; } 74% { opacity: 0.55; } }
@@ -1582,7 +1584,7 @@ const Sound = (() => {
   }
   function setVolume(v) { volume = v; if (master) master.gain.setTargetAtTime(muted ? 0 : v, ctx.currentTime, 0.1); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : volume, ctx.currentTime, 0.1); }
-  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, play, duck, pauseAll, resumeAll, get time() { return ctx ? ctx.currentTime : 0; }, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
+  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, play, duck, pauseAll, resumeAll, get time() { return ctx ? ctx.currentTime : 0; }, get ctx() { return ctx; }, get out() { return master; }, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
 })();
 
 </script>
@@ -2515,6 +2517,130 @@ const Sound = (() => {
   }).catch(() => {
     const m = document.createElement('p'); m.className = 'fs-err'; m.textContent = 'The narration could not load. Open this page through a web server, such as GitHub Pages.'; document.querySelector('.lp-copy').appendChild(m);
   });
+})();
+</script>
+<script>
+// ---------- the projector: scratches, specks, the odd glitch, and the sound of old film ----------
+// Runs over every photograph and the opening footage. The stage never moves; only the picture inside it slips.
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const gate = document.getElementById('gate');
+  const R = (a, b) => a + Math.random() * (b - a);
+  const hosts = [...document.querySelectorAll('.kb, .grain-layer')].map(el => {
+    const c = document.createElement('canvas'); c.className = 'film-fx'; c.setAttribute('aria-hidden', 'true'); el.appendChild(c);
+    const pic = el.classList.contains('kb') ? [...el.querySelectorAll('img, video')] : [el.previousElementSibling].filter(Boolean);
+    return { el, c, g: c.getContext('2d'), pic, scratches: [], hair: null, w: 0, h: 0 };
+  });
+  if (!hosts.length) return;
+
+  function live(hst) {
+    const slide = hst.el.closest('.slide');
+    if (slide) { if (!slide.classList.contains('active')) return false; const b = hst.el.closest('.build'); return !b || parseFloat(getComputedStyle(b).opacity) > 0.4; }
+    return !!(gate && hst.el.closest('#gate') && gate.classList.contains('intro'));
+  }
+  const paused = () => document.body.classList.contains('film-paused') || !document.documentElement.classList.contains('film');
+
+  // ---------- picture ----------
+  let glitch = null, nextGlitch = R(2.5, 5), lastT = performance.now(), wasLive = false;
+  const KINDS = ['slip', 'slip', 'flash', 'splice', 'jitter', 'burn', 'jitter'];
+  function frame(hst, n) {
+    const { g } = hst, W = hst.w, H = hst.h; g.clearRect(0, 0, W, H);
+    // exposure breathes a little from frame to frame
+    const e = R(-1, 1); g.fillStyle = e < 0 ? `rgba(0,0,0,${(-e * 0.07).toFixed(3)})` : `rgba(255,238,205,${(e * 0.045).toFixed(3)})`; g.fillRect(0, 0, W, H);
+    // vertical scratches that live for a few frames and wander
+    if (Math.random() < 0.09) hst.scratches.push({ x: R(0.05, 0.95) * W, life: Math.round(R(3, 16)), wd: R(0.6, 1.8), dark: Math.random() < 0.35, top: Math.random() < 0.3 ? R(0, H * 0.6) : 0, len: Math.random() < 0.5 ? H : R(H * 0.2, H * 0.7) });
+    hst.scratches = hst.scratches.filter(s => s.life-- > 0);
+    hst.scratches.forEach(s => { s.x += R(-1.2, 1.2); g.strokeStyle = s.dark ? `rgba(0,0,0,${R(0.25, 0.5)})` : `rgba(255,248,232,${R(0.2, 0.55)})`; g.lineWidth = s.wd;
+      g.beginPath(); g.moveTo(s.x, s.top); g.lineTo(s.x + R(-2, 2), s.top + s.len); g.stroke(); });
+    // specks, one frame each
+    for (let k = 0, m = Math.floor(R(0, 4)); k < m; k++) { const r = R(0.8, 3.2); g.fillStyle = Math.random() < 0.6 ? `rgba(0,0,0,${R(0.3, 0.7)})` : `rgba(255,250,235,${R(0.3, 0.7)})`;
+      g.beginPath(); g.ellipse(R(0, W), R(0, H), r, r * R(0.5, 1.4), R(0, 3), 0, 7); g.fill(); }
+    // a hair caught in the gate now and then
+    if (!hst.hair && Math.random() < 0.006) hst.hair = { x: R(0.1, 0.9) * W, y: R(0.1, 0.9) * H, life: Math.round(R(5, 14)), k: [R(-40, 40), R(20, 60), R(-50, 50), R(40, 110)] };
+    if (hst.hair) { const h = hst.hair; g.strokeStyle = 'rgba(0,0,0,0.55)'; g.lineWidth = 1.1; g.beginPath(); g.moveTo(h.x, h.y);
+      g.bezierCurveTo(h.x + h.k[0], h.y + h.k[1], h.x + h.k[2], h.y + h.k[3] * 0.6, h.x + h.k[0] * 0.5, h.y + h.k[3]); g.stroke(); if (--h.life <= 0) hst.hair = null; }
+    // the glitch, if one is running
+    if (glitch && n != null) {
+      const f = glitch.f;
+      if (glitch.kind === 'flash' && f < 2) { g.fillStyle = `rgba(255,236,200,${f ? 0.18 : 0.42})`; g.fillRect(0, 0, W, H); }
+      if (glitch.kind === 'splice' && f < 3) { const y = glitch.y * H; g.fillStyle = 'rgba(0,0,0,0.85)'; g.fillRect(0, y, W, H * 0.035); g.fillStyle = 'rgba(255,245,225,0.5)'; g.fillRect(0, y + H * 0.035, W, 2); }
+      if (glitch.kind === 'burn') { const a = Math.max(0, 0.5 - f * 0.026), cx = glitch.y < 0.5 ? 0 : W, gr = g.createRadialGradient(cx, H * 0.4, 0, cx, H * 0.4, W * 0.6);
+        gr.addColorStop(0, `rgba(255,150,60,${a})`); gr.addColorStop(0.5, `rgba(255,90,30,${a * 0.4})`); gr.addColorStop(1, 'rgba(255,90,30,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H); }
+    }
+  }
+  function move(hst) {
+    let t = '';
+    if (glitch) { const f = glitch.f;
+      if (glitch.kind === 'slip') t = f === 0 ? `0 -${glitch.a}%` : f === 1 ? `0 ${glitch.a * 0.4}%` : '';
+      if (glitch.kind === 'splice') t = f < 2 ? `0 ${glitch.a * 0.5}%` : '';
+      if (glitch.kind === 'jitter') t = f < 4 ? `${R(-0.5, 0.5).toFixed(2)}% ${R(-0.3, 0.3).toFixed(2)}%` : ''; }
+    hst.pic.forEach(p => { if (p.style.translate !== t) p.style.translate = t; });
+  }
+  const LEN = { slip: 3, flash: 2, splice: 4, jitter: 5, burn: 20 };
+  function step() {
+    const t = performance.now(), dt = (t - lastT) / 1000; lastT = t;
+    const on = hosts.filter(live), anyLive = on.length > 0 && !paused();
+    bed(anyLive);
+    if (paused()) return;
+    if (anyLive !== wasLive) { wasLive = anyLive; if (!anyLive) hosts.forEach(h => { h.g.clearRect(0, 0, h.w, h.h); h.pic.forEach(p => p.style.translate = ''); }); }
+    if (!anyLive) return;
+    if (!reduce) { nextGlitch -= dt;
+      if (!glitch && nextGlitch <= 0) { glitch = { kind: KINDS[Math.floor(Math.random() * KINDS.length)], f: 0, a: R(2, 5), y: R(0.15, 0.85) }; sfx(glitch.kind); nextGlitch = R(4, 10); } }
+    on.forEach(hst => {
+      const w = Math.round(hst.el.clientWidth / 2), h = Math.round(hst.el.clientHeight / 2);
+      if (w && (w !== hst.w || h !== hst.h)) { hst.w = hst.c.width = w; hst.h = hst.c.height = h; }
+      if (!reduce) frame(hst, glitch ? glitch.f : null);
+      move(hst);
+    });
+    if (glitch && ++glitch.f >= LEN[glitch.kind]) { glitch = null; on.forEach(move); }
+  }
+  setInterval(step, 1000 / 16);   // old film runs slow
+  window.FilmFX = { glitch(kind) { glitch = { kind, f: 0, a: R(2, 5), y: R(0.15, 0.85) }; sfx(kind); } };
+
+  // ---------- sound ----------
+  let bedG = null, ready = false;
+  function audio() {
+    const S = typeof Sound !== 'undefined' ? Sound : null, ctx = S && S.ctx, out = S && S.out;
+    if (!ctx || !out) return null;
+    if (!ready) {
+      ready = true;
+      // crackle: sparse little pops, looped
+      const len = ctx.sampleRate * 5, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.012;
+      for (let k = 0; k < 120; k++) { const at = Math.floor(Math.random() * (len - 400)), amp = R(0.15, 0.9) * (Math.random() < 0.85 ? 0.35 : 1), dec = R(30, 160);
+        for (let j = 0; j < 300; j++) d[at + j] += (Math.random() * 2 - 1) * amp * Math.exp(-j / dec); }
+      const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+      const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 700;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 7000;
+      bedG = ctx.createGain(); bedG.gain.value = 0;
+      src.connect(hp); hp.connect(lp); lp.connect(bedG); bedG.connect(out); src.start();
+    }
+    return { ctx, out };
+  }
+  let bedOn = false;
+  function bed(on) {
+    const a = audio(); if (!a || on === bedOn) return; bedOn = on;
+    const t = a.ctx.currentTime; bedG.gain.cancelScheduledValues(t); bedG.gain.setTargetAtTime(on ? 0.05 : 0, t, on ? 0.8 : 0.3);
+  }
+  function burst(ctx, out, t, dur, f, q, vol, type) {
+    const n = Math.floor(ctx.sampleRate * dur), b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (n * 0.22));
+    const s = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
+    s.buffer = b; fl.type = type || 'bandpass'; fl.frequency.value = f; fl.Q.value = q; g.gain.value = vol;
+    s.connect(fl); fl.connect(g); g.connect(out); s.start(t);
+  }
+  function thump(ctx, out, t, vol) {
+    const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.12);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.16); o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.2);
+  }
+  function sfx(kind) {
+    const a = audio(); if (!a) return; const { ctx, out } = a, t = ctx.currentTime + 0.01;
+    if (kind === 'slip') { thump(ctx, out, t, 0.16); burst(ctx, out, t, 0.05, 2400, 1.2, 0.12); burst(ctx, out, t + 0.07, 0.04, 1800, 1.5, 0.07); }
+    else if (kind === 'flash') burst(ctx, out, t, 0.03, 3500, 0.8, 0.14);
+    else if (kind === 'splice') { burst(ctx, out, t, 0.035, 2800, 1, 0.13); burst(ctx, out, t + 0.12, 0.035, 2200, 1, 0.1); thump(ctx, out, t + 0.02, 0.1); }
+    else if (kind === 'jitter') for (let k = 0; k < 5; k++) burst(ctx, out, t + k * 0.05 + R(0, 0.015), 0.025, R(1800, 4200), 1, R(0.05, 0.1));
+    else if (kind === 'burn') burst(ctx, out, t, 0.7, 900, 0.4, 0.05, 'lowpass');
+  }
 })();
 </script>
 <script>
