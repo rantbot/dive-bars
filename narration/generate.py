@@ -21,6 +21,11 @@ Options:
 """
 import hashlib, json, os, shutil, sys, time, urllib.request, urllib.error
 
+def fail(message):
+    # On GitHub, an ::error:: line shows up on the run's summary page, not just deep in the log.
+    if os.environ.get('GITHUB_ACTIONS'): print('::error title=Record narration::' + message.replace('\n', ' '))
+    sys.exit(message)
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CLIPS = os.path.join(ROOT, 'narration', 'clips.json')
 LEDGER = os.path.join(ROOT, 'narration', 'recorded.json')
@@ -52,7 +57,7 @@ def credentials():
         data['voiceId'] = voice
         open(CLIPS, 'w', encoding='utf-8').write(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
     if not (key and voice):
-        sys.exit('Missing the ElevenLabs API key or voice ID. See the top of narration/generate.py.')
+        fail('Missing the ElevenLabs %s. On GitHub, add a repository secret named ELEVEN_API_KEY. The voice ID goes in narration/clips.json.' % ('API key' if not key else 'voice ID'))
     return key, voice
 
 def spoken(text):
@@ -83,11 +88,19 @@ def record(text, prev_text, next_text, path):
             os.makedirs(os.path.dirname(path), exist_ok=True)
             open(path + '.part', 'wb').write(audio); os.replace(path + '.part', path)
             return
+        except urllib.error.URLError as e:
+            if not isinstance(e, urllib.error.HTTPError):
+                if attempt < 3: time.sleep(4 * (attempt + 1)); continue
+                fail('Could not reach ElevenLabs: %s' % e.reason)
+            msg = e.read().decode('utf-8', 'replace')[:300]
+            if e.code in (429, 500, 502, 503) and attempt < 3:
+                time.sleep(4 * (attempt + 1)); continue
+            fail('ElevenLabs said %s: %s' % (e.code, msg))
         except urllib.error.HTTPError as e:
             msg = e.read().decode('utf-8', 'replace')[:300]
             if e.code in (429, 500, 502, 503) and attempt < 3:
                 time.sleep(4 * (attempt + 1)); continue
-            sys.exit('ElevenLabs said %s: %s' % (e.code, msg))
+            fail('ElevenLabs said %s: %s' % (e.code, msg))
 
 # A new line in clips.json can leave out "file". It gets a name here, saved back into clips.json.
 named = False
