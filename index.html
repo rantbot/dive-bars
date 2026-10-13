@@ -203,6 +203,10 @@ body.film-ended .film-ui, body.film-ended .film-cc { opacity: 0 !important; poin
 .fe-link { display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; padding: 6px 0; color: #B8AF9F; font-family: var(--ui); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; border-bottom: 1px solid rgba(237,230,216,0.2); transition: color .2s, border-color .2s; }
 .fe-link svg { width: 16px; height: 16px; }
 .fe-link:hover, .fe-link:focus-visible { color: var(--ivory); border-color: var(--amber); outline: none; }
+
+/* Still photographs in the film: no drifting zoom and no moving grain. */
+html.film .slide .kb-in { animation: none !important; transform: none !important; }
+html.film .grain { display: none !important; }
 </style>
 <title>The American Dive Bar</title>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
@@ -579,6 +583,20 @@ TO DO: The dots mark 68 cities you named: Seattle, Vancouver, Portland, Ontario 
 
 SOURCES: U.S. Census Bureau NAICS code 722410, "Drinking Places (Alcoholic Beverages)," has no dive-bar subcategory. Earliest noun use of "dive" for a disreputable establishment, National Police Gazette, Jan. 12, 1867 (via Barry Popik). OED defines the U.S. sense as a drinking den "often situated in a cellar, basement, or other half-concealed place." The basement origin is likely, not certain, which is why the narration says "possibly."</aside>
 </section>
+<section class="slide" id="origin" data-scene="exterior" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<img src="img/p_stairs.jpg" alt="Wet concrete steps leading down from a city sidewalk to a basement bar door under a red neon BAR sign" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
+<div style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;background:linear-gradient(90deg, rgba(11,10,8,0.92) 0%, rgba(11,10,8,0.72) 30%, rgba(11,10,8,0) 58%)"></div>
+<div style="position:absolute;left:128px;top:0px;width:700px;height:1080px;display:flex;flex-direction:column;justify-content:center;gap:18px">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;color:#C9A15A">Etymology</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:150px;font-weight:300;line-height:1;font-style:italic;color:#EDE6D8">Dive</h2>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">American slang · 1860s</p>
+<p style="font-size:38px;font-style:italic;line-height:1.3;color:#D9D1C1">A flight below the street</p>
+</div>
+<aside>[film only]
+
+The word itself was never a compliment.</aside>
+</section>
 <section class="slide" id="anatomy" data-scene="quiet" style="background:#E8DFCC;color:#2A2119;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <img src="img/plate_base.jpg" alt="Engraved anatomical illustration of a dive bar interior in lateral section, with numbered leader lines pointing to its neon sign, lamp, bottles, stools, clock, mounted fish, photo wall and jukebox" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
 <div class="build spot" data-k="1" style="position:absolute;left:709px;top:273px;width:170px;height:140px;border-radius:50%;border:2px solid #8C2F23;box-shadow:0px 0px 0px 3000px rgba(42,33,25,0.16)"></div>
@@ -630,19 +648,18 @@ SOURCES: Pre-Prohibition tied houses received "bar fixtures," "branded backbars"
 <section class="slide" id="lineage" data-scene="lastcall" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
 <p style="position:absolute;left:128px;top:150px;width:1664px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#C9A15A">Ancestral species</p>
 <h2 style="position:absolute;left:128px;top:196px;width:1664px;font-family:'Cormorant Garamond', Georgia, serif;font-size:64px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Lineage</h2>
-<div style="position:absolute;left:959px;top:330px;width:1px;height:420px;background:#3A352D"></div>
-<div style="position:absolute;left:128px;top:340px;width:760px;display:flex;flex-direction:column;gap:14px;align-items:center">
+<div class="focus" data-k="0" data-label="The Juke Joint" style="position:absolute;left:128px;top:300px;width:760px;display:flex;flex-direction:column;gap:14px;align-items:center">
+<img src="img/p_jukejoint.jpg" alt="A crowded juke joint at night: a blues band by the wall, a couple dancing by the wood stove, a jukebox glowing at the back" style="width:760px;height:430px;object-fit:cover;margin-bottom:12px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#A89F8F">The Jim Crow South</p>
 <p style="font-size:60px;font-weight:400;line-height:1.1;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Juke Joint</p>
 <p style="font-size:40px;font-style:italic;text-align:center;color:#C9A15A">Diveus jukeus</p>
 </div>
-<div style="position:absolute;left:1032px;top:340px;width:760px;display:flex;flex-direction:column;gap:14px;align-items:center">
+<div class="build focus" data-k="1" data-label="The Honky-Tonk" style="position:absolute;left:1032px;top:300px;width:760px;display:flex;flex-direction:column;gap:14px;align-items:center">
+<img src="img/p_honkytonk.jpg" alt="A packed honky-tonk: a country band under a lit sign, couples two-stepping, cowboys at the bar beneath Lone Star and Shiner signs" style="width:760px;height:430px;object-fit:cover;margin-bottom:12px">
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#A89F8F">Cattle and oil towns of the Southwest</p>
 <p style="font-size:60px;font-weight:400;line-height:1.1;letter-spacing:4px;text-transform:uppercase;text-align:center;color:#EDE6D8">The Honky-Tonk</p>
 <p style="font-size:40px;font-style:italic;text-align:center;color:#C9A15A">Diveus honkytonkus</p>
 </div>
-<p style="position:absolute;left:310px;top:830px;width:1300px;font-size:34px;font-style:italic;line-height:1.3;text-align:center;color:#EDE6D8">“The most important place in America.”</p>
-<p style="position:absolute;left:310px;top:884px;width:1300px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;text-align:center;color:#A89F8F">Zora Neale Hurston, on the juke joint’s place in American music</p>
 <aside>[1:29 to 2:05 · about 90 words]
 
 Every known species has ancestors.
@@ -692,6 +709,7 @@ PHOTO DIRECTION: Your photo of a neighborhood bar on a snowy afternoon.</aside>
 <div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px;border-bottom:1px solid #2A2621"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1970</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">Women first served</p></div>
 <div style="display:flex;gap:36px;align-items:baseline;padding:22px 0px 22px 48px"><p style="width:200px;font-size:88px;font-weight:300;line-height:1;color:#E2B866">1986</p><p style="font-size:30px;line-height:1.3;color:#D9D1C1">A ladies’ room arrives</p></div>
 </div>
+<div class="build" data-label="The wishbones" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;transition:opacity 1.8s ease"><img src="img/p_wishbones.jpg" alt="A close-up of dusty, cobwebbed wishbones hanging from an old gas lamp above the bar at McSorley’s" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover"><div style="position:absolute;left:0px;top:780px;width:1920px;height:300px;background:linear-gradient(0deg, rgba(11,10,8,0.85), rgba(11,10,8,0))"></div><p style="position:absolute;left:128px;top:960px;width:1200px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#D9D1C1">The wishbones · McSorley’s Old Ale House</p></div>
 <aside>[2:20 to 2:45 · about 60 words]
 
 Here is the Neighborhood Dive in its oldest form. McSorley's Old Ale House in New York's East Village. It claims a birth in 1854 and historic patrons, Abraham Lincoln, Ulysses S. Grant, Teddy Roosevelt, and William Jefferson Clinton.
@@ -763,9 +781,7 @@ JIMBO'S SOURCES: NBC Miami (March 15, 2012) and CBS Miami (March 20, 2012): Jame
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;color:#EDE6D8">The Currency Ceiling</h2>
 <div style="display:flex;flex-direction:column;gap:10px;width:760px;font-family:Inter, Arial, sans-serif">
 </div>
-<hr style="width:80px;border-top:2px solid #C9A15A">
-<p style="font-size:120px;font-weight:300;line-height:1;color:#E2B866">$13,961</p>
-<p style="font-size:30px;line-height:1.35;color:#D9D1C1;width:760px">Taken down from one bar’s walls and given to hurricane relief, 2019</p>
+<div class="build" data-label="Siesta Key Oyster Bar" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;transition:opacity 1.8s ease"><img src="img/p_siestakey.jpg" alt="The dining room of the Siesta Key Oyster Bar, every ceiling, wall and post covered in signed dollar bills" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover"><div style="position:absolute;left:0px;top:560px;width:1920px;height:520px;background:linear-gradient(0deg, rgba(11,10,8,0.92), rgba(11,10,8,0))"></div><p style="position:absolute;left:128px;top:770px;width:900px;font-size:150px;font-weight:300;line-height:1;color:#E2B866">$13,961</p><p style="position:absolute;left:132px;top:940px;width:1400px;font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:#D9D1C1">Siesta Key Oyster Bar · Sarasota, Florida · 2019</p></div>
 <aside>[4:49 to 5:34 · about 115 words]
 
 Why money? Scientists remain divided.
@@ -828,6 +844,20 @@ Boston simply has hours.
 HAPPY HOUR SOURCES: Wikipedia, "Happy hour": by June 1913 the crew of USS Arkansas called regular onboard gatherings "happy hours"; the pre-dinner drink custom has roots in Prohibition-era speakeasies. Mondaq, "Are You Happy Now? The Status of Massachusetts Happy Hour Laws" (2019): Massachusetts became the first state to ban happy hours in 1984 (204 CMR 4), after a 1983 drunk-driving death. GBH News (June 10, 2026): the ban is still in place; Gov. Healey has said she would support removing it. The ban is statewide, not only Boston.
 
 VISUAL NOTE: The map is an abstract city, not a real one. If you want it to be your city, a dark-mode screenshot of a real street map works as a replacement. The labels are separate text boxes, so you can move them.</aside>
+</section>
+<section class="slide" id="happyhour" data-scene="neighborhood" style="background:#0B0A08;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px">
+<img src="img/p_boston.jpg" alt="A tavern on a rainy evening in Boston's North End, neon beer signs glowing in its windows and a ballgame on the TV inside" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">
+<div style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;background:linear-gradient(90deg, rgba(11,10,8,0.94) 0%, rgba(11,10,8,0.75) 32%, rgba(11,10,8,0) 60%)"></div>
+<div style="position:absolute;left:128px;top:0px;width:720px;height:1080px;display:flex;flex-direction:column;justify-content:center;gap:18px">
+<p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:8px;text-transform:uppercase;color:#C9A15A">Behavioral note</p>
+<h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:110px;font-weight:300;line-height:1;color:#EDE6D8">Happy Hour</h2>
+<hr style="width:80px;border-top:2px solid #C9A15A">
+<div style="display:flex;gap:28px;align-items:baseline"><p style="width:180px;font-size:64px;font-weight:300;line-height:1;color:#E2B866">1913</p><p style="font-family:Inter, Arial, sans-serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#D9D1C1">USS Arkansas</p></div>
+<div style="display:flex;gap:28px;align-items:baseline"><p style="width:180px;font-size:64px;font-weight:300;line-height:1;color:#A89F8F">1984</p><p style="font-family:Inter, Arial, sans-serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#A89F8F">Banned in Massachusetts</p></div>
+</div>
+<aside>[film only]
+
+The migration has an earlier phase. Happy hour.</aside>
 </section>
 <section class="slide" id="fauna" data-scene="latenight" data-step-cue="3:woo" style="background:#0D0C0A;color:#EDE6D8;font-family:'Cormorant Garamond', Georgia, serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:56px;font-weight:400;line-height:1.1;letter-spacing:8px;text-transform:uppercase;text-align:center;color:#EDE6D8">Fauna of the American Dive</h2>
@@ -1980,7 +2010,7 @@ const Sound = (() => {
       <div class="lp-rule" aria-hidden="true"></div>
       <p class="lp-sub">An exploration of a fragile ecosystem</p>
       <p class="lp-log">Across the American landscape, beneath flickering neon, an extraordinary ecosystem survives. Told as a nature documentary, this field study follows the dive bar through its anatomy, its ancestors, its five living species and the pressures it faces today.</p>
-      <ul class="lp-meta" id="lpMeta"><li id="lpLen">12 minutes</li><li>20 chapters</li><li>Narrated</li><li>Captions</li></ul>
+      <ul class="lp-meta" id="lpMeta"><li id="lpLen">12 minutes</li><li data-chapters>20 chapters</li><li>Narrated</li><li>Captions</li></ul>
       <div class="lp-acts">
         <button type="button" class="lp-play" id="filmBegin" disabled><span class="lp-play-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></span><span>Watch the film</span></button>
         <a class="lp-more" href="#lpInside">Choose a chapter</a>
@@ -1991,7 +2021,7 @@ const Sound = (() => {
     <a class="lp-scroll" href="#lpInside" aria-label="See what is inside the film"><span>Inside the film</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a>
   </section>
   <section class="lp-inside" id="lpInside">
-    <div class="lp-head"><div class="lp-eyebrow">Inside the field study</div><h2>Twenty chapters, one habitat</h2></div>
+    <div class="lp-head"><div class="lp-eyebrow">Inside the field study</div><h2 data-chapters="word">Twenty chapters, one habitat</h2></div>
     <div class="lp-cards" id="lpCards"></div>
     <div class="lp-how">
       <div><b>It plays on its own.</b> Sit back like you would for a film. The narrator, the pictures and the room sound move together.</div>
@@ -2054,7 +2084,7 @@ const Sound = (() => {
   const INTRO_OUT = 16.6, INTRO_TITLE = 16.9, INTRO_LEN = 20.45, INTRO_TAIL = 1.8, LEAD = 0.9, WORDS_PER_SEC = 2.5;
   // The title card builds over about eight seconds (eyebrow, title, rule, subtitle, credit), then stays up long
   // enough to read every line before the first chapter begins.
-  const TITLE_HOLD = 13;
+  const TITLE_HOLD = 10.5;
   const introEnd = d => Math.max(d + INTRO_TAIL, INTRO_TITLE + TITLE_HOLD);
   // Each recording's fingerprint from narration/recorded.json, so a re-recorded line is never served from an old cache.
   let VER = {};
@@ -2086,7 +2116,7 @@ const Sound = (() => {
     clean(text).split(/(?<=[.?!])\s+(?=[A-Z"“$0-9])/).forEach(s => {
       if (s.length <= 120) { out.push(s); return; }
       const mid = s.length / 2; let best = -1;
-      for (let k = s.indexOf(','); k > -1; k = s.indexOf(',', k + 1)) if (best < 0 || Math.abs(k - mid) < Math.abs(best - mid)) best = k;
+      for (let k = s.indexOf(','); k > -1; k = s.indexOf(',', k + 1)) if (s[k + 1] === ' ' && (best < 0 || Math.abs(k - mid) < Math.abs(best - mid))) best = k;
       if (best > 30 && best < s.length - 20) { out.push(s.slice(0, best + 1)); out.push(s.slice(best + 2)); } else out.push(s);
     });
     return out;
@@ -2299,7 +2329,7 @@ const Sound = (() => {
     anatomy: ['img/plate_base.jpg', 'The eight organs every healthy dive shares.'],
     mcsorleys: ['img/p_mcsorleys.jpg', 'The Neighborhood Dive in its oldest form.'],
     sp3: ['img/p_jimbos.jpg', "Jimbo's Place, at the end of things."],
-    dollars: ['img/p_dollars2.jpg', 'Why so many bars are papered in dollar bills.'],
+    dollars: ['img/p_siestakey.jpg', 'Why so many bars are papered in dollar bills.'],
     biker: ['img/p_biker.jpg', 'Admire the bikes. Never touch the bikes.'],
     fauna: ['img/p_bartender2.jpg', 'The Regular, the Bartender, the Tourist, and one disturbance.'],
     falsedive: ['img/p_faux.jpg', 'How to spot an impostor.'],
@@ -2359,6 +2389,9 @@ const Sound = (() => {
     fetch('narration/recorded.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : {}).then(v => { VER = v || {}; }).catch(() => {});
     const all = lens().reduce((a, b) => a + b, 0); $('lpLen').textContent = Math.round(all / 60) + ' minutes';
     landingCards();
+    const WORDS = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty', 'Twenty-one', 'Twenty-two', 'Twenty-three', 'Twenty-four', 'Twenty-five'];
+    const n = d.scenes.length;
+    document.querySelectorAll('[data-chapters]').forEach(e => { e.textContent = e.dataset.chapters === 'word' ? (WORDS[n] || n) + ' chapters, one habitat' : n + ' chapters'; });
   }).catch(() => {
     const m = document.createElement('p'); m.className = 'fs-err'; m.textContent = 'The narration could not load. Open this page through a web server, such as GitHub Pages.'; document.querySelector('.lp-copy').appendChild(m);
   });

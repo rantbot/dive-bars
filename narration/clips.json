@@ -12,7 +12,8 @@
     "$17 cocktail": "seventeen-dollar cocktail",
     "1:17 a.m.": "one seventeen a.m.",
     "about 1,100 pulquerías": "about eleven hundred pulquerías",
-    "Today, only 80 pulquerías": "Today, only eighty pulquerías"
+    "Today, only 80 pulquerías": "Today, only eighty pulquerías",
+    "Malört": "mal-LORT"
   },
   "intro": {
     "file": "snd/intro.mp3",
@@ -46,8 +47,16 @@
         {
           "file": "snd/film/02-range-2.mp3",
           "text": "The U.S. government counts drinking places. However, it has no category for a dive. Diveus americanus remains today, unrecognized by science.",
-          "gap": 0.9
-        },
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "origin",
+      "title": "The Word",
+      "direction": "A small aside, wry. Let \"a flight below the street\" land.",
+      "hold": 1.4,
+      "clips": [
         {
           "file": "snd/film/02-range-3.mp3",
           "text": "The word itself was never a compliment. By the late 1860s, American newspapers were calling a disreputable drinking den a \"dive,\" possibly because so many of them sat a flight below the street.",
@@ -126,7 +135,7 @@
         },
         {
           "file": "snd/film/04-lineage-4.mp3",
-          "text": "Out west, the honky-tonk was born. Country music is said to have gone electric partly so it could be heard over the rowdy noise.",
+          "text": "[*]Out west, the honky-tonk was born. Country music is said to have gone electric partly so it could be heard over the rowdy noise.",
           "gap": 0.6
         }
       ]
@@ -167,7 +176,7 @@
         },
         {
           "file": "snd/film/06-mcsorleys-3.mp3",
-          "text": "Above the bar hang wishbones, said to have been left by soldiers heading to the First World War. The ones still hanging are said to belong to those who never came back.",
+          "text": "[*]Above the bar hang wishbones, said to have been left by soldiers heading to the First World War. The ones still hanging are said to belong to those who never came back.",
           "gap": 0.6
         }
       ]
@@ -241,8 +250,13 @@
         },
         {
           "file": "snd/film/09-dollars-4.mp3",
-          "text": "The true origin may be unrecoverable. The money is not. In 2019, staff at the Siesta Key Oyster Bar pulled every bill off the walls. Thirteen thousand, nine hundred and sixty-one dollars. All of it sent to hurricane relief in the Bahamas.",
-          "gap": 0.6
+          "text": "The true origin may be unrecoverable. The money is not.",
+          "gap": 0.8
+        },
+        {
+          "text": "[*]In 2019, staff at the Siesta Key Oyster Bar spent a month pulling every bill off the walls, with pliers, screwdrivers and patience. Thirteen thousand, nine hundred and sixty-one dollars. All of it sent to the Red Cross in the Bahamas, after Hurricane Dorian.",
+          "gap": 0.6,
+          "file": "snd/film/10-dollars-1.mp3"
         }
       ]
     },
@@ -288,8 +302,16 @@
         {
           "file": "snd/film/11-sp4-3.mp3",
           "text": "By 1:17 a.m., they converge. Here, together, they will make increasingly questionable decisions.",
-          "gap": 1.0
-        },
+          "gap": 0.6
+        }
+      ]
+    },
+    {
+      "id": "happyhour",
+      "title": "Happy Hour",
+      "direction": "A field note with a wink. Deadpan on Boston.",
+      "hold": 1.6,
+      "clips": [
         {
           "file": "snd/film/11-sp4-4.mp3",
           "text": "The migration has an earlier phase. Happy hour. The term began among sailors aboard the USS Arkansas in 1913, and caught on during Prohibition. In Massachusetts, it has been illegal since 1984.",

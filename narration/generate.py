@@ -18,6 +18,7 @@ Options:
   --force          record again even if nothing changed
   --dry-run        show what would happen without calling ElevenLabs
   --keep           leave recordings the script no longer uses
+  --names          only give new lines their file names, then stop
 """
 import hashlib, json, os, shutil, sys, time, urllib.request, urllib.error
 
@@ -113,6 +114,8 @@ for n, scene in enumerate(data['scenes'], 1):
             clip['file'] = 'snd/film/%02d-%s-%d.mp3' % (n, scene['id'], k); taken.add(clip['file']); named = True
 if named and not dry:
     open(CLIPS, 'w', encoding='utf-8').write(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
+if '--names' in args:
+    print('Named the new lines in clips.json.' if named else 'Every line already has a file name.'); sys.exit(0)
 
 # Recordings we already have, by what they say, so a line that only moved is copied, not re-recorded.
 have = {v: f for f, v in ledger.items() if os.path.exists(os.path.join(ROOT, f))}
