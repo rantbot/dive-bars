@@ -236,7 +236,7 @@ html.film .film-fx { position: absolute; inset: 0; width: 100%; height: 100%; z-
 html:not(.film) .film-fx { display: none; }
 @keyframes film-grain { 0% { background-position: 0 0; } 14% { background-position: -71px 39px; } 28% { background-position: 53px -88px; } 42% { background-position: -120px -17px; } 57% { background-position: 97px 64px; } 71% { background-position: -33px 112px; } 85% { background-position: 140px -51px; } }
 @keyframes film-dust { 0% { background-position: 0 0; } 20% { background-position: -410px 230px; } 40% { background-position: 260px -370px; } 60% { background-position: -150px -120px; } 80% { background-position: 520px 310px; } }
-@keyframes film-flicker { 0%, 100% { opacity: 0.22; } 9% { opacity: 0.14; } 10% { opacity: 0.24; } 47% { opacity: 0.18; } 48% { opacity: 0.25; } 73% { opacity: 0.16; } 74% { opacity: 0.22; } }
+@keyframes film-flicker { 0%, 100% { opacity: 0.22; } 9% { opacity: 0.19; } 10% { opacity: 0.23; } 47% { opacity: 0.2; } 48% { opacity: 0.23; } 73% { opacity: 0.19; } 74% { opacity: 0.22; } }
 body.film-paused .slide-fx::after, body.film-paused .slide-fx::before, body.film-paused .grain-layer, body.film-paused .grain-layer::before { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { html.film .slide-fx::after, html.film .slide-fx::before, html.film .grain-layer, html.film .grain-layer::before { animation: none; } }
 
@@ -686,44 +686,44 @@ VISUAL NOTE: The title card before this slide already names the talk, so this op
 <div style="position:absolute;left:1271px;top:286px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.04s" class="dot" data-city="Madison, Wisconsin" data-seq="46"></div>
 <div style="position:absolute;left:1263px;top:289px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.18s" class="dot" data-city="Mineral Point, Wisconsin" data-seq="47"></div>
 <div style="position:absolute;left:955px;top:396px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.66s" class="dot" data-city="Los Angeles, California" data-seq="34"></div>
-<div style="position:absolute;left:1163px;top:628px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.00s" class="dot" data-city="Mexico City, Mexico" data-seq="60"></div>
-<div style="position:absolute;left:1283px;top:605px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.28s" class="dot" data-city="Mérida, Mexico" data-seq="62"></div>
-<div style="position:absolute;left:1317px;top:600px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.42s" class="dot" data-city="Cancún, Mexico" data-seq="63"></div>
-<div style="position:absolute;left:1441px;top:917px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.98s" class="dot" data-city="Guayaquil, Ecuador" data-seq="67"></div>
-<div style="position:absolute;left:1032px;top:570px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.86s" class="dot" data-city="Cabo San Lucas, Mexico" data-seq="59"></div>
-<div style="position:absolute;left:1465px;top:256px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.42s" class="dot" data-city="Portland, Maine" data-seq="23"></div>
-<div style="position:absolute;left:1028px;top:245px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:9.06s" class="dot" data-city="Jackson, Montana" data-seq="44"></div>
-<div style="position:absolute;left:1258px;top:294px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.32s" class="dot" data-city="Dubuque, Iowa" data-seq="48"></div>
-<div style="position:absolute;left:1371px;top:315px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:2.06s" class="dot" data-city="Pittsburgh, Pennsylvania" data-seq="9"></div>
-<div style="position:absolute;left:1304px;top:382px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.46s" class="dot" data-city="Nashville, Tennessee" data-seq="49"></div>
-<div style="position:absolute;left:1269px;top:398px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.60s" class="dot" data-city="Memphis, Tennessee" data-seq="50"></div>
-<div style="position:absolute;left:1404px;top:400px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.16s" class="dot" data-city="Wilmington, North Carolina" data-seq="54"></div>
+<div style="position:absolute;left:1163px;top:628px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.14s" class="dot" data-city="Mexico City, Mexico" data-seq="61"></div>
+<div style="position:absolute;left:1283px;top:605px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.42s" class="dot" data-city="Mérida, Mexico" data-seq="63"></div>
+<div style="position:absolute;left:1317px;top:600px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.56s" class="dot" data-city="Cancún, Mexico" data-seq="64"></div>
+<div style="position:absolute;left:1441px;top:917px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:13.12s" class="dot" data-city="Guayaquil, Ecuador" data-seq="68"></div>
+<div style="position:absolute;left:1032px;top:570px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.00s" class="dot" data-city="Cabo San Lucas, Mexico" data-seq="60"></div>
+<div style="position:absolute;left:1028px;top:245px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.42s" class="dot" data-city="Jackson, Montana" data-seq="23"></div>
+<div style="position:absolute;left:1258px;top:294px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:9.06s" class="dot" data-city="Dubuque, Iowa" data-seq="44"></div>
+<div style="position:absolute;left:1371px;top:315px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.32s" class="dot" data-city="Pittsburgh, Pennsylvania" data-seq="48"></div>
+<div style="position:absolute;left:1304px;top:382px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:2.06s" class="dot" data-city="Nashville, Tennessee" data-seq="9"></div>
+<div style="position:absolute;left:1269px;top:398px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.46s" class="dot" data-city="Memphis, Tennessee" data-seq="49"></div>
+<div style="position:absolute;left:1404px;top:400px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.60s" class="dot" data-city="Wilmington, North Carolina" data-seq="50"></div>
 <div style="position:absolute;left:1397px;top:407px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.30s" class="dot" data-city="North Myrtle Beach, South Carolina" data-seq="55"></div>
-<div style="position:absolute;left:1338px;top:463px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:2.90s" class="dot" data-city="Tallahassee, Florida" data-seq="10"></div>
-<div style="position:absolute;left:1405px;top:332px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:4.58s" class="dot" data-city="Washington, D.C." data-seq="17"></div>
-<div style="position:absolute;left:1460px;top:275px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.28s" class="dot" data-city="Boston, Massachusetts" data-seq="22"></div>
-<div style="position:absolute;left:1458px;top:283px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.14s" class="dot" data-city="Providence, Rhode Island" data-seq="21"></div>
-<div style="position:absolute;left:1423px;top:315px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:4.72s" class="dot" data-city="Philadelphia, Pennsylvania" data-seq="18"></div>
-<div style="position:absolute;left:1285px;top:467px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.74s" class="dot" data-city="Biloxi, Mississippi" data-seq="51"></div>
-<div style="position:absolute;left:1023px;top:414px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.24s" class="dot" data-city="Phoenix, Arizona" data-seq="31"></div>
-<div style="position:absolute;left:1033px;top:433px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.38s" class="dot" data-city="Tucson, Arizona" data-seq="32"></div>
-<div style="position:absolute;left:1042px;top:442px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.52s" class="dot" data-city="Tombstone, Arizona" data-seq="33"></div>
-<div style="position:absolute;left:964px;top:417px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.08s" class="dot" data-city="San Diego, California" data-seq="37"></div>
-<div style="position:absolute;left:964px;top:399px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.94s" class="dot" data-city="Riverside, California" data-seq="36"></div>
-<div style="position:absolute;left:965px;top:420px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.44s" class="dot" data-city="Tijuana, Mexico" data-seq="56"></div>
+<div style="position:absolute;left:1338px;top:463px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.44s" class="dot" data-city="Tallahassee, Florida" data-seq="56"></div>
+<div style="position:absolute;left:1405px;top:332px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:2.90s" class="dot" data-city="Washington, D.C." data-seq="10"></div>
+<div style="position:absolute;left:1460px;top:275px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:4.58s" class="dot" data-city="Boston, Massachusetts" data-seq="17"></div>
+<div style="position:absolute;left:1458px;top:283px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.28s" class="dot" data-city="Providence, Rhode Island" data-seq="22"></div>
+<div style="position:absolute;left:1423px;top:315px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.14s" class="dot" data-city="Philadelphia, Pennsylvania" data-seq="21"></div>
+<div style="position:absolute;left:1285px;top:467px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:4.72s" class="dot" data-city="Biloxi, Mississippi" data-seq="18"></div>
+<div style="position:absolute;left:1023px;top:414px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.74s" class="dot" data-city="Phoenix, Arizona" data-seq="51"></div>
+<div style="position:absolute;left:1033px;top:433px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.24s" class="dot" data-city="Tucson, Arizona" data-seq="31"></div>
+<div style="position:absolute;left:1042px;top:442px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.38s" class="dot" data-city="Tombstone, Arizona" data-seq="32"></div>
+<div style="position:absolute;left:964px;top:417px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.52s" class="dot" data-city="San Diego, California" data-seq="33"></div>
+<div style="position:absolute;left:964px;top:399px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:8.08s" class="dot" data-city="Riverside, California" data-seq="37"></div>
+<div style="position:absolute;left:965px;top:420px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:7.94s" class="dot" data-city="Tijuana, Mexico" data-seq="36"></div>
 <div style="position:absolute;left:965px;top:423px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.58s" class="dot" data-city="Rosarito, Mexico" data-seq="57"></div>
 <div style="position:absolute;left:969px;top:430px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.72s" class="dot" data-city="Ensenada, Mexico" data-seq="58"></div>
-<div style="position:absolute;left:1342px;top:342px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.08s" class="dot" data-city="Portsmouth, Ohio" data-seq="2"></div>
-<div style="position:absolute;left:1346px;top:345px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.22s" class="dot" data-city="Ashland, Kentucky" data-seq="3"></div>
-<div style="position:absolute;left:1459px;top:888px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.84s" class="dot" data-city="Quito, Ecuador" data-seq="66"></div>
-<div style="position:absolute;left:1328px;top:329px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:0.94s" class="dot" data-city="Dayton, Ohio" data-seq="1"></div>
-<div style="position:absolute;left:1272px;top:474px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.88s" class="dot" data-city="New Orleans, Louisiana" data-seq="52"></div>
-<div style="position:absolute;left:1432px;top:275px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.56s" class="dot" data-city="Albany, New York" data-seq="24"></div>
-<div style="position:absolute;left:1406px;top:274px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.70s" class="dot" data-city="Syracuse, New York" data-seq="25"></div>
-<div style="position:absolute;left:1428px;top:532px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.56s" class="dot" data-city="Nassau, Bahamas" data-seq="64"></div>
-<div style="position:absolute;left:1155px;top:660px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.14s" class="dot" data-city="Acapulco, Mexico" data-seq="61"></div>
-<div style="position:absolute;left:1580px;top:605px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.70s" class="dot" data-city="San Juan, Puerto Rico" data-seq="65"></div>
-<div style="position:absolute;left:1375px;top:467px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:3.04s" class="dot" data-city="St. Augustine, Florida" data-seq="11"></div>
+<div style="position:absolute;left:1342px;top:342px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:11.86s" class="dot" data-city="Portsmouth, Ohio" data-seq="59"></div>
+<div style="position:absolute;left:1346px;top:345px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.08s" class="dot" data-city="Ashland, Kentucky" data-seq="2"></div>
+<div style="position:absolute;left:1459px;top:888px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:1.22s" class="dot" data-city="Quito, Ecuador" data-seq="3"></div>
+<div style="position:absolute;left:1328px;top:329px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.98s" class="dot" data-city="Dayton, Ohio" data-seq="67"></div>
+<div style="position:absolute;left:1272px;top:474px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:0.94s" class="dot" data-city="New Orleans, Louisiana" data-seq="1"></div>
+<div style="position:absolute;left:1432px;top:275px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:10.88s" class="dot" data-city="Albany, New York" data-seq="52"></div>
+<div style="position:absolute;left:1406px;top:274px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.56s" class="dot" data-city="Syracuse, New York" data-seq="24"></div>
+<div style="position:absolute;left:1428px;top:532px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:5.70s" class="dot" data-city="Nassau, Bahamas" data-seq="25"></div>
+<div style="position:absolute;left:1155px;top:660px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.70s" class="dot" data-city="Acapulco, Mexico" data-seq="65"></div>
+<div style="position:absolute;left:1580px;top:605px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.28s" class="dot" data-city="San Juan, Puerto Rico" data-seq="62"></div>
+<div style="position:absolute;left:1375px;top:467px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:12.84s" class="dot" data-city="St. Augustine, Florida" data-seq="66"></div>
+<div style="position:absolute;left:1193px;top:433px;width:14px;height:14px;background:#E2B866;box-shadow:0px 0px 18px rgba(226,184,102,0.85);border-radius:50%;--d:3.04s" class="dot" data-city="Dallas, Texas" data-seq="11"></div>
 <h2 style="font-family:'Cormorant Garamond', Georgia, serif;font-size:72px;font-weight:400;line-height:1.1;letter-spacing:12px;text-transform:uppercase;color:#EDE6D8">Range</h2>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:4px;color:#A89F8F">1999 – 2026</p>
 <p style="font-family:Inter, Arial, sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#C9A15A;width:520px"><span class="map-count">68</span> sites · survey ongoing</p>
@@ -2673,7 +2673,7 @@ const Sound = (() => {
   function frame(hst, n) {
     const { g } = hst, W = hst.w, H = hst.h; g.clearRect(0, 0, W, H);
     // exposure breathes a little from frame to frame
-    const e = R(-1, 1); g.fillStyle = e < 0 ? `rgba(0,0,0,${(-e * 0.04).toFixed(3)})` : `rgba(255,238,205,${(e * 0.025).toFixed(3)})`; g.fillRect(0, 0, W, H);
+    const e = R(-1, 1); g.fillStyle = e < 0 ? `rgba(0,0,0,${(-e * 0.02).toFixed(3)})` : `rgba(255,238,205,${(e * 0.012).toFixed(3)})`; g.fillRect(0, 0, W, H);
     // vertical scratches that live for a few frames and wander
     if (Math.random() < 0.03) hst.scratches.push({ x: R(0.05, 0.95) * W, life: Math.round(R(3, 16)), wd: R(0.6, 1.8), dark: Math.random() < 0.35, top: Math.random() < 0.3 ? R(0, H * 0.6) : 0, len: Math.random() < 0.5 ? H : R(H * 0.2, H * 0.7) });
     hst.scratches = hst.scratches.filter(s => s.life-- > 0);
@@ -2689,9 +2689,9 @@ const Sound = (() => {
     // the glitch, if one is running
     if (glitch && n != null) {
       const f = glitch.f;
-      if (glitch.kind === 'flash' && f < 2) { g.fillStyle = `rgba(255,236,200,${f ? 0.18 : 0.42})`; g.fillRect(0, 0, W, H); }
+      if (glitch.kind === 'flash' && f < 2) { g.fillStyle = `rgba(255,236,200,${f ? 0.06 : 0.15})`; g.fillRect(0, 0, W, H); }
       if (glitch.kind === 'splice' && f < 3) { const y = glitch.y * H; g.fillStyle = 'rgba(0,0,0,0.85)'; g.fillRect(0, y, W, H * 0.035); g.fillStyle = 'rgba(255,245,225,0.5)'; g.fillRect(0, y + H * 0.035, W, 2); }
-      if (glitch.kind === 'burn') { const a = Math.max(0, 0.5 - f * 0.026), cx = glitch.y < 0.5 ? 0 : W, gr = g.createRadialGradient(cx, H * 0.4, 0, cx, H * 0.4, W * 0.6);
+      if (glitch.kind === 'burn') { const a = Math.max(0, 0.26 - f * 0.013), cx = glitch.y < 0.5 ? 0 : W, gr = g.createRadialGradient(cx, H * 0.4, 0, cx, H * 0.4, W * 0.6);
         gr.addColorStop(0, `rgba(255,150,60,${a})`); gr.addColorStop(0.5, `rgba(255,90,30,${a * 0.4})`); gr.addColorStop(1, 'rgba(255,90,30,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H); }
     }
   }
