@@ -22,7 +22,7 @@ body.film-paused .slide *, body.film-paused .gate *, body.film-paused .slide { a
 .film-start .fs-err { font-family: var(--ui); font-size: 14px; color: #E2B866; max-width: 34em; }
 
 .film-cc { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 25; width: min(1000px, calc(100vw - 32px)); text-align: center; pointer-events: none; transition: bottom .35s ease; }
-body.film-idle .film-cc { bottom: calc(40px + env(safe-area-inset-bottom)); }
+body.film-idle .film-cc { bottom: calc(22px + env(safe-area-inset-bottom)); }
 .film-cc span { display: inline; font-family: var(--ui); font-weight: 500; font-size: clamp(16px, 1.9vw, 25px); line-height: 1.55; color: #F6F1E6; background: rgba(0,0,0,0.62); padding: 0.12em 0.45em; border-radius: 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; text-shadow: 0 1px 2px rgba(0,0,0,0.6); transition: opacity .25s ease; }
 .film-cc span:empty, body.cc-off .film-cc span { opacity: 0; }
 
@@ -1441,7 +1441,9 @@ const Sound = (() => {
       pvNextStage.style.transform = `translate(-50%, -50%) scale(${pvNextBox.clientWidth / 1920})`;
       return;
     }
-    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080); stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+    // The film keeps a band free under the picture for captions, like a letterbox.
+    const band = window.FILM ? Math.max(84, Math.min(130, window.innerHeight * 0.13)) : 0;
+    const s = Math.min(window.innerWidth / 1920, (window.innerHeight - band) / 1080); stage.style.transform = `translate(-50%, calc(-50% - ${band / 2}px)) scale(${s})`;
   };
   window.addEventListener('resize', fit); fit();
 
