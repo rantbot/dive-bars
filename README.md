@@ -10,6 +10,16 @@ A five-minute lightning talk in the style of a prestige nature documentary, abou
 
 Refreshing a tab keeps you on the same slide. Opening the site fresh starts at the title card.
 
+## The film
+
+**film.html** is the standalone version for people to watch on their own. It plays like a film: one narrator tells the whole story, the slides reveal on cue with the voice, and captions run underneath. Viewers can pause, skip between the twenty chapters, turn captions off and go full screen. It is built from the lightning talk with four scenes from the full version added back (the Working-Class Dive, the Currency Ceiling, the Late-Night Dive and Local Adaptations).
+
+- `narration/clips.json` holds every line of narration, in order. Edit a line there and record that clip again. `[*]` marks the word where something on the slide appears.
+- `narration/recording-script.md` is the same script laid out for recording, with direction and pronunciation.
+- `narration/generate.py` records every clip with ElevenLabs into `snd/film/`. See the top of that file.
+
+Until a clip is recorded, the film shows its line as a caption and moves on after about as long as it would take to say it, so the film can be watched from start to finish at any point.
+
 ## What's in here
 
 - `index.html` holds the slides, styles, and the sound engine. Most ambience is synthesized live with the Web Audio API.
