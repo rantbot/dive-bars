@@ -243,7 +243,7 @@ body.film-paused .kb::after, body.film-paused .kb::before, body.film-paused .gra
 .bw-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
 .bw-world canvas { display: block; }
 .bw-ink { position: absolute; inset: 0; }
-.bw-shade { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 45%, rgba(8,5,2,0.55) 100%), linear-gradient(to bottom, rgba(10,7,4,0.72), rgba(10,7,4,0) 190px); }
+.bw-shade { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 45%, rgba(8,5,2,0.55) 100%), linear-gradient(to bottom, rgba(10,7,4,0.8), rgba(10,7,4,0) 230px); }
 .bw-head { position: absolute; left: max(20px, 4vw); top: max(18px, 3.5vh); max-width: min(560px, calc(100vw - 110px)); pointer-events: none; text-shadow: 0 2px 18px rgba(0,0,0,0.7); }
 .bw-e { font-family: var(--ui); font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--amber); }
 .bw-head h2 { margin: 8px 0 6px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: clamp(30px, 4.2vw, 50px); line-height: 1; letter-spacing: 0.04em; }
@@ -270,7 +270,7 @@ body.film-paused .kb::after, body.film-paused .kb::before, body.film-paused .gra
 .bw-n .bar svg { position: absolute; overflow: visible; pointer-events: none; }
 .bw-n .sig { margin-top: 0.15em; }
 .bw-a.x { text-decoration: line-through; text-decoration-thickness: 0.12em; }
-.bw-n.fresh > div { clip-path: inset(-20% 100% -20% 0); animation: bw-write var(--d, 1s) steps(var(--n, 18), end) forwards; animation-delay: var(--t, 0s); }
+.bw-n.fresh > div { clip-path: inset(-20% 100% -20% 0); animation: bw-write var(--d, 1s) linear forwards; animation-delay: var(--t, 0s); }
 @keyframes bw-write { to { clip-path: inset(-20% -5% -20% 0); } }
 @media (prefers-reduced-motion: reduce) { .bw-n.fresh > div { animation: none; clip-path: none; } .bw { transition: none; } }
 @media (max-width: 600px) { .bw-lede { font-size: 13px; } .bw-foot { right: 76px; } }

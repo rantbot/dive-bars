@@ -23,7 +23,7 @@ Refreshing a tab keeps you on the same slide. Opening the site fresh starts at t
 1. Double-click **Record narration.command** in the dive-bars folder. The first time, it asks for your ElevenLabs API key (kept on your Mac in `narration/.elevenlabs.json`, never committed) and the narrator's voice ID (saved in `clips.json`). Then commit and push in GitHub Desktop.
 2. Or just commit and push. The **Record narration** GitHub Action records the changed lines and commits them back. It needs the API key once, in the repo's Settings, Secrets and variables, Actions, as a secret named `ELEVEN_API_KEY`, and the voice ID filled in at the top of `clips.json`. Pull in GitHub Desktop afterwards to get the new recordings.
 
-At the end, a field journal asks viewers for a favorite dive bar and a protocol of their own. To switch it on, create a free Supabase project, run `supabase/field_notes.sql` in its SQL editor, and put the project URL and its public anon key into `FIELD_NOTES` near the top of the film script. Viewers can only add notes, never read them. You read them in Supabase's Table editor.
+At the end, a field journal asks viewers for a favorite dive bar and a protocol of their own. Their notes go up on the bathroom wall, a pan-and-zoom page that opens after someone logs a note, from Read the wall on the end card, or at `/dive-bars/#wall`. The notes live in a free Supabase project. Run `supabase/field_notes.sql` in its SQL editor (it's safe to run again after changes). To take a note off the wall, tick `hidden` on its row in the Table editor.
 
 Until a clip is recorded, the film shows its line as a caption and moves on after about as long as it would take to say it, so the film can be watched from start to finish at any point.
 
