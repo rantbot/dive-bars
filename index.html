@@ -1714,6 +1714,9 @@ const Sound = (() => {
     // The film keeps a band free under the picture for captions, like a letterbox.
     const band = window.FILM ? Math.max(84, Math.min(130, window.innerHeight * 0.13)) : 0;
     const s = Math.min(window.innerWidth / 1920, (window.innerHeight - band) / 1080); stage.style.transform = `translate(-50%, calc(-50% - ${band / 2}px)) scale(${s})`;
+    // The opening footage sits in exactly the same frame as every chapter after it.
+    const gp = window.FILM && document.querySelector('#gate .gate-photo');
+    if (gp) { const w = 1920 * s, h = 1080 * s; Object.assign(gp.style, { inset: 'auto', left: (window.innerWidth - w) / 2 + 'px', top: (window.innerHeight - band - h) / 2 + 'px', width: w + 'px', height: h + 'px' }); }
   };
   window.addEventListener('resize', fit); fit();
 
