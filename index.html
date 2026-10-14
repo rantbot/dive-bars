@@ -390,10 +390,9 @@ if (!document.documentElement.requestFullscreen && !document.documentElement.web
 </script>
 <style>
 html.no-fs #fbFs { display: none !important; }
-@media (orientation: landscape) and (max-height: 500px) {
-  html.no-fs body.film-started .film-cc { bottom: calc(14px + env(safe-area-inset-bottom)); }
-  html.no-fs body.film-started:not(.film-idle) .film-cc { bottom: calc(84px + env(safe-area-inset-bottom)); }
-}
+/* A phone held sideways gives the picture the full height; the captions and the controls lie over it. */
+html.immersive body.film-started .film-cc { bottom: calc(14px + env(safe-area-inset-bottom)); }
+html.immersive body.film-started:not(.film-idle) .film-cc { bottom: calc(var(--ui-h, 120px) + 6px); }
 html.safe-grain .slide-fx, html.safe-grain .grain-layer, html.safe-grain .lp-grain, html.safe-grain .film-fx { display: none !important; }
 html.safe-anim *, html.safe-anim *::before, html.safe-anim *::after { animation: none !important; transition: none !important; }
 </style>
@@ -1741,7 +1740,8 @@ const Sound = (() => {
       return;
     }
     // The film keeps a band free under the picture for captions, like a letterbox.
-    const immersive = document.documentElement.classList.contains('no-fs') && window.innerWidth > window.innerHeight && window.innerHeight < 500;
+    const immersive = !!window.FILM && matchMedia('(pointer: coarse)').matches && window.innerWidth > window.innerHeight && window.innerHeight < 600;
+    document.documentElement.classList.toggle('immersive', immersive);
     const band = window.FILM && !immersive ? Math.max(84, Math.min(130, window.innerHeight * 0.13)) : 0;
     const s = Math.min(window.innerWidth / 1920, (window.innerHeight - band) / 1080); stage.style.transform = `translate(-50%, calc(-50% - ${band / 2}px)) scale(${s})`;
     // The opening footage sits in exactly the same frame as every chapter after it.
@@ -2566,7 +2566,10 @@ const Sound = (() => {
   function closeChapters() { $('filmChapters').hidden = true; $('fbChap').setAttribute('aria-expanded', 'false'); }
 
   // ---------- controls hide while watching ----------
-  function setIdle(on) { document.body.classList.toggle('film-idle', on); }
+  // Captions sit just above the controls while they show, wherever the controls end up.
+  const uiH = () => { const u = $('filmUi'); if (u && !u.hidden) document.documentElement.style.setProperty('--ui-h', u.offsetHeight + 'px'); };
+  addEventListener('resize', uiH);
+  function setIdle(on) { uiH(); document.body.classList.toggle('film-idle', on); }
   function wake() {
     setIdle(false); clearTimeout(idleT);
     idleT = setTimeout(() => { if (playing && $('filmChapters').hidden && !$('filmUi').matches(':hover')) setIdle(true); }, 2800);
@@ -2714,9 +2717,9 @@ const Sound = (() => {
   upright.addEventListener ? upright.addEventListener('change', rotCheck) : upright.addListener(rotCheck);
   addEventListener('resize', rotCheck);
   $('rotOk').addEventListener('click', () => { rotOk = true; track('watch_upright'); rotCheck(); });
-  // Turned sideways on an iPhone: tuck the controls away straight off, so the picture has the whole window.
+  // Turned sideways on a phone: tuck the controls away straight off, so the picture has the whole window.
   addEventListener('orientationchange', () => setTimeout(() => {
-    if (!document.documentElement.classList.contains('no-fs') || !started || !playing || innerWidth < innerHeight) return;
+    if (!matchMedia('(pointer: coarse)').matches || !started || !playing || innerWidth < innerHeight) return;
     window.scrollTo(0, 0); clearTimeout(idleT); setIdle(true);
   }, 400));
   setInterval(rotCheck, 1000);
