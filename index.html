@@ -9,6 +9,8 @@
   gtag('js', new Date());
 
   gtag('config', 'G-6K22W54S0C');
+  // Custom events for the things people can do in the film. They show up in Google Analytics under Reports, Engagement, Events.
+  window.track = (name, params) => { try { gtag('event', name, params || {}); } catch (e) {} };
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -2356,7 +2358,9 @@ const Sound = (() => {
   }
 
   // ---------- scenes ----------
+  const seenChapters = new Set();
   function startScene(k) {
+    if (!seenChapters.has(k)) { seenChapters.add(k); track('chapter_reached', { chapter: DATA.scenes[k].title, chapter_number: k + 1 }); }
     cancel(); endCard(false); cur = k;
     video.pause();
     if (D.titleOn) D.showTitle(false);
@@ -2391,7 +2395,7 @@ const Sound = (() => {
     range.querySelectorAll('.dot').forEach(d => {
       d.addEventListener('mouseenter', () => show(d));
       d.addEventListener('mouseleave', () => tip.classList.remove('on'));
-      d.addEventListener('click', e => { e.stopPropagation(); show(d); });
+      d.addEventListener('click', e => { e.stopPropagation(); show(d); track('map_city', { city: d.dataset.city }); });
     });
   }
   function preload(k) { const s = DATA.scenes[k]; if (s) s.clips.forEach(c => Sound.loadVoice(clipUrl(c))); }
@@ -2426,7 +2430,7 @@ const Sound = (() => {
   function finish() {
     cur = DATA.scenes.length - 1;
     at(0.1, () => D.next());           // the screen fades to black
-    at(3.6, () => endCard(true));
+    at(3.6, () => { endCard(true); track('film_complete'); });
   }
   function endCard(on) { const e = $('filmEnd'); e.classList.toggle('on', on); document.body.classList.toggle('film-ended', on); e.setAttribute('aria-hidden', String(!on)); keepAwake(!on && playing); if (on) { setIdle(false); $('feAgain').focus({ preventScroll: true }); } }
 
@@ -2474,7 +2478,7 @@ const Sound = (() => {
       titles().forEach((t, k) => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'fb-seg'; b.setAttribute('aria-label', 'Chapter ' + k + ', ' + t);
         b.innerHTML = '<i></i><span class="tip"></span>'; b.querySelector('.tip').textContent = (k ? String(k).padStart(2, '0') + ' · ' : '') + t;
-        b.addEventListener('click', e => { e.stopPropagation(); jump(k - 1); }); tr.appendChild(b);
+        b.addEventListener('click', e => { e.stopPropagation(); track('chapter_select', { chapter: k ? DATA.scenes[k - 1].title : 'Opening', via: 'timeline' }); jump(k - 1); }); tr.appendChild(b);
       });
     }
     [...tr.children].forEach((b, k) => b.style.flexGrow = L[k]);
@@ -2484,7 +2488,7 @@ const Sound = (() => {
       const b = document.createElement('button'); b.type = 'button'; if (k - 1 === cur) b.className = 'cur';
       b.innerHTML = '<span class="n"></span><span class="t"></span><span class="d"></span>';
       b.querySelector('.n').textContent = String(k).padStart(2, '0'); b.querySelector('.t').textContent = t; b.querySelector('.d').textContent = fmt(L[k]);
-      b.addEventListener('click', () => jump(k - 1)); list.appendChild(b);
+      b.addEventListener('click', () => { track('chapter_select', { chapter: k ? DATA.scenes[k - 1].title : 'Opening', via: 'list' }); jump(k - 1); }); list.appendChild(b);
     });
   }
   function markChapter() {
@@ -2519,6 +2523,7 @@ const Sound = (() => {
   let toastT = null;
   function toast(t) { const e = $('filmToast'); e.textContent = t; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 2600); }
   async function share() {
+    track('share', { method: navigator.share ? 'share_sheet' : 'copy_link' });
     const data = { title: 'The American Dive Bar', text: 'A twelve-minute field film about the American dive bar, told as a nature documentary.', url: shareUrl() };
     if (navigator.share) { try { await navigator.share(data); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
     try { await navigator.clipboard.writeText(data.url); toast('Link copied. Send it to a friend.'); }
@@ -2547,6 +2552,7 @@ const Sound = (() => {
         body: JSON.stringify(row) });
       if (!r.ok) throw new Error(r.status);
       form.classList.add('done'); msg.textContent = 'Logged. Thank you for your contribution to science.';
+      track('field_note_submit', { has_protocol: !!row.protocol, has_tip: !!row.tip, has_name: !!row.name });
       if (window.BathroomWall) setTimeout(() => window.BathroomWall.open(row), 1100);
     } catch (err) { go.disabled = false; msg.textContent = 'That did not go through. Try once more?'; }
   });
@@ -2581,6 +2587,7 @@ const Sound = (() => {
   if (lpBg.complete) showBg(); else { lpBg.addEventListener('load', showBg, { once: true }); setTimeout(showBg, 2000); }
   function start(k) {
     if (!DATA || started) return; started = true;
+    track('film_start', { from_chapter: k == null || k < 0 ? 'Opening' : DATA.scenes[k].title });
     document.body.classList.add('film-started');
     // On a phone, go full screen and ask for landscape where the browser allows it (Android does, iPhone shows the prompt below).
     if (matchMedia('(pointer: coarse)').matches) { const el = document.documentElement; Promise.resolve(el.requestFullscreen && el.requestFullscreen()).then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {}); }
@@ -2624,12 +2631,12 @@ const Sound = (() => {
   }
   upright.addEventListener ? upright.addEventListener('change', rotCheck) : upright.addListener(rotCheck);
   addEventListener('resize', rotCheck);
-  $('rotOk').addEventListener('click', () => { rotOk = true; rotCheck(); });
+  $('rotOk').addEventListener('click', () => { rotOk = true; track('watch_upright'); rotCheck(); });
   setInterval(rotCheck, 1000);
-  $('fbPlay').addEventListener('click', () => setPlaying(!playing));
+  $('fbPlay').addEventListener('click', () => { track(playing ? 'film_pause' : 'film_resume', { chapter: cur < 0 ? 'Opening' : DATA.scenes[cur].title }); setPlaying(!playing); });
   $('fbPrev').addEventListener('click', prevChapter);
   $('fbNext').addEventListener('click', nextChapter);
-  $('fbCC').addEventListener('click', () => setCC(!ccOn));
+  $('fbCC').addEventListener('click', () => { track('captions_toggle', { on: !ccOn }); setCC(!ccOn); });
   $('fbChap').addEventListener('click', () => $('filmChapters').hidden ? openChapters() : closeChapters());
   $('fbMute').addEventListener('click', () => { Sound.setMuted(!Sound.muted); const m = Sound.muted; $('fbMute').setAttribute('aria-label', m ? 'Unmute' : 'Mute'); $('fbMute').querySelector('.i-on').style.display = m ? 'none' : ''; $('fbMute').querySelector('.i-off').style.display = m ? '' : 'none'; });
   $('fbFs').addEventListener('click', () => { const d = document; d.fullscreenElement ? d.exitFullscreen?.() : d.documentElement.requestFullscreen?.().catch(() => {}); });
@@ -3257,6 +3264,7 @@ const Sound = (() => {
   // ---------- open and close ----------
   let opener = null;
   async function open(own) {
+    track('wall_open', { via: own ? 'after_note' : location.hash === '#wall' ? 'link' : 'button' });
     opener = document.activeElement; box.hidden = false; requestAnimationFrame(() => box.classList.add('on'));
     document.documentElement.classList.add('bw-open');
     const [rows] = await Promise.all([load(), fontsReady()]);
