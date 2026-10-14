@@ -373,8 +373,12 @@ body.rot-ask .film-rotate { display: flex; }
 <script>
 // Troubleshooting switches for phones that crash: ?safe turns off every effect below, ?safe=grain,anim turns off just those.
 // fx = the projector scratches and drifting photos, grain = film grain and dust overlays, anim = all CSS animation, video = the opening footage.
-(function () { const m = /[?&]safe(?:=([^&]*))?/.exec(location.search); if (!m) return;
-  const list = m[1] ? decodeURIComponent(m[1]).split(',') : ['fx', 'grain', 'anim', 'video'];
+// iPhones and iPads run out of memory with the full film-stock effects, so they get the film without the grain overlays
+// and projector scratches unless ?full is added. Everything else, including the motion and the footage, stays.
+(function () { const m = /[?&]safe(?:=([^&]*))?/.exec(location.search);
+  const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (!m && !(ios && !/[?&]full\b/.test(location.search))) return;
+  const list = m ? (m[1] ? decodeURIComponent(m[1]).split(',') : ['fx', 'grain', 'anim', 'video']) : ['fx', 'grain'];
   window.SAFE = {}; list.forEach(k => { window.SAFE[k] = true; document.documentElement.classList.add('safe-' + k); }); })();
 </script>
 <style>
