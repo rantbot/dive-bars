@@ -357,13 +357,6 @@ body.rot-ask .film-rotate { display: flex; }
 .bw-k { position: absolute; left: 0; top: 0; transform-origin: 0 0; filter: brightness(0.8) saturate(0.78) sepia(0.12) drop-shadow(0 2px 2px rgba(40,25,5,0.35)); }
 .bw-k svg { display: block; }
 .bw-k.worn svg { opacity: 0.86; filter: contrast(0.92); }
-.bw-k.peel-tr svg { clip-path: polygon(0 0, 78% 0, 100% 34%, 100% 100%, 0 100%); }
-.bw-k.peel-bl svg { clip-path: polygon(0 0, 100% 0, 100% 100%, 26% 100%, 0 66%); }
-.bw-k.peel-tl svg { clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%, 0 30%); }
-.bw-k[class*="peel"]::after { content: ""; position: absolute; width: 22%; height: 34%; background: linear-gradient(135deg, #d9d2c2, #f4efe4 60%, #bdb4a1); box-shadow: -2px 2px 4px rgba(0,0,0,0.3); }
-.bw-k.peel-tr::after { right: 0; top: 0; clip-path: polygon(0 0, 100% 100%, 0 100%); }
-.bw-k.peel-bl::after { left: 0; bottom: 0; width: 26%; clip-path: polygon(100% 0, 100% 100%, 0 0); }
-.bw-k.peel-tl::after { left: 0; top: 0; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
 </style>
 <title>The American Dive Bar</title>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
@@ -2901,6 +2894,15 @@ const Sound = (() => {
   // The rest of what ends up on a stall wall.
   const SCRAWL = ['I WAS HERE', 'J + M', 'TIP YOUR BARTENDER', 'last call', 'call your mom', 'BE NICE', 'SAME', 'who?', 'est. 1979', 'wash your hands', 'Dana', 'K.T. ♥ R.B.', 'hi', 'NO', 'go home', ':)', 'IIII IIII II', '1987', 'Lou was here', 'stay weird', 'skol', 'it gets better', 'R.I.P. the old jukebox', 'this wall is art', 'Mike', 'yes', '★', 'you look nice today', 'drink water', '→', 'L + T 4ever', 'nope', 'cash only', 'Gina', 'hydrate', 'love you Pat'];
   const CROSSED = ['never again', 'Steve', 'call me', 'ugh'];
+  // Longer lines, the jokes every good stall collects. Each one shows up once.
+  const JOKES = [
+    "I came here to drink, not to read your autobiography.", 'For a good time, call your mother. She misses you.',
+    "If you can read this, you're too close.", "I used to be indecisive. Now I'm not sure.", "Flush twice. It's a long way to City Hall.",
+    'The handwriting gets worse as the night gets better.', 'Dave owes me $40. Since 1998.', "I was here before it was cool. It wasn't cool then either.",
+    'I came in for one. That was Thursday.', 'This bar has seen me at my best. That was a Tuesday in 2007.', "I'm banned from better places.",
+    'The jukebox knows too much.', 'Your secrets are safe here. Nobody remembers anything.', "Nothing good happens after 2 AM. That's why we close at 2.",
+    'Somewhere, a village is missing you.',
+  ];
 
   let W = 3400, H = 2100, s = 1, x = 0, y = 0, built = false, notes = [], placed = [], mine = null, anim = 0;
   let rand = mulberry(20261013);
@@ -3026,6 +3028,12 @@ const Sound = (() => {
     el.style.opacity = R(0.45, 0.85).toFixed(2); words(t, el); bend(el); return el;
   }
 
+  function joke(t) {
+    const el = scrawl(t); el.style.whiteSpace = 'normal'; el.style.lineHeight = '1.12';
+    el.style.width = Math.round(R(t.length > 40 ? 340 : 260, t.length > 40 ? 460 : 360)) + 'px';
+    el.style.fontSize = Math.round(parseFloat(el.style.fontSize) * 0.4 + R(16, 22)) + 'px'; el.style.opacity = R(0.6, 0.9).toFixed(2);
+    return el;
+  }
   // Scratched in with a key or a coin by someone without a pen: the paint comes away and shows the undercoat.
   const SCRATCHED = ['J.R.', 'MIKE', 'KT + AL', 'NO', '1994', 'IIII IIII', 'ROSIE', 'HI', 'SAM WAS HERE', 'B.B.', 'LOVE', 'X', 'DAVE', '♥', 'PUNK', 'W.T.F.', 'T.J. 02', 'yes', 'MAX', 'LUZ'];
   function scratched(t) {
@@ -3086,26 +3094,44 @@ const Sound = (() => {
     { bg: '#2e7a4c', fg: '#fff', f: 'Cormorant Garamond', w: 700 }, { bg: '#efe5cf', fg: '#a3241c', f: 'Rock Salt', w: 400 },
     { bg: '#6c3793', fg: '#fff', f: 'Inter', w: 800 }, { bg: '#e2602b', fg: '#fff', f: 'Sedgwick Ave', w: 400 },
   ];
-  let stickerI = 0;
+  let stickerI = 0, peelN = 0;
   function sticker() {
     const [a, b, city] = STICKERS[stickerI++ % STICKERS.length], st = pick(STYLES), NS = 'http://www.w3.org/2000/svg';
     const shape = pick(['rect', 'rect', 'circle', 'oval', 'burst']), w = shape === 'circle' ? 180 : shape === 'burst' ? 200 : Math.round(R(230, 300)), h = shape === 'circle' ? 180 : shape === 'burst' ? 200 : Math.round(R(120, 150));
     const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.setAttribute('width', w); svg.setAttribute('height', h);
-    let body;
+    let body, rx = 0;
     if (shape === 'circle') body = `<circle cx="${w / 2}" cy="${h / 2}" r="${w / 2 - 5}"/>`;
     else if (shape === 'oval') body = `<ellipse cx="${w / 2}" cy="${h / 2}" rx="${w / 2 - 5}" ry="${h / 2 - 5}"/>`;
     else if (shape === 'burst') { let d = ''; for (let i = 0; i <= 28; i++) { const ang = i / 28 * T, r = i % 2 ? w / 2 - 22 : w / 2 - 5; d += (i ? 'L' : 'M') + (w / 2 + Math.cos(ang) * r).toFixed(1) + ',' + (h / 2 + Math.sin(ang) * r).toFixed(1); } body = `<path d="${d}Z"/>`; }
-    else body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="${R(6, 18).toFixed(0)}"/>`;
+    else { rx = Math.round(R(6, 18)); body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="${rx}"/>`; }
     const big = shape === 'rect' || shape === 'oval' ? (a.length > 12 ? 30 : 38) : (a.length > 11 ? 24 : 30), esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
     const lines = [[a, big], [b, big * 0.55], [city.toUpperCase(), 13]].filter(l => l[0]), gap = 6;
     let y = 0, txt = '';
     lines.forEach(l => { l[1] = Math.min(l[1], (w * (shape === 'circle' || shape === 'burst' ? 0.66 : 0.84)) / (l[0].length * (l[1] > 14 ? (/Rock|Sedgwick|Marker/.test(st.f) ? 0.74 : 0.56) : 0.75))); });
     y = h / 2 - lines.reduce((s2, l) => s2 + l[1] + gap, -gap) / 2;
     lines.forEach(([t, fs], i) => { y += fs; txt += `<text x="${w / 2}" y="${(y - fs * 0.18).toFixed(1)}" text-anchor="middle" font-family="${st.f}, sans-serif" font-weight="${i === 2 ? 600 : st.w}" font-size="${fs}" letter-spacing="${i === 2 ? 3 : 0}" fill="${st.fg}">${esc(t)}</text>`; y += gap; });
-    svg.innerHTML = `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${st.bg}">${body}</g>` +
+    let face = `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${st.bg}">${body}</g>` +
       `<g fill="none" stroke="${st.fg}" stroke-opacity="0.5" stroke-width="2" transform="translate(${w / 2} ${h / 2}) scale(0.9) translate(${-w / 2} ${-h / 2})">${body}</g>` + txt;
+    // Some are peeling. The fold follows the sticker's real edge: a line cuts across one corner of the shape,
+    // the part beyond it lifts away, and its paper back folds over onto the face, so a circle peels as a round flap.
+    if (rand() < 0.4) {
+      const corner = pick([[1, -1], [-1, 1], [-1, -1], [1, 1]]), ang = Math.atan2(corner[1], corner[0]) + R(-0.3, 0.3);
+      const ux = Math.cos(ang), uy = Math.sin(ang), hw = w / 2 - 5, hh = h / 2 - 5, cx = w / 2, cy = h / 2;
+      const reach = (shape === 'circle' || shape === 'burst') ? hw : shape === 'oval' ? Math.hypot(hw * ux, hh * uy) : Math.abs(ux) * (hw - rx) + Math.abs(uy) * (hh - rx) + rx;
+      const far = reach + 5, fold = far - R(0.12, 0.2) * Math.min(w, h), L = w + h;
+      const px = cx + ux * fold, py = cy + uy * fold, vx = -uy, vy = ux;
+      const half = dir => [[px + vx * L, py + vy * L], [px + vx * L + ux * L * dir, py + vy * L + uy * L * dir], [px - vx * L + ux * L * dir, py - vy * L + uy * L * dir], [px - vx * L, py - vy * L]].map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ');
+      const k = px * ux + py * uy, m = [1 - 2 * ux * ux, -2 * ux * uy, -2 * ux * uy, 1 - 2 * uy * uy, 2 * k * ux, 2 * k * uy].map(n => n.toFixed(4)).join(' ');
+      const id = 'pk' + (++peelN);
+      const flap = `<g transform="matrix(${m})" clip-path="url(#${id}c)" stroke-linejoin="round">` +
+        `<g fill="rgba(30,18,4,0.35)" stroke="rgba(30,18,4,0.35)" stroke-width="10" transform="translate(${(ux * 3).toFixed(1)} ${(uy * 3).toFixed(1)})">${body}</g>` +
+        `<g fill="url(#${id}g)" stroke="url(#${id}g)" stroke-width="10">${body}</g></g>`;
+      svg.innerHTML = `<defs><clipPath id="${id}k" clipPathUnits="userSpaceOnUse"><polygon points="${half(-1)}"/></clipPath>` +
+        `<clipPath id="${id}c" clipPathUnits="userSpaceOnUse"><polygon points="${half(1)}"/></clipPath>` +
+        `<linearGradient id="${id}g" gradientUnits="userSpaceOnUse" x1="${px}" y1="${py}" x2="${(px + ux * (far - fold)).toFixed(1)}" y2="${(py + uy * (far - fold)).toFixed(1)}"><stop offset="0" stop-color="#bdb4a1"/><stop offset="0.6" stop-color="#f4efe4"/><stop offset="1" stop-color="#d9d2c2"/></linearGradient></defs>` +
+        `<g clip-path="url(#${id}k)">${face}</g>${flap}`;
+    } else svg.innerHTML = face;
     const el = document.createElement('div'); el.className = 'bw-k'; el.setAttribute('aria-hidden', 'true'); el.appendChild(svg);
-    if (rand() < 0.4) el.classList.add(pick(['peel-tr', 'peel-bl', 'peel-tl']));
     if (rand() < 0.3) el.classList.add('worn');
     return el;
   }
@@ -3144,6 +3170,7 @@ const Sound = (() => {
     const extra = Math.round(W * H / 160000);
     const tilt = () => rand() < 0.1 ? (rand() < 0.5 ? -1 : 1) * R(1.2, 1.57) : rand() < 0.35 ? R(-0.55, 0.55) : R(-0.22, 0.22);
     const n = Math.round(W * H / 1e6);
+    JOKES.forEach(t => put(joke(t), rand() < 0.3 ? R(-0.35, 0.35) : R(-0.12, 0.12), false, 10, 300));
     for (let i = 0; i < Math.round(n * 1.6); i++) put(sticker(), R(-0.45, 0.45), false, 4, 40);
     const kinds = Object.keys(DOODLES); for (let i = 0; i < Math.round(n * 2.6); i++) put(doodle(kinds[i % kinds.length]), R(-0.5, 0.5), false, 6, 30);
     for (let i = 0; i < Math.round(n * 2.4); i++) put(scratched(pick(SCRATCHED)), tilt(), false, 6, 30);
