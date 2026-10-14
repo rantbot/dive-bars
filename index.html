@@ -203,6 +203,11 @@ html.film #range .map-tip span { display: block; margin-top: 2px; font-size: 17p
 .fj-msg { font-size: 13px; color: #B8AF9F; line-height: 1.4; }
 .fe-journal.done .fj-f, .fe-journal.done .fj-go, .fe-journal.done .fj-lede { display: none; }
 .fe-journal.done .fj-msg { font-family: var(--display); font-size: 22px; color: var(--ivory); }
+.fj-see { color: var(--amber); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.fj-see:hover, .fj-see:focus-visible { color: #E2BC75; outline: none; }
+.bw-yours { padding: 7px 12px; border-radius: 999px; background: rgba(201,161,90,0.92); color: #13110E; font-weight: 600; transition: opacity 1s ease; }
+.bw-yours[hidden] { display: none; }
+.bw-yours.gone { opacity: 0; }
 @media (max-width: 860px) { .fe-wrap { grid-template-columns: 1fr; padding-top: 48px; } }
 body.film-ended .film-ui, body.film-ended .film-cc { opacity: 0 !important; pointer-events: none !important; }
 .fe-acts { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; margin-top: 10px; }
@@ -335,6 +340,7 @@ body.rot-ask .film-rotate { display: flex; }
 .bw-ctl button:hover, .bw-ctl button:focus-visible { background: rgba(201,161,90,0.22); outline: none; }
 .bw-foot { position: absolute; left: max(20px, 4vw); right: 90px; bottom: calc(max(18px, 3vh) + env(safe-area-inset-bottom)); display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; pointer-events: none; font-family: var(--ui); font-size: 13px; letter-spacing: 0.04em; color: #EDE6D8; text-shadow: 0 1px 10px rgba(0,0,0,0.9); }
 #bwCount:empty { display: none; }
+#bwCount { padding: 7px 12px; border-radius: 999px; background: rgba(13,12,10,0.72); }
 .bw-hint { padding: 7px 12px; border-radius: 999px; background: rgba(13,12,10,0.72); transition: opacity 1s ease; }
 .bw-hint.gone { opacity: 0; }
 
@@ -2263,7 +2269,7 @@ const Sound = (() => {
     <button type="button" id="bwOut" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
     <button type="button" id="bwFit" aria-label="See the whole wall"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
   </div>
-  <div class="bw-foot"><span id="bwCount"></span><span class="bw-hint" id="bwHint">Drag to look around. Scroll or pinch to zoom.</span></div>
+  <div class="bw-foot"><span class="bw-yours" id="bwYours" role="status" hidden></span><span id="bwCount"></span><span class="bw-hint" id="bwHint">Drag to look around. Scroll or pinch to zoom.</span></div>
 </div>
 <script>
 // ---------- Film mode ----------
@@ -2551,12 +2557,21 @@ const Sound = (() => {
         headers: Object.assign({ apikey: FIELD_NOTES.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, FIELD_NOTES.key.startsWith('sb_') ? {} : { Authorization: 'Bearer ' + FIELD_NOTES.key }),
         body: JSON.stringify(row) });
       if (!r.ok) throw new Error(r.status);
-      form.classList.add('done'); msg.textContent = 'Logged. Thank you for your contribution to science.';
+      form.classList.add('done'); seeMine('Logged. Your note is on the bathroom wall.', row);
+      try { const saved = JSON.parse(localStorage.getItem('dive-my-notes') || '[]'); saved.push({ bar: row.bar, protocol: row.protocol || '', name: row.name || '', at: Date.now() }); localStorage.setItem('dive-my-notes', JSON.stringify(saved.slice(-10))); } catch (e) {}
       track('field_note_submit', { has_protocol: !!row.protocol, has_tip: !!row.tip, has_name: !!row.name });
       if (window.BathroomWall) setTimeout(() => window.BathroomWall.open(row), 1100);
     } catch (err) { go.disabled = false; msg.textContent = 'That did not go through. Try once more?'; }
   });
   form.addEventListener('click', e => e.stopPropagation());
+  // The message under the journal says where the note went, with a way to go and look at it.
+  function seeMine(text, row) {
+    msg.textContent = text + ' ';
+    const a = document.createElement('a'); a.href = '#wall'; a.className = 'fj-see'; a.textContent = 'See it';
+    a.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); if (window.BathroomWall) window.BathroomWall.open(row); });
+    msg.appendChild(a);
+  }
+  try { const saved = JSON.parse(localStorage.getItem('dive-my-notes') || '[]'); if (saved.length) seeMine('Your note from last time is on the wall.'); } catch (e) {}
   form.querySelectorAll('textarea').forEach(t => t.addEventListener('input', () => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }));
 
   // ---------- the landing page ----------
@@ -3269,14 +3284,22 @@ const Sound = (() => {
     document.documentElement.classList.add('bw-open');
     const [rows] = await Promise.all([load(), fontsReady()]);
     let list = (rows || []).map(r => Object.assign({}, r));
-    if (own) { const same = list.find(r => r.bar === own.bar && (r.protocol || '') === (own.protocol || '') && (r.name || '') === (own.name || ''));
+    const match = (r, o) => r.bar === o.bar && (r.protocol || '') === (o.protocol || '') && (r.name || '') === (o.name || '');
+    if (own) { const same = list.find(r => match(r, own));
       if (same) same.mine = true; else list.unshift(Object.assign({ mine: true }, own)); }
+    else {   // a note this browser left on an earlier visit, if it's still up
+      let saved = []; try { saved = JSON.parse(localStorage.getItem('dive-my-notes') || '[]'); } catch (e) {}
+      saved.slice().reverse().some(o => { const same = list.find(r => match(r, o)); if (same) same.mine = true; return !!same; });
+    }
     list = list.filter(r => r.bar || r.protocol || r.tip);
     const real = list.length; list = list.concat(SEED);
-    if (own) list.sort((a, b) => (b.mine ? 1 : 0) - (a.mine ? 1 : 0));
+    if (list.some(n => n.mine)) list.sort((a, b) => (b.mine ? 1 : 0) - (a.mine ? 1 : 0));
     build(list);
     $('bwCount').textContent = real ? `${real} ${real === 1 ? 'note' : 'notes'} on the wall so far` : '';
     mine = list.find(n => n.mine);
+    if (mine) $('bwCount').textContent = `${real} ${real === 1 ? 'note' : 'notes'} on the wall so far, including yours`;
+    const yours = $('bwYours'); clearTimeout(yours._t); yours.classList.remove('gone'); yours.hidden = !mine;
+    if (mine) { yours.textContent = own ? 'There it is. Your note is on the wall.' : 'Your note is still up.'; yours._t = setTimeout(() => yours.classList.add('gone'), 7000); }
     if (mine && mine.el && mine.el._box) {
       const [cx, cy] = center(mine.el); s = minS(); x = vw() / 2 - W * s / 2; y = vh() / 2 - H * s / 2; draw();
       fly(cx, cy, Math.min(1.25, Math.max(minS(), vw() / 900)), 1600);
