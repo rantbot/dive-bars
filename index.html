@@ -237,6 +237,7 @@ html.film .slide-fx::before, html.film .gate .grain-layer::before { content: "";
   animation: film-dust 1.25s steps(1) infinite, film-flicker 4.6s steps(1) infinite; }
 html.film .grain-layer { overflow: hidden; }
 html.film .slide .grain-layer { display: none; }
+html.film #stage > .slide:not(.near):not(.active):not(.leaving) { display: none !important; }
 html.film .slide-fx { position: absolute; inset: 0; z-index: 40; pointer-events: none; overflow: hidden; }
 html:not(.film) .slide-fx { display: none; }
 html.film .film-fx { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
@@ -1678,7 +1679,8 @@ const Sound = (() => {
   }
   function setVolume(v) { volume = v; if (master) master.gain.setTargetAtTime(muted ? 0 : v, ctx.currentTime, 0.1); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : volume, ctx.currentTime, 0.1); }
-  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, play, duck, pauseAll, resumeAll, trimAmb, get time() { return ctx ? ctx.currentTime : 0; }, get ctx() { return ctx; }, get out() { return master; }, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
+  function forget(url) { delete voices[url]; }
+  return { init, setScene, cue, neon, voice, stopVoice, loadVoice, forget, play, duck, pauseAll, resumeAll, trimAmb, get time() { return ctx ? ctx.currentTime : 0; }, get ctx() { return ctx; }, get out() { return master; }, get speaking() { return !!voiceSrc; }, setVolume, setMuted, get started() { return !!ctx; }, get muted() { return muted; }, get volume() { return volume; } };
 })();
 
 </script>
@@ -1778,6 +1780,8 @@ const Sound = (() => {
       was.classList.add('leaving'); clearTimeout(leaveT); leaveT = setTimeout(() => was.classList.remove('leaving'), 1000);
     }
     slides.forEach((el, k) => el.classList.toggle('active', k === i));
+    // Only the slides around this one are drawn at all, so a phone isn't holding twenty-odd full-screen pictures in memory.
+    slides.forEach((el, k) => el.classList.toggle('near', Math.abs(k - i) <= 1));
     const el = slides[i], b = builds(el);
     b.forEach((x, k) => x.classList.toggle('on', k < step));
     // One step past the last reveal on the last slide is the end: the screen fades to black.
@@ -2388,6 +2392,8 @@ const Sound = (() => {
     sceneT0 = now(); markChapter();
     if (D.slides[k].id === 'range') mapIn(); else mapOut();
     preload(k); preload(k + 1);
+    // let go of narration two or more chapters back, so the phone isn't holding the whole film's audio at once
+    DATA.scenes.forEach((sc, j) => { if (j < k - 1) sc.clips.forEach(c => Sound.forget(clipUrl(c))); });
     at(LEAD, () => playClip(0));
   }
   // ---------- the range map ----------
@@ -3012,9 +3018,11 @@ const Sound = (() => {
     while (slices.length < n) { const c = document.createElement('canvas'); c.setAttribute('aria-hidden', 'true'); world.insertBefore(c, ink); slices.push(c); }
     slices.forEach((c, i) => {
       if (i >= n) { c.width = c.height = 1; c.hidden = true; return; }
-      const ox = i * SL, cw = Math.min(SL, W - ox); c.hidden = false; c.width = cw; c.height = H;
+      // phones get the paint at half resolution, a quarter of the memory; nobody can tell on a phone screen
+      const Q = matchMedia('(pointer: coarse)').matches ? 0.5 : 1;
+      const ox = i * SL, cw = Math.min(SL, W - ox); c.hidden = false; c.width = Math.round(cw * Q); c.height = Math.round(H * Q);
       c.style.cssText = `position:absolute;left:${ox}px;top:0;width:${cw}px;height:${H}px`;
-      const g = c.getContext('2d'); g.translate(-ox, 0); rand = mulberry(4242); paintOn(g, ghosts);
+      const g = c.getContext('2d'); g.scale(Q, Q); g.translate(-ox, 0); rand = mulberry(4242); paintOn(g, ghosts);
     });
   }
   function paintOn(g, ghosts) {
