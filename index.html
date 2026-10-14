@@ -3164,23 +3164,85 @@ const Sound = (() => {
     { bg: '#6c3793', fg: '#fff', f: 'Inter', w: 800 }, { bg: '#e2602b', fg: '#fff', f: 'Sedgwick Ave', w: 400 },
   ];
   let stickerI = 0, peelN = 0;
+  // Each bar's sticker is drawn the way that bar might print its own: its colors, its type, a picture of what it's known for.
+  const esc2 = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const tx = (x, y, t, f, size, fill, more = '') => `<text x="${x}" y="${y}" text-anchor="middle" font-family="${f}" font-size="${size}" fill="${fill}" ${more}>${esc2(t)}</text>`;
+  const cut = (body, bg) => `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${bg}">${body}</g>`;
+  const SERIF = "'Cormorant Garamond', Georgia, serif", SANS = 'Inter, Arial, sans-serif', BLOCK = 'Bungee, Impact, sans-serif', BUBBLE = 'Shrikhand, Georgia, serif', TYPE = "'Special Elite', monospace";
+  const ICON = {
+    mug: (x, y, c) => `<g transform="translate(${x} ${y})" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round"><path d="M-12,-14 h22 v28 h-22 z"/><path d="M10,-8 h6 a5,5 0 0 1 0,14 h-6"/><path d="M-12,-14 q4,-8 11,-3 q6,-6 11,3" fill="${c}"/></g>`,
+    glove: (x, y, c) => `<g transform="translate(${x} ${y})" fill="${c}"><path d="M-14,4 c-6,-16 2,-28 16,-26 c12,2 16,12 12,22 c-2,6 -6,8 -10,8 l-16,0 z"/><path d="M-6,-10 c-6,-2 -10,4 -6,10" fill="none" stroke="#f7f3ea" stroke-width="2"/><rect x="-15" y="8" width="26" height="12" rx="2"/><path d="M-15,13 h26" stroke="#f7f3ea" stroke-width="2"/></g>`,
+    palm: (x, y, c) => `<g transform="translate(${x} ${y})" fill="${c}"><path d="M-2,28 q4,-22 0,-38 l4,0 q4,18 -1,38 z"/><path d="M0,-10 q-18,-10 -30,2 q14,-4 30,-2 z M0,-10 q18,-10 30,2 q-14,-4 -30,-2 z M0,-10 q-8,-16 -24,-14 q12,4 24,14 z M0,-10 q8,-16 24,-14 q-12,4 -24,14 z"/></g>`,
+    oyster: (x, y, c) => `<g transform="translate(${x} ${y})" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"><path d="M-22,8 q-4,-26 22,-30 q26,4 22,30 q-22,10 -44,0 z" fill="${c}" fill-opacity="0.18"/>${[-14, -7, 0, 7, 14].map(dx => `<path d="M0,10 L${dx * 1.4},-18"/>`).join('')}<circle cx="0" cy="2" r="4" fill="#f7f3ea" stroke="none"/></g>`,
+    star: (x, y, r, c) => { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; d += (i ? 'L' : 'M') + (x + Math.cos(a) * rr).toFixed(1) + ',' + (y + Math.sin(a) * rr).toFixed(1); } return `<path d="${d}Z" fill="${c}"/>`; },
+    star6: (x, y, r, c) => { let d = ''; for (let i = 0; i < 12; i++) { const a = -Math.PI / 2 + i * Math.PI / 6, rr = i % 2 ? r * 0.5 : r; d += (i ? 'L' : 'M') + (x + Math.cos(a) * rr).toFixed(1) + ',' + (y + Math.sin(a) * rr).toFixed(1); } return `<path d="${d}Z" fill="${c}"/>`; },
+    die: (x, y, s, rot, c, pip, n) => { const P = { 1: [[0, 0]], 2: [[-1, -1], [1, 1]], 3: [[-1, -1], [0, 0], [1, 1]], 4: [[-1, -1], [1, -1], [-1, 1], [1, 1]], 5: [[-1, -1], [1, -1], [0, 0], [-1, 1], [1, 1]], 6: [[-1, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [1, 1]] }[n];
+      return `<g transform="translate(${x} ${y}) rotate(${rot})"><rect x="${-s / 2}" y="${-s / 2}" width="${s}" height="${s}" rx="${s * 0.18}" fill="${c}"/>${P.map(([i, j]) => `<circle cx="${i * s * 0.27}" cy="${j * s * 0.27}" r="${s * 0.09}" fill="${pip}"/>`).join('')}</g>`; },
+    bulbs: (x0, x1, y, n) => { let o = `<path d="M${x0},${y} Q${(x0 + x1) / 2},${y + 18} ${x1},${y}" fill="none" stroke="#1b1b1b" stroke-width="2"/>`; const cs = ['#e8443a', '#f2c032', '#3fa34d', '#3a7bd5', '#f08a24'];
+      for (let i = 0; i < n; i++) { const t = (i + 0.5) / n, bx = x0 + (x1 - x0) * t, by = y + 18 * 2 * t * (1 - t) + 2; o += `<rect x="${bx - 2.5}" y="${by - 1}" width="5" height="4" fill="#1b1b1b"/><ellipse cx="${bx}" cy="${by + 8}" rx="4.5" ry="7" fill="${cs[i % 5]}"/>`; } return o; },
+    rainbow: (x, y, r, w) => ['#e8443a', '#f08a24', '#f2c032', '#3fa34d', '#3a7bd5', '#7b4fb8'].map((c, i) => `<path d="M${x - r + i * w},${y} a${r - i * w},${r - i * w} 0 0 1 ${2 * (r - i * w)},0" fill="none" stroke="${c}" stroke-width="${w}"/>`).join(''),
+    anchor: (x, y, c) => `<g transform="translate(${x} ${y})" fill="none" stroke="${c}" stroke-width="3.4" stroke-linecap="round"><circle cx="0" cy="-20" r="5"/><path d="M0,-15 v38 M-11,-6 h22 M-20,10 q4,14 20,14 q16,0 20,-14"/><path d="M-20,10 l-4,4 M20,10 l4,4"/></g>`,
+    martini: (x, y, c) => `<g transform="translate(${x} ${y})" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M-16,-14 h32 l-16,18 z" fill="${c}" fill-opacity="0.25"/><path d="M0,4 v16 M-9,20 h18"/><circle cx="6" cy="-8" r="3.4" fill="#7fae3a" stroke="none"/><path d="M6,-8 l10,-12"/></g>`,
+    pig: (x, y, c) => `<g transform="translate(${x} ${y})" fill="${c}"><ellipse cx="0" cy="0" rx="22" ry="14"/><circle cx="20" cy="-6" r="10"/><ellipse cx="29" cy="-4" rx="4" ry="5"/><path d="M14,-15 l4,-8 l4,7 z"/><rect x="-14" y="10" width="5" height="10"/><rect x="8" y="10" width="5" height="10"/><path d="M-22,-2 q-8,-4 -4,-10" fill="none" stroke="${c}" stroke-width="2.4"/></g>`,
+    record: (cx, cy, r) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#121111"/>${[0.92, 0.84, 0.76, 0.68, 0.6].map(k => `<circle cx="${cx}" cy="${cy}" r="${(r * k).toFixed(1)}" fill="none" stroke="#2c2a29" stroke-width="1.2"/>`).join('')}<path d="M${cx - r * 0.7},${cy - r * 0.3} a${r * 0.76},${r * 0.76} 0 0 1 ${r * 0.5},${-r * 0.45}" stroke="#4a4744" stroke-width="3" fill="none"/>`,
+    waves: (x, y, w, c) => [0, 7].map(dy => `<path d="M${x},${y + dy} ${Array.from({ length: Math.round(w / 12) }, (_, i) => `q3,-4 6,0 t6,0`).join(' ')}" fill="none" stroke="${c}" stroke-width="2"/>`).join(''),
+  };
+  const BARS = {
+    "McSorley's": () => { const w = 280, h = 170, body = `<ellipse cx="140" cy="85" rx="135" ry="80"/>`;
+      return { w, h, shape: 'oval', body, face: cut(body, '#efe4c8') + `<ellipse cx="140" cy="85" rx="122" ry="68" fill="none" stroke="#1f3b2a" stroke-width="2.5"/><ellipse cx="140" cy="85" rx="116" ry="62" fill="none" stroke="#1f3b2a" stroke-width="1"/>` +
+        ICON.mug(140, 52, '#1f3b2a') + tx(140, 102, "McSORLEY'S", SERIF, 34, '#1f3b2a', 'font-weight="700" letter-spacing="1"') + tx(140, 119, 'OLD ALE HOUSE', SANS, 10.5, '#7a2e1c', 'font-weight="700" letter-spacing="4"') + tx(140, 133, 'EST. 1854 · NEW YORK', SANS, 7.5, '#1f3b2a', 'letter-spacing="2.5"') }; },
+    "Jimmy's Corner": () => { const w = 240, h = 160, body = `<rect x="5" y="5" width="230" height="150" rx="6"/>`;
+      return { w, h, shape: 'rect', rx: 6, body, face: cut(body, '#b8322a') + `<rect x="5" y="104" width="230" height="30" fill="#f2c032"/>` + ICON.glove(206, 54, '#151515') +
+        tx(92, 62, "JIMMY'S", BLOCK, 31, '#fff4e0') + tx(92, 90, 'BOXING · COLD BEER', TYPE, 11, '#151515', 'letter-spacing="1"') + tx(120, 126, 'CORNER', BLOCK, 26, '#151515', 'letter-spacing="3"') + tx(120, 148, 'TIMES SQUARE · NYC', SANS, 8, '#fff4e0', 'font-weight="700" letter-spacing="3"') }; },
+    "Jimbo's Place": () => { const w = 190, h = 190, body = `<circle cx="95" cy="95" r="90"/>`;
+      return { w, h, shape: 'circle', body, face: cut(body, '#2a7f86') + `<path d="M5,120 h180 a90,90 0 0 1 -180,0 z" fill="#e8d3a2"/>` + ICON.palm(95, 74, '#173b3e') +
+        tx(95, 140, "Jimbo's", "'Rock Salt', cursive", 22, '#173b3e') + tx(95, 160, 'VIRGINIA KEY', SANS, 9, '#173b3e', 'font-weight="700" letter-spacing="3"') + tx(95, 36, 'CASH · COLD · OYSTERS', SANS, 7.5, '#e8d3a2', 'font-weight="700" letter-spacing="1.5"') }; },
+    'Siesta Key': () => { const w = 260, h = 150, body = `<ellipse cx="130" cy="75" rx="125" ry="70"/>`;
+      return { w, h, shape: 'oval', body, face: cut(body, '#1c5f8c') + ICON.oyster(130, 46, '#f6e7c8') + tx(130, 98, 'SIESTA KEY', BUBBLE, 30, '#f28b6a') +
+        tx(130, 117, 'OYSTER BAR', SANS, 12, '#f6e7c8', 'font-weight="800" letter-spacing="5"') + ICON.waves(86, 124, 90, '#7fc3d9') }; },
+    "Jumbo's": () => { const w = 230, h = 170, body = `<path d="M5,40 q22,-30 55,-30 q35,-6 55,-5 q20,-1 55,5 q33,0 55,30 v120 h-220 z"/>`;
+      let stripes = ''; for (let i = 0; i < 12; i++) stripes += `<rect x="${5 + i * 20}" y="0" width="10" height="170" fill="#f4ead3"/>`;
+      return { w, h, shape: 'rect', rx: 6, body, face: cut(body, '#c7261e') + `<g clip-path="none" opacity="0.9"><clipPath id="jc${++peelN}">${body}</clipPath><g clip-path="url(#jc${peelN})">${stripes}</g></g>` +
+        `<rect x="22" y="62" width="186" height="78" rx="8" fill="#151515"/>` + ICON.star(38, 92, 8, '#f2c032') + ICON.star(192, 92, 8, '#f2c032') +
+        tx(115, 104, "JUMBO'S", BUBBLE, 26, '#f2c032') + tx(115, 125, 'CLOWN ROOM', SANS, 11, '#f4ead3', 'font-weight="800" letter-spacing="5"') + `<rect x="60" y="146" width="110" height="16" rx="3" fill="#f4ead3"/>` + tx(115, 158, 'HOLLYWOOD', SANS, 8.5, '#151515', 'font-weight="800" letter-spacing="4"') }; },
+    'The Frolic Room': () => { const w = 260, h = 130, body = `<rect x="5" y="5" width="250" height="120" rx="14"/>`, glow = `stroke="#ff4fa3" stroke-width="5" stroke-opacity="0.35"`;
+      return { w, h, shape: 'rect', rx: 14, body, face: cut(body, '#1a1424') + ICON.star(130, 28, 11, '#ffd34f') +
+        tx(130, 78, 'Frolic Room', "'Caveat Brush', cursive", 46, 'none', glow) + tx(130, 78, 'Frolic Room', "'Caveat Brush', cursive", 46, '#ffd6ec') + tx(130, 106, 'HOLLYWOOD BLVD', SANS, 9, '#7fd4ff', 'font-weight="700" letter-spacing="4"') }; },
+    'Double Down': () => { const w = 250, h = 130, body = `<rect x="5" y="5" width="240" height="120" rx="4"/>`;
+      return { w, h, shape: 'rect', rx: 4, body, face: cut(body, '#121111') + ICON.die(40, 50, 34, -14, '#c7261e', '#f7f3ea', 5) + ICON.die(70, 82, 30, 18, '#f7f3ea', '#121111', 2) +
+        tx(160, 58, 'DOUBLE', BLOCK, 30, '#f7f3ea') + tx(160, 90, 'DOWN', BLOCK, 30, '#c7261e') + tx(160, 112, 'SALOON · LAS VEGAS', TYPE, 9.5, '#f7f3ea', 'letter-spacing="1"') }; },
+    "Mac's": () => { const w = 240, h = 150, body = `<rect x="5" y="5" width="230" height="140" rx="10"/>`;
+      let deco = ''; for (let i = 0; i < 4; i++) deco += `<path d="M${20 + i * 8},135 v-${60 - i * 12}" stroke="#2bb3a3" stroke-width="3"/><path d="M${220 - i * 8},135 v-${60 - i * 12}" stroke="#2bb3a3" stroke-width="3"/>`;
+      return { w, h, shape: 'rect', rx: 10, body, face: cut(body, '#f5b8c4') + deco + `<circle cx="120" cy="58" r="34" fill="#2bb3a3"/>` + tx(120, 76, '2', BUBBLE, 54, '#f5b8c4') +
+        tx(120, 116, "MAC'S CLUB DEUCE", BLOCK, 12.5, '#1d3a3a', 'letter-spacing="0.5"') + tx(120, 134, 'MIAMI BEACH', SANS, 8.5, '#1d3a3a', 'font-weight="800" letter-spacing="4"') }; },
+    'Snake & Jake’s': () => { const w = 270, h = 140, body = `<rect x="5" y="5" width="260" height="130" rx="8"/>`;
+      return { w, h, shape: 'rect', rx: 8, body, face: cut(body, '#123d2a') + ICON.bulbs(14, 256, 12, 11) +
+        tx(135, 76, 'SNAKE & JAKE’S', BLOCK, 24, '#f7f3ea') + tx(135, 102, 'Christmas Club Lounge', "'Caveat Brush', cursive", 22, '#e8443a') + tx(135, 124, 'NEW ORLEANS', SANS, 8.5, '#f2c032', 'font-weight="800" letter-spacing="4"') }; },
+    'Old Town': () => { const w = 230, h = 160, body = `<rect x="5" y="5" width="220" height="150" rx="4"/>`;
+      return { w, h, shape: 'rect', rx: 4, body, face: cut(body, '#f1ebdd') + `<rect x="5" y="5" width="220" height="26" fill="#9fd3ef"/><rect x="5" y="129" width="220" height="26" fill="#9fd3ef"/>` +
+        [64, 98, 132, 166].map(cx => ICON.star6(cx, 18, 8, '#d0312d')).join('') + tx(115, 66, 'OLD TOWN', SERIF, 34, '#3a1f17', 'font-weight="700"') + tx(115, 92, 'ALE HOUSE', SERIF, 24, '#3a1f17', 'font-style="italic"') +
+        tx(115, 114, 'NORTH AVE · CHICAGO', SANS, 8.5, '#3a1f17', 'font-weight="700" letter-spacing="3"') + tx(115, 147, 'COLD BEER · WARM ART', SANS, 7.5, '#1f3a68', 'font-weight="800" letter-spacing="2"') }; },
+    'Rainbo Club': () => { const w = 230, h = 150, body = `<rect x="5" y="5" width="220" height="140" rx="6"/>`;
+      return { w, h, shape: 'rect', rx: 6, body, face: cut(body, '#151515') + ICON.rainbow(115, 72, 52, 6) + tx(115, 108, 'RAINBO', BLOCK, 34, '#f7f3ea') + tx(115, 130, 'CLUB · CHICAGO', SANS, 9, '#f2c032', 'font-weight="800" letter-spacing="4"') }; },
+    'Earnestine': () => { const w = 190, h = 190, body = `<circle cx="95" cy="95" r="90"/>`;
+      return { w, h, shape: 'circle', body, face: cut(body, '#121111') + ICON.record(95, 95, 86) + `<circle cx="95" cy="95" r="40" fill="#c7261e"/><circle cx="95" cy="95" r="3" fill="#121111"/>` +
+        tx(95, 84, 'Earnestine', "'Caveat Brush', cursive", 17, '#fff4e0') + tx(95, 102, '& Hazel’s', "'Caveat Brush', cursive", 15, '#fff4e0') + tx(95, 118, 'MEMPHIS', SANS, 7, '#f2c032', 'font-weight="800" letter-spacing="2.5"') }; },
+    "Spec's": () => { const w = 230, h = 150, body = `<rect x="5" y="5" width="220" height="140" rx="10"/>`;
+      return { w, h, shape: 'rect', rx: 10, body, face: cut(body, '#1b2f4f') + `<rect x="14" y="14" width="202" height="122" rx="6" fill="none" stroke="#d9b45a" stroke-width="1.5"/>` + ICON.anchor(52, 76, '#d9b45a') +
+        tx(140, 76, "SPEC'S", SERIF, 40, '#f1e6c8', 'font-weight="700"') + tx(140, 98, 'MUSEUM CAFE', SANS, 9, '#d9b45a', 'font-weight="700" letter-spacing="3"') + tx(140, 116, 'NORTH BEACH · S.F.', SANS, 8, '#f1e6c8', 'letter-spacing="2.5"') }; },
+    'Holiday': () => { const w = 250, h = 140, body = `<path d="M18,10 h214 q14,0 14,14 q-8,46 0,92 q0,14 -14,14 h-214 q-14,0 -14,-14 q8,-46 0,-92 q0,-14 14,-14 z"/>`;
+      return { w, h, shape: 'rect', rx: 14, body, face: cut(body, '#7cc8c0') + `<path d="M34,82 q60,-26 150,-8" fill="none" stroke="#f4e2b8" stroke-width="12" stroke-linecap="round"/>` + ICON.martini(206, 50, '#20343a') +
+        tx(110, 70, 'Holiday', "'Caveat Brush', cursive", 46, '#c7261e') + tx(118, 102, 'COCKTAIL LOUNGE', SANS, 10, '#20343a', 'font-weight="800" letter-spacing="3"') + tx(125, 122, 'ST. MARKS PL · NYC', SANS, 7.5, '#20343a', 'font-weight="700" letter-spacing="2.5"') }; },
+    "Rudy's": () => { const w = 230, h = 150, body = `<rect x="5" y="5" width="220" height="140" rx="70"/>`;
+      return { w, h, shape: 'rect', rx: 70, body, face: cut(body, '#c7261e') + ICON.pig(108, 48, '#f5b8c4') +
+        tx(115, 98, "RUDY'S", BUBBLE, 32, '#fff4e0') + tx(115, 116, 'BAR & GRILL', SANS, 10, '#fff4e0', 'font-weight="800" letter-spacing="4"') + tx(115, 132, "HELL'S KITCHEN", SANS, 7.5, '#f5b8c4', 'font-weight="700" letter-spacing="2.5"') }; },
+    'The Ear Inn': () => { const w = 240, h = 120, body = `<rect x="5" y="5" width="230" height="110" rx="3"/>`, glow = `stroke="#ff5a3c" stroke-width="5" stroke-opacity="0.35"`;
+      return { w, h, shape: 'rect', rx: 3, body, face: cut(body, '#14100e') + tx(120, 66, 'EAR INN', BLOCK, 38, 'none', glow) + tx(120, 66, 'EAR INN', BLOCK, 38, '#ffb59e') +
+        ICON.waves(40, 80, 160, '#4f7c8f') + tx(120, 106, 'SPRING ST · SINCE THE 1800s', SANS, 7.5, '#d8cfc0', 'font-weight="700" letter-spacing="2"') }; },
+  };
   function barDesign() {
-    const [a, b, city] = STICKERS[stickerI++ % STICKERS.length], st = pick(STYLES);
-    const shape = pick(['rect', 'rect', 'circle', 'oval', 'burst']), w = shape === 'circle' ? 180 : shape === 'burst' ? 200 : Math.round(R(230, 300)), h = shape === 'circle' ? 180 : shape === 'burst' ? 200 : Math.round(R(120, 150));
-    let body, rx = 0;
-    if (shape === 'circle') body = `<circle cx="${w / 2}" cy="${h / 2}" r="${w / 2 - 5}"/>`;
-    else if (shape === 'oval') body = `<ellipse cx="${w / 2}" cy="${h / 2}" rx="${w / 2 - 5}" ry="${h / 2 - 5}"/>`;
-    else if (shape === 'burst') { let d = ''; for (let i = 0; i <= 28; i++) { const ang = i / 28 * T, r = i % 2 ? w / 2 - 22 : w / 2 - 5; d += (i ? 'L' : 'M') + (w / 2 + Math.cos(ang) * r).toFixed(1) + ',' + (h / 2 + Math.sin(ang) * r).toFixed(1); } body = `<path d="${d}Z"/>`; }
-    else { rx = Math.round(R(6, 18)); body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="${rx}"/>`; }
-    const big = shape === 'rect' || shape === 'oval' ? (a.length > 12 ? 30 : 38) : (a.length > 11 ? 24 : 30), esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-    const lines = [[a, big], [b, big * 0.55], [city.toUpperCase(), 13]].filter(l => l[0]), gap = 6;
-    let y = 0, txt = '';
-    lines.forEach(l => { l[1] = Math.min(l[1], (w * (shape === 'circle' || shape === 'burst' ? 0.66 : 0.84)) / (l[0].length * (l[1] > 14 ? (/Rock|Sedgwick|Marker/.test(st.f) ? 0.74 : 0.56) : 0.75))); });
-    y = h / 2 - lines.reduce((s2, l) => s2 + l[1] + gap, -gap) / 2;
-    lines.forEach(([t, fs], i) => { y += fs; txt += `<text x="${w / 2}" y="${(y - fs * 0.18).toFixed(1)}" text-anchor="middle" font-family="${st.f}, sans-serif" font-weight="${i === 2 ? 600 : st.w}" font-size="${fs}" letter-spacing="${i === 2 ? 3 : 0}" fill="${st.fg}">${esc(t)}</text>`; y += gap; });
-    const face = `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${st.bg}">${body}</g>` +
-      `<g fill="none" stroke="${st.fg}" stroke-opacity="0.5" stroke-width="2" transform="translate(${w / 2} ${h / 2}) scale(0.9) translate(${-w / 2} ${-h / 2})">${body}</g>` + txt;
-    return { w, h, shape, body, rx, face };
+    const [a] = STICKERS[stickerI++ % STICKERS.length], d = BARS[a]();
+    return Object.assign({ rx: 0 }, d);
   }
   // Stickers from local bands that played here once. All invented, in the styles every bar door collects:
   // black-and-white punk, blackletter metal, '70s bubble letters, a round tour sticker, a loud red slab.
