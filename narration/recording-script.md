@@ -47,7 +47,7 @@ If ElevenLabs gets one of these wrong, add it to the `say` list in `narration/cl
 
 **`02-range-1.mp3`**
 
-> Sixty-eight documented research sites, from Vancouver to Guayaquil, spanning both American continents, yet the survey continues to this day.
+> Sixty-eight cities explored, with many dives documented in each, from Vancouver to Guayaquil, spanning both American continents, yet the survey continues to this day.
 
 **`02-range-2.mp3`**
 
