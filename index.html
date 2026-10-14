@@ -381,7 +381,17 @@ body.rot-ask .film-rotate { display: flex; }
   const list = m ? (m[1] ? decodeURIComponent(m[1]).split(',') : ['fx', 'grain', 'anim', 'video']) : ['fx', 'grain'];
   window.SAFE = {}; list.forEach(k => { window.SAFE[k] = true; document.documentElement.classList.add('safe-' + k); }); })();
 </script>
+<script>
+// iPhones can't put a web page in full screen (only a video file), so there the film hides its button and,
+// held sideways, fills the whole window with the captions laid over the picture instead.
+if (!document.documentElement.requestFullscreen && !document.documentElement.webkitRequestFullscreen) document.documentElement.classList.add('no-fs');
+</script>
 <style>
+html.no-fs #fbFs { display: none !important; }
+@media (orientation: landscape) and (max-height: 500px) {
+  html.no-fs body.film-started .film-cc { bottom: calc(14px + env(safe-area-inset-bottom)); }
+  html.no-fs body.film-started:not(.film-idle) .film-cc { bottom: calc(84px + env(safe-area-inset-bottom)); }
+}
 html.safe-grain .slide-fx, html.safe-grain .grain-layer, html.safe-grain .lp-grain, html.safe-grain .film-fx { display: none !important; }
 html.safe-anim *, html.safe-anim *::before, html.safe-anim *::after { animation: none !important; transition: none !important; }
 </style>
@@ -1729,7 +1739,8 @@ const Sound = (() => {
       return;
     }
     // The film keeps a band free under the picture for captions, like a letterbox.
-    const band = window.FILM ? Math.max(84, Math.min(130, window.innerHeight * 0.13)) : 0;
+    const immersive = document.documentElement.classList.contains('no-fs') && window.innerWidth > window.innerHeight && window.innerHeight < 500;
+    const band = window.FILM && !immersive ? Math.max(84, Math.min(130, window.innerHeight * 0.13)) : 0;
     const s = Math.min(window.innerWidth / 1920, (window.innerHeight - band) / 1080); stage.style.transform = `translate(-50%, calc(-50% - ${band / 2}px)) scale(${s})`;
     // The opening footage sits in exactly the same frame as every chapter after it.
     const gp = window.FILM && document.querySelector('#gate .gate-photo');
@@ -2692,6 +2703,11 @@ const Sound = (() => {
   upright.addEventListener ? upright.addEventListener('change', rotCheck) : upright.addListener(rotCheck);
   addEventListener('resize', rotCheck);
   $('rotOk').addEventListener('click', () => { rotOk = true; track('watch_upright'); rotCheck(); });
+  // Turned sideways on an iPhone: tuck the controls away straight off, so the picture has the whole window.
+  addEventListener('orientationchange', () => setTimeout(() => {
+    if (!document.documentElement.classList.contains('no-fs') || !started || !playing || innerWidth < innerHeight) return;
+    window.scrollTo(0, 0); clearTimeout(idleT); setIdle(true);
+  }, 400));
   setInterval(rotCheck, 1000);
   $('fbPlay').addEventListener('click', () => { track(playing ? 'film_pause' : 'film_resume', { chapter: cur < 0 ? 'Opening' : DATA.scenes[cur].title }); setPlaying(!playing); });
   $('fbPrev').addEventListener('click', prevChapter);
