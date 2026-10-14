@@ -22,13 +22,13 @@ Use the same voice as the opening, the Multilingual v2 model, and these settings
 
 ## Pronunciation
 
-If ElevenLabs gets one of these wrong, add it to the `say` list in `narration/clips.json` with a respelling (for example `"Malört": "MAHL-urt"`) and record that clip again.
+If ElevenLabs gets one of these wrong, add it to the `say` list in `narration/clips.json` with a respelling (for example `"Malört": "muhlort"`) and record that clip again.
 
 - Diveus (DYE-vee-us), americanus, laboriosus, motorcyclus, nocturnus, artificialis
 - Guayaquil (gwy-ah-KEEL)
 - pulquería (pool-keh-REE-ah), pulque (POOL-keh)
 - boteco (boo-TEH-koo), Comida di Buteco (koh-MEE-dah jee boo-TEH-koo)
-- Malört (MAHL-urt)
+- Malört (muhlort)
 - Oldenburg, Schlitz, McSorley's
 
 ## The clips
@@ -269,7 +269,7 @@ Say: By one seventeen a.m., they converge. Here, together, they will make increa
 
 **`13-local-2.mp3`**
 
-> In Chicago, before Prohibition, brewers built saloons of their own. Between 1897 and 1905, Schlitz alone built fifty-seven here. Beer on the ground floor. Upstairs, often, the family who ran the place. Many still stand.
+> In Chicago, before Prohibition, brewers built saloons of their own, called tied houses. Between 1897 and 1905, Schlitz alone built fifty-seven here. Beer on the ground floor. Upstairs, often, the family who ran the place. Many still stand.
 
 **`13-local-3.mp3`**
 

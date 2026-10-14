@@ -13,7 +13,7 @@
     "1:17 a.m.": "one seventeen a.m.",
     "about 1,100 pulquerías": "about eleven hundred pulquerías",
     "Today, only 80 pulquerías": "Today, only eighty pulquerías",
-    "Malört": "muhlurt",
+    "Malört": "muhlort",
     "Working-Class Dive": "working class dive",
     "pulque ": "POOL-keh ",
     "Forty-eight percent.": "Forty eight percent.",
@@ -380,7 +380,7 @@
         },
         {
           "file": "snd/film/13-local-2.mp3",
-          "text": "In Chicago, before Prohibition, brewers built saloons of their own. Between 1897 and 1905, Schlitz alone built fifty-seven here. Beer on the ground floor. Upstairs, often, the family who ran the place. Many still stand.",
+          "text": "In Chicago, before Prohibition, brewers built saloons of their own, called tied houses. Between 1897 and 1905, Schlitz alone built fifty-seven here. Beer on the ground floor. Upstairs, often, the family who ran the place. Many still stand.",
           "gap": 0.8
         },
         {
