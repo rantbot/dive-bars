@@ -72,20 +72,37 @@ body.film-paused .slide *, body.film-paused .gate *, body.film-paused .slide { a
 @keyframes lp-bob { 50% { transform: translateY(4px); } }
 .lp-inside { position: relative; padding: 72px max(20px, 6vw) 48px; background: #050504; }
 .lp-head h2 { margin: 12px 0 34px; font-family: var(--display); font-weight: 300; font-size: clamp(30px, 3.6vw, 52px); letter-spacing: 0.02em; color: var(--ivory); }
-.lp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
-.lp-card { position: relative; display: block; text-align: left; padding: 0; border: 0; background: #0D0C0A; color: var(--ivory); cursor: pointer; border-radius: 6px; overflow: hidden; font: inherit; }
+.lp-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; }
+.lp-part { min-width: 0; }
+.lp-part-h { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 4px 24px; padding-bottom: 16px; margin-bottom: 18px; border-bottom: 1px solid rgba(237,230,216,0.12); }
+.lp-part-h .lp-eyebrow { grid-column: 1 / -1; }
+.lp-part-h h3 { margin: 0; font-family: var(--display); font-weight: 300; font-size: clamp(26px, 2.6vw, 36px); letter-spacing: 0.02em; color: var(--ivory); }
+.lp-part-h p { grid-column: 1; margin: 2px 0 0; font-family: var(--ui); font-size: 14px; line-height: 1.5; color: #9C9384; }
+.lp-part-h .r { grid-column: 2; grid-row: 2 / 4; align-self: end; font-family: var(--ui); font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: #7D7668; white-space: nowrap; }
+.lp-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+.lp-card { position: relative; display: flex; flex-direction: column; text-align: left; padding: 0; border: 0; background: #0D0C0A; color: var(--ivory); cursor: pointer; border-radius: 6px; overflow: hidden; font: inherit; }
 .lp-card .ph { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #13110E; }
 .lp-card img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.85) brightness(0.82); transform: scale(1.02); transition: transform .8s cubic-bezier(.2,.7,.2,1), filter .5s ease; }
-.lp-card .ph::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,5,4,0.85), rgba(5,5,4,0) 55%); }
-.lp-card .pl { position: absolute; z-index: 1; right: 12px; bottom: 12px; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(237,230,216,0.92); color: #13110E; opacity: 0; transform: scale(.85); transition: opacity .3s ease, transform .3s ease; }
+.lp-card .ph::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,5,4,0.6), rgba(5,5,4,0) 50%); pointer-events: none; }
+.lp-card.type .ph { display: grid; place-items: center; background: radial-gradient(ellipse at 50% 40%, #1d1a15, #0d0c0a 75%); }
+.lp-card .big { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 34px; color: var(--amber); letter-spacing: 0.01em; }
+.lp-card .pl { position: absolute; z-index: 1; right: 12px; bottom: 12px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(237,230,216,0.92); color: #13110E; opacity: 0; transform: scale(.85); transition: opacity .3s ease, transform .3s ease; }
 .lp-card .pl svg { width: 14px; height: 14px; margin-left: 2px; }
-.lp-card .n { position: absolute; z-index: 1; left: 14px; bottom: 12px; font-family: var(--ui); font-size: 11px; letter-spacing: 0.24em; color: var(--amber); }
-.lp-card .tx { padding: 14px 16px 18px; }
-.lp-card .t { font-family: var(--display); font-size: 23px; line-height: 1.15; }
-.lp-card .d { margin-top: 6px; font-family: var(--ui); font-size: 13px; line-height: 1.5; color: #9C9384; }
+.lp-card .tx { padding: 12px 14px 16px; }
+.lp-card .meta { display: flex; justify-content: space-between; font-family: var(--ui); font-size: 11px; letter-spacing: 0.2em; color: var(--amber); font-variant-numeric: tabular-nums; }
+.lp-card .meta .len { color: #7D7668; letter-spacing: 0.06em; }
+.lp-card .t { margin-top: 6px; font-family: var(--display); font-size: 21px; line-height: 1.15; }
+.lp-card .d { margin-top: 5px; font-family: var(--ui); font-size: 13px; line-height: 1.45; color: #9C9384; }
 .lp-card:hover img, .lp-card:focus-visible img { transform: scale(1.08); filter: saturate(1) brightness(0.95); }
 .lp-card:hover .pl, .lp-card:focus-visible .pl { opacity: 1; transform: none; }
 .lp-card:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+@media (max-width: 640px) {
+  .lp-cards { gap: 40px; }
+  .lp-part-h { grid-template-columns: 1fr; } .lp-part-h .r { grid-column: 1; grid-row: auto; margin-top: 6px; }
+  .lp-row { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 max(20px, 6vw); margin: 0 calc(-1 * max(20px, 6vw)); padding: 0 max(20px, 6vw) 6px; scrollbar-width: none; }
+  .lp-row::-webkit-scrollbar { display: none; }
+  .lp-card { flex: 0 0 72%; scroll-snap-align: start; }
+}
 .lp-how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px 40px; margin-top: 56px; padding-top: 32px; border-top: 1px solid rgba(237,230,216,0.12); font-family: var(--ui); font-size: 14px; line-height: 1.65; color: #9C9384; }
 .lp-how b { display: block; margin-bottom: 4px; font-family: var(--display); font-weight: 400; font-size: 21px; color: var(--ivory); }
 .lp-foot { margin-top: 56px; font-family: var(--ui); font-size: 12px; letter-spacing: 0.06em; color: #6B6457; }
@@ -96,8 +113,6 @@ body.film-paused .slide *, body.film-paused .gate *, body.film-paused .slide { a
   .lp-title { font-size: 9.6vw; letter-spacing: 0.05em; }
   .lp-bars::before, .lp-bars::after { height: 3vh; }
   .lp-scroll { display: none; }
-  .lp-cards { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .lp-card .t { font-size: 19px; } .lp-card .d { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .lp-copy > *, .lp-scroll { animation: none; opacity: 1; } .lp-bg { transition: none; transform: none; } .lp-grain, .lp-scroll svg { animation: none; } }
 
@@ -2624,26 +2639,54 @@ const Sound = (() => {
   form.querySelectorAll('textarea').forEach(t => t.addEventListener('input', () => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }));
 
   // ---------- the landing page ----------
-  const TEASERS = {
-    anatomy: ['img/thumb/plate_base.jpg', 'The eight organs every healthy dive shares.'],
-    mcsorleys: ['img/thumb/p_mcsorleys.jpg', 'The Neighborhood Dive in its oldest form.'],
-    sp3: ['img/thumb/p_jimbos.jpg', "Jimbo's Place, at the end of things."],
-    dollars: ['img/thumb/p_siestakey.jpg', 'Why so many bars are papered in dollar bills.'],
-    biker: ['img/thumb/p_biker.jpg', 'Admire the bikes. Never touch the bikes.'],
-    fauna: ['img/thumb/p_bartender2.jpg', 'The Regular, the Bartender, the Tourist, and one disturbance.'],
-    falsedive: ['img/thumb/p_faux.jpg', 'How to spot an impostor.'],
-    conservation: ['img/thumb/p_gary_wide.jpg', 'What it takes to make a seventy-year-old bar.'],
+  // Every chapter, in order, grouped into the four parts of the study. Chapters without a photograph get a card set in type.
+  const PARTS = [
+    { n: 'I', t: 'The Habitat', d: 'Where dives live, what they are made of, and where they came from.', ids: ['cover', 'range', 'origin', 'anatomy', 'lineage'] },
+    { n: 'II', t: 'The Species', d: 'Five living species, observed up close.', ids: ['sp1', 'mcsorleys', 'sp2', 'sp3', 'dollars', 'biker', 'sp4'] },
+    { n: 'III', t: 'Behavior', d: 'How the habitat lives, at home and abroad.', ids: ['happyhour', 'fauna', 'local', 'abroad', 'third'] },
+    { n: 'IV', t: 'Conservation', d: 'Impostors, field protocols, and how to keep the real ones.', ids: ['falsedive', 'test', 'protocol', 'conservation', 'closing'] },
+  ];
+  const CARDS = {
+    cover: ['p_cover2', 'Field notes begin. Most of them at night.'], range: ['americas', 'Sixty-eight cities, Vancouver to Guayaquil.'],
+    origin: ['p_stairs', 'Why a dive was never a compliment.'], anatomy: ['plate_engraved', 'The eight organs every healthy dive shares.'],
+    lineage: ['p_jukejoint', 'The juke joint and the honky-tonk.'], sp1: ['p_neighborhood2', 'The bartender starts pouring before you order.'],
+    mcsorleys: ['p_mcsorleys', 'The Neighborhood Dive in its oldest form.'], sp2: ['p_working2', 'Same people, same stools, same time.'],
+    sp3: ['p_jimbos', "Jimbo's Place, at the end of things."], dollars: ['p_siestakey', 'Why so many bars are papered in dollar bills.'],
+    biker: ['p_biker', 'Admire the bikes. Never touch the bikes.'], sp4: ['migration_streets', 'The nightly migration to one watering hole.'],
+    happyhour: ['p_boston', 'Born on a battleship. Banned in Boston.'], fauna: ['p_bartender2', 'The Regular, the Bartender, the Tourist.'],
+    local: ['p_tiedhouse', "Chicago's tied houses, and other adaptations."], abroad: ['p_pulqueria', 'Pulquerías, botecos, and the genus abroad.'],
+    third: [null, 'Home, work, and the place in between.', '48%'], falsedive: ['p_faux', 'How to spot an impostor.'],
+    test: [null, 'Did it accumulate, or was it bought?', 'Accumulated?'], protocol: [null, 'How to visit without disturbing anyone.', 'Protocol'],
+    conservation: ['p_gary_wide', 'What it takes to make a seventy-year-old bar.'], closing: ['p_closing2', "And don't sit in Gary's seat."],
   };
+  const mmss = t => Math.floor(t / 60) + ':' + String(Math.round(t % 60)).padStart(2, '0');
   function landingCards() {
     const box = $('lpCards'); box.innerHTML = '';
-    DATA.scenes.forEach((s, k) => {
-      const t = TEASERS[s.id]; if (!t) return;
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'lp-card';
-      b.setAttribute('aria-label', 'Watch from chapter ' + (k + 1) + ', ' + s.title);
-      b.innerHTML = '<div class="ph"><img alt="" loading="lazy"><span class="n"></span><span class="pl" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></span></div><div class="tx"><div class="t"></div><div class="d"></div></div>';
-      b.querySelector('img').src = t[0]; b.querySelector('.n').textContent = String(k + 1).padStart(2, '0');
-      b.querySelector('.t').textContent = s.title; b.querySelector('.d').textContent = t[1];
-      b.addEventListener('click', () => start(k)); box.appendChild(b);
+    const L = lens(), idx = {}; DATA.scenes.forEach((s, k) => { idx[s.id] = k; });
+    const seen = new Set();
+    const parts = PARTS.map(p => Object.assign({}, p, { ids: p.ids.filter(id => id in idx) }));
+    const rest = DATA.scenes.map(s => s.id).filter(id => !parts.some(p => p.ids.includes(id)));
+    if (rest.length) parts[parts.length - 1].ids.push(...rest);   // a chapter added later still shows up
+    parts.forEach(p => {
+      if (!p.ids.length) return;
+      const sec = document.createElement('section'); sec.className = 'lp-part';
+      const k0 = idx[p.ids[0]], k1 = idx[p.ids[p.ids.length - 1]];
+      sec.innerHTML = `<header class="lp-part-h"><div class="lp-eyebrow">Part ${p.n}</div><h3></h3><p></p><span class="r">Chapters ${k0 + 1}–${k1 + 1}</span></header><div class="lp-row"></div>`;
+      sec.querySelector('h3').textContent = p.t; sec.querySelector('p').textContent = p.d;
+      const row = sec.querySelector('.lp-row');
+      p.ids.forEach(id => {
+        const k = idx[id], s = DATA.scenes[k], c = CARDS[id] || [null, '', s.title];
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'lp-card' + (c[0] ? '' : ' type');
+        b.setAttribute('aria-label', 'Watch from chapter ' + (k + 1) + ', ' + s.title);
+        b.innerHTML = '<div class="ph">' + (c[0] ? '<img alt="" loading="lazy" decoding="async">' : '<span class="big"></span>') +
+          '<span class="pl" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></span></div>' +
+          '<div class="tx"><div class="meta"><span class="n"></span><span class="len"></span></div><div class="t"></div><div class="d"></div></div>';
+        if (c[0]) b.querySelector('img').src = 'img/thumb/' + c[0] + '.jpg'; else b.querySelector('.big').textContent = c[2];
+        b.querySelector('.n').textContent = String(k + 1).padStart(2, '0'); b.querySelector('.len').textContent = L[k + 1] ? mmss(L[k + 1]) : '';
+        b.querySelector('.t').textContent = s.title; b.querySelector('.d').textContent = c[1];
+        b.addEventListener('click', () => start(k)); row.appendChild(b);
+      });
+      box.appendChild(sec);
     });
   }
   const lpBg = $('lpBg');
