@@ -366,6 +366,7 @@ body.rot-ask .film-rotate { display: flex; }
 .bw-k { position: absolute; left: 0; top: 0; transform-origin: 0 0; filter: brightness(0.8) saturate(0.78) sepia(0.12) drop-shadow(0 2px 2px rgba(40,25,5,0.35)); }
 .bw-k svg { display: block; }
 .bw-k svg.aged { filter: saturate(0.72) sepia(0.22) contrast(0.94) brightness(1.03); }
+.bw-k svg.faded { filter: saturate(0.35) sepia(0.4) contrast(0.78) brightness(1.12); opacity: 0.72; }
 </style>
 <title>The American Dive Bar</title>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
@@ -3274,10 +3275,15 @@ const Sound = (() => {
       tx(125, 66, name, "'Caveat Brush', cursive", 36, a) + tx(125, 128, 'COLD · CHEAP · HONEST', SANS, 7.5, a, 'font-weight="700" letter-spacing="2.5"') };
   }
   // Every sticker on the wall is a different one. The pool holds one of each, shuffled, and runs out rather than repeat.
+  // Band stickers come in a few styles, so only a handful go up, and no style more than twice. One name tag, two beers.
+  const BAND_STICKERS = 8;
   let stickerPool = [];
   function fillPool() {
+    const shuffled = list => { const a = list.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+    bandI = Math.floor(rand() * BANDS.length);  // a different run of band names each time
+    kindBag = shuffled(['punk', 'punk', 'metal', 'metal', 'bubble', 'bubble', 'tour', 'tour', 'slab', 'slab', 'advisory']).slice(0, BAND_STICKERS);
     stickerPool = Object.keys(BARS).map(k => () => Object.assign({ rx: 0 }, BARS[k]()))
-      .concat(BANDS.map(() => () => bandDesign()), [() => bandDesign(true)], NAMES.map(nm => () => nameTag(nm)), BEERS.map(b2 => () => beer(b2)));
+      .concat(kindBag.map(() => () => bandDesign()), [() => bandDesign(true)], [() => nameTag(pick(NAMES))], shuffled(BEERS).slice(0, 2).map(b2 => () => beer(b2)));
     for (let i = stickerPool.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [stickerPool[i], stickerPool[j]] = [stickerPool[j], stickerPool[i]]; }
   }
   function barDesign() {
@@ -3387,7 +3393,7 @@ const Sound = (() => {
       art = `<g opacity="${R(0.88, 0.96).toFixed(2)}">${art}</g><g clip-path="url(#${id}b)" fill="none">${sc}</g>`;
     }
     if (cut) { /* shaped like its letters, so it only fades */ }
-    else if (age > 0.85) {  // torn: a ragged line across the sticker, the far side ripped off
+    else if (age > 0.8) {  // torn: a ragged line across the sticker, the far side ripped off
       const ang = R(0, T), ux = Math.cos(ang), uy = Math.sin(ang), far = reach(ux, uy) + 5, cut = far - R(0.18, 0.38) * (2 * far);
       const px = cx + ux * cut, py = cy + uy * cut;
       defs.push(`<clipPath id="${id}t"><polygon points="${side(px, py, ux, uy, -1, 4)}"/></clipPath><clipPath id="${id}r"><polygon points="${side(px, py, ux, uy, 1, 4)}"/></clipPath>`);
@@ -3406,13 +3412,15 @@ const Sound = (() => {
     }
     svg.innerHTML = (defs.length ? `<defs>${defs.join('')}</defs>` : '') + art;
     if (age > 0.45) svg.classList.add('aged');
+    if (age > 0.3 && age < 0.62) svg.classList.add('faded');  // years of sun, the color nearly gone
     const el = document.createElement('div'); el.className = 'bw-k'; el.setAttribute('aria-hidden', 'true'); el.appendChild(svg);
     return el;
   }
 
   // ---------- layout ----------
   // Nothing written on the wall crosses the seam between two panels, or the bolts beside it. Stickers can, since people slap them on anywhere.
-  const hits = (a, free) => (!free && seams.some(sx => a.x < sx + 44 && a.x + a.w > sx - 44)) || placed.some(b => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
+  // `over` lets a sticker land on other stickers (marked k), though never on writing.
+  const hits = (a, free, over) => (!free && seams.some(sx => a.x < sx + 44 && a.x + a.w > sx - 44)) || placed.some(b => !(over && b.k) && a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
   // zone limits where it lands: 0 is the middle of the wall, 1 the edges, about 1.4 the far corners
   function put(el, rot, near, pad, tries, zone, tile) {
     ink.appendChild(el); const w = el.offsetWidth, h = el.offsetHeight, ex = Math.abs(Math.sin(rot)) * h, ey = Math.abs(Math.sin(rot)) * w;
@@ -3426,6 +3434,20 @@ const Sound = (() => {
       if (zone) { const d = Math.hypot((px + bw / 2 - W / 2) / (W / 2), (py + bh / 2 - (H - 300) / 2) / ((H - 300) / 2)); if (d < zone[0] || d > zone[1]) continue; }
       const a = { x: px, y: py, w: bw, h: bh };
       if (!hits(a, el.classList.contains('bw-k'))) { placed.push(a); el.style.transform = `translate(${(px + pad + (rot < 0 ? 0 : ex)).toFixed(0)}px, ${(py + pad + (rot < 0 ? ey : 0)).toFixed(0)}px) rotate(${rot.toFixed(3)}rad)`; el._box = a; return true; }
+    }
+    el.remove(); return false;
+  }
+  // A sticker slapped partly over one already up, the way a bar door fills in over the years.
+  function slapOver(el, rot, tries) {
+    const under = placed.filter(b => b.k); if (!under.length) return false;
+    ink.appendChild(el); const pad = 4, w = el.offsetWidth, h = el.offsetHeight, ex = Math.abs(Math.sin(rot)) * h, ey = Math.abs(Math.sin(rot)) * w;
+    const bw = w + ex + pad * 2, bh = h + ey + pad * 2, maxY = H - 300 - bh + pad;
+    for (let i = 0; i < tries; i++) {
+      const t = pick(under), ang = R(0, T), d = R(0.45, 0.8);   // far enough to leave most of the one underneath showing
+      const px = t.x + t.w / 2 + Math.cos(ang) * d * (t.w + bw) / 2 - bw / 2, py = t.y + t.h / 2 + Math.sin(ang) * d * (t.h + bh) / 2 - bh / 2;
+      if (px < 10 || py < 10 || px + bw > W - 10 || py > maxY) continue;
+      const a = { x: px, y: py, w: bw, h: bh, k: true };
+      if (!hits(a, true, true)) { placed.push(a); el.style.transform = `translate(${(px + pad + (rot < 0 ? 0 : ex)).toFixed(0)}px, ${(py + pad + (rot < 0 ? ey : 0)).toFixed(0)}px) rotate(${rot.toFixed(3)}rad)`; el._box = a; return true; }
     }
     el.remove(); return false;
   }
@@ -3461,9 +3483,14 @@ const Sound = (() => {
     { const el = scrawl("you found the smallest joke on the wall. it's this one."); el.style.fontSize = '11px'; el.style.opacity = '0.8'; put(el, R(-0.1, 0.1), false, 4, 1200, [1.1, 2]); }
     for (let i = 0; i < 9; i++) put(doodle(pick(['eye', 'eye', 'peek', 'spiral'])), R(-0.6, 0.6), false, 6, 200, [0.85, 2]);
     fillPool();
-    const onTile = 10, onWall = Math.min(stickerPool.length - onTile, Math.round(n * 1.9));
-    for (let i = 0; i < onWall; i++) { const el = sticker(); if (el) put(el, R(-0.45, 0.45), false, 4, 60); }
-    for (let i = 0; i < onTile; i++) { const el = sticker(); if (el) put(el, R(-0.35, 0.35), false, 4, 120, null, true); }
+    // Fewer than before, at all sorts of angles, and about a third slapped over another one.
+    const stickerTilt = () => rand() < 0.2 ? (rand() < 0.5 ? -1 : 1) * R(0.5, 1.1) : rand() < 0.25 ? R(-0.06, 0.06) : R(-0.32, 0.32);
+    const onTile = 6, onWall = Math.min(stickerPool.length - onTile, Math.round(n * 0.85));
+    for (let i = 0; i < onWall; i++) {
+      const el = sticker(); if (!el) continue;
+      if ((i < 6 || rand() > 0.33 || !slapOver(el, stickerTilt(), 40)) && put(el, stickerTilt(), false, 4, 60)) el._box.k = true;
+    }
+    for (let i = 0; i < onTile; i++) { const el = sticker(); if (el && put(el, R(-0.35, 0.35), false, 4, 120, null, true)) el._box.k = true; }
     const kinds = Object.keys(DOODLES); for (let i = 0; i < Math.round(n * 2.6); i++) put(doodle(kinds[i % kinds.length]), R(-0.5, 0.5), false, 6, 30);
     for (let i = 0; i < Math.round(n * 2.4); i++) put(scratched(pick(SCRATCHED)), tilt(), false, 6, 30);
     for (let i = 0; i < extra; i++) { const t = rand() < 0.15 ? pick(CROSSED) : pick(SCRAWL), el = scrawl(t); if (CROSSED.includes(t)) el.classList.add('x'); put(el, tilt(), false, 8, 30); }
