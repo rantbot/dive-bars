@@ -2312,7 +2312,16 @@ const Sound = (() => {
   let DATA = null, cur = -1, playing = false, started = false, token = 0, events = [], sceneT0 = 0, idleT = null;
 
   // ---------- the clock ----------
-  const now = () => Sound.time;
+  // The film keeps its own clock. While the sound is running it follows the audio clock, so words and slides stay
+  // in step. If the phone has paused the sound (iPhones do this, after a call, a notification or turning the phone),
+  // it follows the wall clock instead, so the film keeps going with captions rather than freezing. It only moves
+  // while the film is playing.
+  let filmT = 0, lastA = null, lastW = performance.now();
+  function now() {
+    const w = performance.now(), c = Sound.ctx, running = !!c && c.state === 'running', a = running ? c.currentTime : null;
+    if (playing) filmT += running && lastA != null ? Math.max(0, a - lastA) : Math.min(0.25, (w - lastW) / 1000);
+    lastA = a; lastW = w; return filmT;
+  }
   function at(delay, fn) { events.push({ t: now() + delay, fn, tok: token }); }
   setInterval(() => {
     if (!playing || !events.length) return;
@@ -2361,7 +2370,7 @@ const Sound = (() => {
     sceneT0 = now(); markChapter();
     const tok = token;
     const t0 = now();
-    Sound.play(DATA.intro.file).then(d => { if (tok === token) at(introEnd(d == null ? INTRO_LEN : d) - (now() - t0), () => startScene(0)); });
+    Sound.play(DATA.intro.file).catch(() => null).then(d => { if (tok === token) at(introEnd(d == null ? INTRO_LEN : d) - (now() - t0), () => startScene(0)); });
   }
 
   // ---------- scenes ----------
@@ -2413,10 +2422,12 @@ const Sound = (() => {
       at(scene.hold, () => cur < DATA.scenes.length - 1 ? startScene(cur + 1) : finish());
       return;
     }
-    const tok = token;
-    Sound.play(clipUrl(clip), () => { if (tok === token) at(clip.gap, () => playClip(n + 1)); }).then(d => {
+    const tok = token; let moved = false;
+    const next = () => { if (moved || tok !== token) return; moved = true; at(clip.gap, () => playClip(n + 1)); };
+    Sound.play(clipUrl(clip), next).catch(() => null).then(d => {
       if (tok !== token) return;
-      if (d == null) { d = estimate(clip.text); Sound.duck(true); at(d + clip.gap, () => playClip(n + 1)); }
+      if (d == null) { d = estimate(clip.text); Sound.duck(true); }
+      at(d + 0.3, next);   // in case the phone paused the sound and the clip never reports that it ended
       clip.dur = d; layoutTrack();
       arm(clip, d);
     });
@@ -2630,6 +2641,13 @@ const Sound = (() => {
     } catch (e) {}
   }
   function wakeSound() { if (started && playing) Sound.resumeAll(); }
+  // If the phone keeps the sound paused, try again each second, and after a couple of seconds ask for a tap.
+  let mutedFor = 0;
+  setInterval(() => {
+    const c = Sound.ctx;
+    if (started && playing && c && c.state !== 'running' && !document.hidden) { Sound.resumeAll(); if (++mutedFor === 2) toast('Tap the screen to bring the sound back.'); }
+    else mutedFor = 0;
+  }, 1000);
   $('filmBegin').addEventListener('pointerdown', unlockAudio, { capture: true });
   $('filmBegin').addEventListener('click', unlockAudio, { capture: true });
   ['pointerdown', 'touchend', 'click'].forEach(t => document.addEventListener(t, () => { unlockAudio(); wakeSound(); }, { capture: true, passive: true }));
