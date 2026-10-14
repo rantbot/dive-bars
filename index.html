@@ -370,6 +370,17 @@ body.rot-ask .film-rotate { display: flex; }
 .bw-k svg.faded { filter: saturate(0.35) sepia(0.4) contrast(0.78) brightness(1.12); }
 </style>
 <title>The American Dive Bar</title>
+<script>
+// Troubleshooting switches for phones that crash: ?safe turns off every effect below, ?safe=grain,anim turns off just those.
+// fx = the projector scratches and drifting photos, grain = film grain and dust overlays, anim = all CSS animation, video = the opening footage.
+(function () { const m = /[?&]safe(?:=([^&]*))?/.exec(location.search); if (!m) return;
+  const list = m[1] ? decodeURIComponent(m[1]).split(',') : ['fx', 'grain', 'anim', 'video'];
+  window.SAFE = {}; list.forEach(k => { window.SAFE[k] = true; document.documentElement.classList.add('safe-' + k); }); })();
+</script>
+<style>
+html.safe-grain .slide-fx, html.safe-grain .grain-layer, html.safe-grain .lp-grain, html.safe-grain .film-fx { display: none !important; }
+html.safe-anim *, html.safe-anim *::before, html.safe-anim *::after { animation: none !important; transition: none !important; }
+</style>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2309,6 +2320,7 @@ const Sound = (() => {
     } catch (e) {}
   })();
   const gate = $('gate'), video = $('introVideo'), ccEl = $('filmCC').firstElementChild;
+  if (window.SAFE && window.SAFE.video) { video.removeAttribute('src'); video.preload = 'none'; video.load(); }
   const INTRO_OUT = 16.6, INTRO_TITLE = 16.9, INTRO_LEN = 20.45, INTRO_TAIL = 1.8, LEAD = 0.9, WORDS_PER_SEC = 2.5;
   // The title card builds over about eight seconds (eyebrow, title, rule, subtitle, credit), then stays up long
   // enough to read every line before the first chapter begins.
@@ -2598,14 +2610,14 @@ const Sound = (() => {
 
   // ---------- the landing page ----------
   const TEASERS = {
-    anatomy: ['img/plate_base.jpg', 'The eight organs every healthy dive shares.'],
-    mcsorleys: ['img/p_mcsorleys.jpg', 'The Neighborhood Dive in its oldest form.'],
-    sp3: ['img/p_jimbos.jpg', "Jimbo's Place, at the end of things."],
-    dollars: ['img/p_siestakey.jpg', 'Why so many bars are papered in dollar bills.'],
-    biker: ['img/p_biker.jpg', 'Admire the bikes. Never touch the bikes.'],
-    fauna: ['img/p_bartender2.jpg', 'The Regular, the Bartender, the Tourist, and one disturbance.'],
-    falsedive: ['img/p_faux.jpg', 'How to spot an impostor.'],
-    conservation: ['img/p_gary_wide.jpg', 'What it takes to make a seventy-year-old bar.'],
+    anatomy: ['img/thumb/plate_base.jpg', 'The eight organs every healthy dive shares.'],
+    mcsorleys: ['img/thumb/p_mcsorleys.jpg', 'The Neighborhood Dive in its oldest form.'],
+    sp3: ['img/thumb/p_jimbos.jpg', "Jimbo's Place, at the end of things."],
+    dollars: ['img/thumb/p_siestakey.jpg', 'Why so many bars are papered in dollar bills.'],
+    biker: ['img/thumb/p_biker.jpg', 'Admire the bikes. Never touch the bikes.'],
+    fauna: ['img/thumb/p_bartender2.jpg', 'The Regular, the Bartender, the Tourist, and one disturbance.'],
+    falsedive: ['img/thumb/p_faux.jpg', 'How to spot an impostor.'],
+    conservation: ['img/thumb/p_gary_wide.jpg', 'What it takes to make a seventy-year-old bar.'],
   };
   function landingCards() {
     const box = $('lpCards'); box.innerHTML = '';
@@ -2720,6 +2732,7 @@ const Sound = (() => {
 // ---------- the projector: scratches, specks, the odd glitch, and the sound of old film ----------
 // Runs over every photograph and the opening footage. The stage never moves; only the picture inside it slips.
 (() => {
+  if (window.SAFE && window.SAFE.fx) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const gate = document.getElementById('gate');
   const R = (a, b) => a + Math.random() * (b - a);
