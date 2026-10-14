@@ -3258,6 +3258,28 @@ const Sound = (() => {
       return { w, h, shape: 'rect', rx: 3, body, face: cut(body, '#14100e') + tx(120, 66, 'EAR INN', BLOCK, 38, 'none', glow) + tx(120, 66, 'EAR INN', BLOCK, 38, '#ffb59e') +
         ICON.waves(40, 80, 160, '#4f7c8f') + tx(120, 106, 'SPRING ST · SINCE THE 1800s', SANS, 7.5, '#d8cfc0', 'font-weight="700" letter-spacing="2"') }; },
   };
+  // Name tags people fill in and slap up, and stickers from beers nobody has heard of.
+  const NAMES = ['Gary', 'Big Steve', 'Trouble', 'Your Ex', 'Lou (the real one)', 'Not Gary', 'Mom said no', 'Ask the bartender'];
+  function nameTag(name) {
+    const w = 220, h = 150, body = `<rect x="5" y="5" width="210" height="140" rx="12"/>`, c = pick(['#c7261e', '#1f4fa3', '#2e7a4c']), p = pick(PENS);
+    return { w, h, shape: 'rect', rx: 12, body, face: cut(body, '#fbf8f1') + `<path d="M5,17 a12,12 0 0 1 12,-12 h186 a12,12 0 0 1 12,12 v40 h-210 z" fill="${c}"/><rect x="5" y="128" width="210" height="17" fill="${c}"/><path d="M5,128 h210 v5 a12,12 0 0 1 -12,12 h-186 a12,12 0 0 1 -12,-12 z" fill="${c}"/>` +
+      tx(110, 36, 'HELLO', SANS, 24, '#fff', 'font-weight="800" letter-spacing="3"') + tx(110, 51, 'my name is', SANS, 11, '#fff', 'font-weight="600"') +
+      tx(110, 103, name, `'${p.f}', cursive`, Math.min(38, 300 / name.length), p.c, name.length > 8 ? 'textLength="186" lengthAdjust="spacingAndGlyphs"' : '') };
+  }
+  const BEERS = [['Old Duster', 'LAGER', '#7a2e1c', '#efe1bf'], ['Gutter Gold', 'PILSNER', '#1f3a68', '#f2c032'], ['Tall Boy', 'LIGHT', '#c7261e', '#fbf8f1'], ['Rusty Tap', 'RED ALE', '#2e2a26', '#e8664a']];
+  function beer([name, style, a, b]) {
+    const w = 250, h = 160, body = `<ellipse cx="125" cy="80" rx="120" ry="75"/>`;
+    return { w, h, shape: 'oval', body, face: cut(body, b) + `<ellipse cx="125" cy="80" rx="108" ry="63" fill="none" stroke="${a}" stroke-width="2"/>` +
+      `<path d="M28,78 h194 l-12,14 l12,14 h-194 l12,-14 z" fill="${a}"/>` + tx(125, 98, style, SANS, 12, b, 'font-weight="800" letter-spacing="5"') +
+      tx(125, 66, name, "'Caveat Brush', cursive", 36, a) + tx(125, 128, 'COLD · CHEAP · HONEST', SANS, 7.5, a, 'font-weight="700" letter-spacing="2.5"') };
+  }
+  // Every sticker on the wall is a different one. The pool holds one of each, shuffled, and runs out rather than repeat.
+  let stickerPool = [];
+  function fillPool() {
+    stickerPool = Object.keys(BARS).map(k => () => Object.assign({ rx: 0 }, BARS[k]()))
+      .concat(BANDS.map(() => () => bandDesign()), [() => bandDesign(true)], NAMES.map(nm => () => nameTag(nm)), BEERS.map(b2 => () => beer(b2)));
+    for (let i = stickerPool.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [stickerPool[i], stickerPool[j]] = [stickerPool[j], stickerPool[i]]; }
+  }
   function barDesign() {
     const [a] = STICKERS[stickerI++ % STICKERS.length], d = BARS[a]();
     return Object.assign({ rx: 0 }, d);
@@ -3266,16 +3288,17 @@ const Sound = (() => {
   // black-and-white punk, blackletter metal, '70s bubble letters, a round tour sticker, a loud red slab.
   const BANDS = ['The Flat Tires', 'Sorry Mom', 'Last Call Lizards', 'Dead Battery Club', 'Wet Napkins', 'Sticky Floors', 'Two Drink Minimum',
     'The Bar Tabs', 'Neon Ghosts', 'Tuesday Night Riot', 'Busted Clock', 'Pull Tab', 'Gary’s Seat', 'Coin Op', 'Velvet Lotto', 'Warm Beer Choir',
-    'Fake ID', 'The Stool Pigeons', 'Ice Machine', 'Mildew'];
+    'Fake ID', 'The Stool Pigeons', 'Ice Machine', 'Mildew', 'The Coin Slots', 'Pickled Eggs', 'Stale Pretzels', 'Dartboard Kids',
+    'Bathroom Line', 'Lost & Found', 'Happy Hour Heroes', 'Bad Lighting', 'Ashtray Angels', 'The Neon Nevers', 'Drink Tickets', 'Cheap Seats'];
   const TAGS = ['LIVE THURSDAYS', 'TOUR ’96', 'NO COVER', 'EST. 1998', 'LOUD AS HELL', 'ALL AGES', 'DEMO OUT NOW', 'FREE SHOW', 'NOT SORRY', 'SIDE B'];
   // Each design comes round once before any repeats, and the warning-label one only once per wall.
   let bandI = 0, localDone = false, kindBag = [], advisoryDone = false;
-  function bandDesign() {
+  function bandDesign(local) {
     const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
     const fit = (t, size, room, k) => Math.min(size, room / (t.length * k));
-    const name = BANDS[bandI++ % BANDS.length], tag = pick(TAGS);
+    const name = local ? '' : BANDS[bandI++ % BANDS.length], tag = pick(TAGS);
     if (!kindBag.length) { kindBag = ['punk', 'metal', 'bubble', 'tour', 'slab'].concat(advisoryDone ? [] : ['advisory']); for (let i = kindBag.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [kindBag[i], kindBag[j]] = [kindBag[j], kindBag[i]]; } }
-    const kind = !localDone && rand() < 0.35 ? 'local' : kindBag.pop();
+    const kind = local ? 'local' : kindBag.pop();
     if (kind === 'advisory') advisoryDone = true;
     let w, h, shape = 'rect', rx = 3, body, art = '';
     if (kind === 'local') {   // our own Support Local Bands, stacked bubble letters, die-cut around the words
@@ -3340,7 +3363,8 @@ const Sound = (() => {
     return { w, h, shape, body, rx: 4, face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10">${body}</g><g fill="#f4f1ea">${body}</g>${art}` };
   }
   function sticker() {
-    const NS = 'http://www.w3.org/2000/svg', d = rand() < 0.55 ? bandDesign() : barDesign();
+    const make = stickerPool.pop(); if (!make) return null;
+    const NS = 'http://www.w3.org/2000/svg', d = make();
     const { w, h, shape, body, rx, face, cut } = d;
     const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.setAttribute('width', w); svg.setAttribute('height', h);
     // Stickers age. A few are fresh, most are faded and scuffed, some have been half torn away (sometimes
@@ -3390,14 +3414,15 @@ const Sound = (() => {
   // Nothing written on the wall crosses the seam between two panels, or the bolts beside it. Stickers can, since people slap them on anywhere.
   const hits = (a, free) => (!free && seams.some(sx => a.x < sx + 44 && a.x + a.w > sx - 44)) || placed.some(b => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
   // zone limits where it lands: 0 is the middle of the wall, 1 the edges, about 1.4 the far corners
-  function put(el, rot, near, pad, tries, zone) {
+  function put(el, rot, near, pad, tries, zone, tile) {
     ink.appendChild(el); const w = el.offsetWidth, h = el.offsetHeight, ex = Math.abs(Math.sin(rot)) * h, ey = Math.abs(Math.sin(rot)) * w;
     const bw = w + ex + pad * 2, bh = h + ey + pad * 2, maxY = H - 300 - bh + pad;
     for (let i = 0; i < tries; i++) {
       let px, py;
       if (near) { const t = i * 0.55, r = 40 + i * 9; px = W / 2 + Math.cos(t) * r * 1.45 - bw / 2; py = (H - 300) / 2 + Math.sin(t) * r - bh / 2; }
+      else if (tile) { px = R(20, W - bw - 20); py = R(H - 300 + 6, H - bh - 6); }   // down on the tile below the paint
       else { px = R(20, W - bw - 20); py = R(30, maxY); }
-      if (px < 10 || py < 10 || px + bw > W - 10 || py > maxY) continue;
+      if (px < 10 || py < 10 || px + bw > W - 10 || (tile ? py + bh > H - 4 : py > maxY)) continue;
       if (zone) { const d = Math.hypot((px + bw / 2 - W / 2) / (W / 2), (py + bh / 2 - (H - 300) / 2) / ((H - 300) / 2)); if (d < zone[0] || d > zone[1]) continue; }
       const a = { x: px, y: py, w: bw, h: bh };
       if (!hits(a, el.classList.contains('bw-k'))) { placed.push(a); el.style.transform = `translate(${(px + pad + (rot < 0 ? 0 : ex)).toFixed(0)}px, ${(py + pad + (rot < 0 ? ey : 0)).toFixed(0)}px) rotate(${rot.toFixed(3)}rad)`; el._box = a; return true; }
@@ -3435,7 +3460,10 @@ const Sound = (() => {
     { const el = scrawl('turn back turn back turn back turn back'); el.style.whiteSpace = 'normal'; el.style.width = '150px'; el.style.fontSize = '20px'; el.style.lineHeight = '1'; put(el, R(-0.1, 0.1), false, 8, 800, [1.05, 2]); }
     { const el = scrawl("you found the smallest joke on the wall. it's this one."); el.style.fontSize = '11px'; el.style.opacity = '0.8'; put(el, R(-0.1, 0.1), false, 4, 1200, [1.1, 2]); }
     for (let i = 0; i < 9; i++) put(doodle(pick(['eye', 'eye', 'peek', 'spiral'])), R(-0.6, 0.6), false, 6, 200, [0.85, 2]);
-    for (let i = 0; i < Math.round(n * 1.6); i++) put(sticker(), R(-0.45, 0.45), false, 4, 40);
+    fillPool();
+    const onTile = 10, onWall = Math.min(stickerPool.length - onTile, Math.round(n * 1.9));
+    for (let i = 0; i < onWall; i++) { const el = sticker(); if (el) put(el, R(-0.45, 0.45), false, 4, 60); }
+    for (let i = 0; i < onTile; i++) { const el = sticker(); if (el) put(el, R(-0.35, 0.35), false, 4, 120, null, true); }
     const kinds = Object.keys(DOODLES); for (let i = 0; i < Math.round(n * 2.6); i++) put(doodle(kinds[i % kinds.length]), R(-0.5, 0.5), false, 6, 30);
     for (let i = 0; i < Math.round(n * 2.4); i++) put(scratched(pick(SCRATCHED)), tilt(), false, 6, 30);
     for (let i = 0; i < extra; i++) { const t = rand() < 0.15 ? pick(CROSSED) : pick(SCRAWL), el = scrawl(t); if (CROSSED.includes(t)) el.classList.add('x'); put(el, tilt(), false, 8, 30); }
