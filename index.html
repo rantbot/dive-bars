@@ -3188,6 +3188,10 @@ const Sound = (() => {
     const extra = Math.round(W * H / 160000);
     const tilt = () => rand() < 0.1 ? (rand() < 0.5 ? -1 : 1) * R(1.2, 1.57) : rand() < 0.35 ? R(-0.55, 0.55) : R(-0.22, 0.22);
     const n = Math.round(W * H / 1e6);
+    // Ric Flair, answered by someone else
+    { const el = joke('Diamonds are forever and so is Ric Flair.'), p = PENS.filter(q => !el.style.fontFamily.includes(q.f))[Math.floor(rand() * 8)], woo = document.createElement('div');
+      woo.style.cssText = `font-family:"${p.f}", cursive; color:${p.c}; font-size:${Math.round(R(46, 60) * p.s)}px; white-space:nowrap; line-height:1; margin:0.15em 0 0 ${Math.round(R(90, 200))}px; transform:rotate(${R(-14, -4).toFixed(1)}deg); transform-origin:0 50%; opacity:0.85`;
+      words('Woo!', woo); el.appendChild(woo); put(el, R(-0.1, 0.1), false, 10, 400); }
     JOKES.forEach(t => put(joke(t), rand() < 0.3 ? R(-0.35, 0.35) : R(-0.12, 0.12), false, 10, 300));
     for (let i = 0; i < Math.round(n * 1.6); i++) put(sticker(), R(-0.45, 0.45), false, 4, 40);
     const kinds = Object.keys(DOODLES); for (let i = 0; i < Math.round(n * 2.6); i++) put(doodle(kinds[i % kinds.length]), R(-0.5, 0.5), false, 6, 30);
