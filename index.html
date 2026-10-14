@@ -2290,8 +2290,8 @@ const Sound = (() => {
 </div>
 <div class="film-rotate" id="filmRotate" role="dialog" aria-label="Turn your phone sideways">
   <svg class="rot-phone" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="20" y="8" width="24" height="44" rx="4"/><path d="M29 46h6"/></svg>
-  <h3>Turn your phone sideways</h3>
-  <p>The film is made for a wide screen. It will pick up right where it left off.</p>
+  <h3 id="rotH">Turn your phone sideways</h3>
+  <p id="rotP">The film is made for a wide screen. It will pick up right where it left off.</p>
   <button type="button" id="rotOk">Watch upright instead</button>
 </div>
 <div class="film-toast" id="filmToast" role="status" aria-live="polite"></div>
@@ -2717,6 +2717,16 @@ const Sound = (() => {
   upright.addEventListener ? upright.addEventListener('change', rotCheck) : upright.addListener(rotCheck);
   addEventListener('resize', rotCheck);
   $('rotOk').addEventListener('click', () => { rotOk = true; track('watch_upright'); rotCheck(); });
+  // Facebook, Instagram and Messenger open links in their own browser, which stays upright when the phone turns.
+  // There, the prompt says so and points to opening the film in the phone's own browser.
+  const app = (navigator.userAgent.match(/FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger/i) || [])[0];
+  if (app) {
+    const name = /insta/i.test(app) ? 'Instagram' : /messenger/i.test(app) ? 'Messenger' : 'Facebook';
+    $('rotH').textContent = 'Watch it wide in your browser';
+    $('rotP').textContent = name + "'s browser won't turn sideways. Tap its menu (••• or ⋮) and choose to open in your browser, then turn your phone. Or keep watching upright here.";
+    $('rotOk').textContent = 'Watch upright';
+    track('in_app_browser', { app: name });
+  }
   // Turned sideways on a phone: tuck the controls away straight off, so the picture has the whole window.
   addEventListener('orientationchange', () => setTimeout(() => {
     if (!matchMedia('(pointer: coarse)').matches || !started || !playing || innerWidth < innerHeight) return;
