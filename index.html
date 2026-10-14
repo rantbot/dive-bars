@@ -2917,6 +2917,25 @@ const Sound = (() => {
   // The rest of what ends up on a stall wall.
   const SCRAWL = ['I WAS HERE', 'J + M', 'TIP YOUR BARTENDER', 'last call', 'call your mom', 'BE NICE', 'SAME', 'who?', 'est. 1979', 'wash your hands', 'Dana', 'K.T. ♥ R.B.', 'hi', 'NO', 'go home', ':)', 'IIII IIII II', '1987', 'Lou was here', 'stay weird', 'skol', 'it gets better', 'R.I.P. the old jukebox', 'this wall is art', 'Mike', 'yes', '★', 'you look nice today', 'drink water', '→', 'L + T 4ever', 'nope', 'cash only', 'Gina', 'hydrate', 'love you Pat'];
   const CROSSED = ['never again', 'Steve', 'call me', 'ugh'];
+  // Bragging rights, a little further out from the middle.
+  const BRAGS = [
+    'Beat Gary at darts. Once. 2011.', 'Got engaged here. Got divorced here. Still come here.', 'Fixed the jukebox with a butter knife.',
+    'First legal beer, right here. 6/14/91', 'Closed this place down 112 times and counting.', "Tipped $100 on a $4 beer. Don't tell my wife.",
+    'Survived chili night 2015.', 'Met my best friend here. Never got his last name.', 'Fell asleep on stool 4. They let me.',
+    'Won the meat raffle. Twice.', "Taught the bartender's dog to sit.", 'Sang every part of the long song on the jukebox. Alone.',
+    'Got the bartender to smile. 3/2/2019. Witnesses: none.', 'Parallel parked out front on the first try. Drunk on the glory.',
+  ];
+  // Out at the edges, where nobody should be reading, the wall gets strange.
+  const STRANGE = [
+    'There is no back room. Stop asking about the back room.', 'Gary is not a person. Gary is a feeling.',
+    'Count the stools. There is always one more than you counted.', 'The jukebox picks the songs after 1 AM.',
+    "Don't make eye contact with the moose head.", 'The ice machine hums in Latin.', "I've been in this stall since 1994. Send fries.",
+    "If the lights flicker twice, order another round. Don't ask why.", 'THE SEAT REMEMBERS', 'Whoever keeps moving the dartboard, we know.',
+    "The bartender doesn't age. Check the photos.", 'Last call is a state of mind.', "You've been reading this wall a long time. Your friends miss you.",
+    'This wall is load-bearing. The jokes hold it up.', "Help. I'm trapped in a dive bar wall.", 'The mop bucket has been full since 1987. Nobody fills it.',
+    'Every bathroom wall is the same wall.', 'Stop scrolling. It sees you scrolling.',
+  ];
+  const BACKWARDS = ['SEE YOU INSIDE', 'the exit is the entrance', 'ORDER THE PICKLED EGG'];
   // Longer lines, the jokes every good stall collects. Each one shows up once.
   const JOKES = [
     "I came here to drink, not to read your autobiography.", 'For a good time, call your mother. She misses you.',
@@ -2927,7 +2946,7 @@ const Sound = (() => {
     'Somewhere, a village is missing you.',
   ];
 
-  let W = 3400, H = 2100, s = 1, x = 0, y = 0, built = false, notes = [], placed = [], mine = null, anim = 0;
+  let W = 3400, H = 2100, s = 1, x = 0, y = 0, built = false, notes = [], placed = [], mine = null, anim = 0, seams = [];
   let rand = mulberry(20261013);
   function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   const R = (a, b) => a + rand() * (b - a);
@@ -2962,12 +2981,25 @@ const Sound = (() => {
     }
     g.restore();
   }
+  // The wall is painted in vertical slices, each its own canvas, because phones refuse one canvas this big.
+  // Every slice replays the same random paint job, shifted, so the slices meet without a join.
+  const slices = [cv];
   function paint(ghosts) {
-    const dpr = 1; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px';
     world.style.width = W + 'px'; world.style.height = H + 'px';
-    const g = cv.getContext('2d'), TILE = 300, wallH = H - TILE;
+    const SL = 3600, n = Math.ceil(W / SL);
+    while (slices.length < n) { const c = document.createElement('canvas'); c.setAttribute('aria-hidden', 'true'); world.insertBefore(c, ink); slices.push(c); }
+    slices.forEach((c, i) => {
+      if (i >= n) { c.width = c.height = 1; c.hidden = true; return; }
+      const ox = i * SL, cw = Math.min(SL, W - ox); c.hidden = false; c.width = cw; c.height = H;
+      c.style.cssText = `position:absolute;left:${ox}px;top:0;width:${cw}px;height:${H}px`;
+      const g = c.getContext('2d'); g.translate(-ox, 0); rand = mulberry(4242); paintOn(g, ghosts);
+    });
+  }
+  function paintOn(g, ghosts) {
+    const TILE = 300, wallH = H - TILE;
     // stall panels, each a slightly different coat of the same yellow
     const panels = [0]; let px = 0; while (px < W) { px += R(1050, 1400); panels.push(Math.min(px, W)); }
+    seams = panels.slice(1, -1);
     for (let i = 0; i < panels.length - 1; i++) {
       const hue = R(-4, 4), sat = R(-6, 6), lig = R(-3, 3);
       g.fillStyle = `hsl(${39 + hue} ${60 + sat}% ${50 + lig}%)`; g.fillRect(panels[i], 0, panels[i + 1] - panels[i], wallH);
@@ -2976,13 +3008,18 @@ const Sound = (() => {
     const tile = plasterTile(); g.save(); g.globalCompositeOperation = 'soft-light'; g.globalAlpha = 0.5; g.fillStyle = g.createPattern(tile, 'repeat'); g.fillRect(0, 0, W, wallH); g.restore();
     // old writing, mostly painted over later
     g.save(); g.globalCompositeOperation = 'multiply';
-    ghosts.forEach(t => { g.save(); g.translate(R(60, W - 300), R(80, wallH - 80)); g.rotate(R(-0.12, 0.12)); const p = pick(PENS);
-      g.font = `${Math.round(R(26, 60) * p.s)}px "${p.f}"`; g.fillStyle = p.c; g.globalAlpha = R(0.12, 0.3); g.fillText(t, 0, 0); g.restore(); });
+    ghosts.forEach(t => { const p = pick(PENS), size = Math.round(R(26, 60) * p.s), k = Math.floor(rand() * (panels.length - 1)), rot = R(-0.12, 0.12);
+      g.save(); g.font = `${size}px "${p.f}"`; const tw = g.measureText(t).width, x0 = panels[k] + 50, x1 = panels[k + 1] - 50 - tw;
+      if (x1 > x0) { g.translate(R(x0, x1), R(80, wallH - 80)); g.rotate(rot); g.fillStyle = p.c; g.globalAlpha = R(0.12, 0.3); g.fillText(t, 0, 0); }
+      g.restore(); });
     g.restore();
     // touch-up paint that never quite matches
     for (let i = 0; i < Math.round(W * wallH / 1.1e6); i++) {
       const w = R(500, 950), h = R(260, 520), cx = R(w / 2, W - w / 2), cy = R(h / 2 + 40, wallH - h / 2 - 20);
+      const k = Math.max(0, panels.findIndex(v => v > cx) - 1);   // touch-up paint stops at the panel's edge
+      g.save(); g.beginPath(); g.rect(panels[k], 0, panels[k + 1] - panels[k], wallH); g.clip();
       brush(g, cx, cy, w, h, rand() < 0.7 ? `hsl(43 38% ${R(84, 90)}%)` : `hsl(${R(36, 41)} ${R(56, 64)}% ${R(45, 49)}%)`);
+      g.restore();
     }
     // grime, scuffs, a lipstick smear, water stains
     g.save(); g.globalCompositeOperation = 'multiply';
@@ -3151,12 +3188,15 @@ const Sound = (() => {
     'The Bar Tabs', 'Neon Ghosts', 'Tuesday Night Riot', 'Busted Clock', 'Pull Tab', 'Gary’s Seat', 'Coin Op', 'Velvet Lotto', 'Warm Beer Choir',
     'Fake ID', 'The Stool Pigeons', 'Ice Machine', 'Mildew'];
   const TAGS = ['LIVE THURSDAYS', 'TOUR ’96', 'NO COVER', 'EST. 1998', 'LOUD AS HELL', 'ALL AGES', 'DEMO OUT NOW', 'FREE SHOW', 'NOT SORRY', 'SIDE B'];
-  let bandI = 0, localDone = false;
+  // Each design comes round once before any repeats, and the warning-label one only once per wall.
+  let bandI = 0, localDone = false, kindBag = [], advisoryDone = false;
   function bandDesign() {
     const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
     const fit = (t, size, room, k) => Math.min(size, room / (t.length * k));
     const name = BANDS[bandI++ % BANDS.length], tag = pick(TAGS);
-    const kind = !localDone && rand() < 0.35 ? 'local' : pick(['punk', 'punk', 'metal', 'bubble', 'tour', 'slab', 'advisory']);
+    if (!kindBag.length) { kindBag = ['punk', 'metal', 'bubble', 'tour', 'slab'].concat(advisoryDone ? [] : ['advisory']); for (let i = kindBag.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [kindBag[i], kindBag[j]] = [kindBag[j], kindBag[i]]; } }
+    const kind = !localDone && rand() < 0.35 ? 'local' : kindBag.pop();
+    if (kind === 'advisory') advisoryDone = true;
     let w, h, shape = 'rect', rx = 3, body, art = '';
     if (kind === 'local') {   // our own Support Local Bands, stacked bubble letters, die-cut around the words
       localDone = true; const fs = 46; w = 300; h = Math.round(fs * 3.15 + 34);
@@ -3166,14 +3206,14 @@ const Sound = (() => {
       return { w, h, shape: 'rect', body, rx: 40, cut: true,
         face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="30" stroke-linejoin="round">${t}</g><g fill="#2b2418" stroke="#2b2418" stroke-width="12" stroke-linejoin="round">${t}</g>${t}` };
     }
-    if (kind === 'punk') {    // black slab, white blocky type, a rough white rule, the tag in a typewriter face
-      w = Math.round(R(240, 300)); h = Math.round(R(90, 120));
+    if (kind === 'punk') {    // black slab, white blocky type, a rough rule, the tag in a typewriter face (sometimes printed the other way round)
+      w = Math.round(R(240, 300)); h = Math.round(R(90, 120)); const inv = rand() < 0.45, ink = inv ? '#141313' : '#f2efe6', paper = inv ? '#efe9dc' : '#141313';
       const fs = fit(name.toUpperCase(), 40, w - 34, 0.76), up = rand() < 0.5;
-      art = `<text x="${w / 2}" y="${h / 2 + fs * 0.2}" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="${fs.toFixed(1)}" fill="#f2efe6" transform="rotate(${up ? -2 : 1.5} ${w / 2} ${h / 2})">${esc(name.toUpperCase())}</text>` +
-        `<path d="M18,${h - 22} L${w - 18},${h - 24}" stroke="#f2efe6" stroke-width="2" stroke-dasharray="${R(14, 30).toFixed(0)} 4 3 4"/>` +
-        `<text x="${w / 2}" y="${h - 9}" text-anchor="middle" font-family="'Special Elite', monospace" font-size="11" letter-spacing="3" fill="#f2efe6">${tag}</text>`;
+      art = `<text x="${w / 2}" y="${h / 2 + fs * 0.2}" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="${fs.toFixed(1)}" fill="${ink}" transform="rotate(${up ? -2 : 1.5} ${w / 2} ${h / 2})">${esc(name.toUpperCase())}</text>` +
+        `<path d="M18,${h - 22} L${w - 18},${h - 24}" stroke="${ink}" stroke-width="2" stroke-dasharray="${R(14, 30).toFixed(0)} 4 3 4"/>` +
+        `<text x="${w / 2}" y="${h - 9}" text-anchor="middle" font-family="'Special Elite', monospace" font-size="11" letter-spacing="3" fill="${ink}">${tag}</text>`;
       body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="${rx}"/>`;
-      return { w, h, shape, body, rx, face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="#141313">${body}</g>${art}` };
+      return { w, h, shape, body, rx, face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${paper}">${body}</g>${art}` };
     }
     if (kind === 'metal') {   // blackletter on black, thin white frame
       w = Math.round(R(240, 290)); h = Math.round(R(110, 130));
@@ -3267,8 +3307,10 @@ const Sound = (() => {
   }
 
   // ---------- layout ----------
-  const hits = (a) => placed.some(b => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
-  function put(el, rot, near, pad, tries) {
+  // Nothing written on the wall crosses the seam between two panels, or the bolts beside it. Stickers can, since people slap them on anywhere.
+  const hits = (a, free) => (!free && seams.some(sx => a.x < sx + 44 && a.x + a.w > sx - 44)) || placed.some(b => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
+  // zone limits where it lands: 0 is the middle of the wall, 1 the edges, about 1.4 the far corners
+  function put(el, rot, near, pad, tries, zone) {
     ink.appendChild(el); const w = el.offsetWidth, h = el.offsetHeight, ex = Math.abs(Math.sin(rot)) * h, ey = Math.abs(Math.sin(rot)) * w;
     const bw = w + ex + pad * 2, bh = h + ey + pad * 2, maxY = H - 300 - bh + pad;
     for (let i = 0; i < tries; i++) {
@@ -3276,18 +3318,19 @@ const Sound = (() => {
       if (near) { const t = i * 0.55, r = 40 + i * 9; px = W / 2 + Math.cos(t) * r * 1.45 - bw / 2; py = (H - 300) / 2 + Math.sin(t) * r - bh / 2; }
       else { px = R(20, W - bw - 20); py = R(30, maxY); }
       if (px < 10 || py < 10 || px + bw > W - 10 || py > maxY) continue;
+      if (zone) { const d = Math.hypot((px + bw / 2 - W / 2) / (W / 2), (py + bh / 2 - (H - 300) / 2) / ((H - 300) / 2)); if (d < zone[0] || d > zone[1]) continue; }
       const a = { x: px, y: py, w: bw, h: bh };
-      if (!hits(a)) { placed.push(a); el.style.transform = `translate(${(px + pad + (rot < 0 ? 0 : ex)).toFixed(0)}px, ${(py + pad + (rot < 0 ? ey : 0)).toFixed(0)}px) rotate(${rot.toFixed(3)}rad)`; el._box = a; return true; }
+      if (!hits(a, el.classList.contains('bw-k'))) { placed.push(a); el.style.transform = `translate(${(px + pad + (rot < 0 ? 0 : ex)).toFixed(0)}px, ${(py + pad + (rot < 0 ? ey : 0)).toFixed(0)}px) rotate(${rot.toFixed(3)}rad)`; el._box = a; return true; }
     }
     el.remove(); return false;
   }
   function size(list) {
     // a bigger wall for a busier bar, within what a phone can paint
-    const need = list.length * 340000 + 3.4e6, ratio = 1.62;
-    W = Math.round(Math.min(5000, Math.max(3400, Math.sqrt(need * ratio)))); H = Math.round(Math.min(3100, Math.max(2100, W / ratio)));
+    // big enough to wander, and it grows a little as people add to it
+    W = Math.round(Math.min(10000, 7600 + list.length * 60)); H = Math.round(Math.min(4200, 3800 + list.length * 10));
   }
   function build(list) {
-    rand = mulberry(20261013); ink.innerHTML = ''; placed = []; size(list);
+    rand = mulberry(20261013); ink.innerHTML = ''; placed = []; size(list); bandI = 0; localDone = false; kindBag = []; advisoryDone = false;
     const ghosts = []; for (let i = 0; i < Math.round(W * H / 90000); i++) ghosts.push(pick(SCRAWL.concat(CROSSED)));
     paint(ghosts);
     rand = mulberry(7 + list.length);
@@ -3304,7 +3347,14 @@ const Sound = (() => {
     { const el = joke('Diamonds are forever and so is Ric Flair.'), p = PENS.filter(q => !el.style.fontFamily.includes(q.f))[Math.floor(rand() * 8)], woo = document.createElement('div');
       woo.style.cssText = `font-family:"${p.f}", cursive; color:${p.c}; font-size:${Math.round(R(46, 60) * p.s)}px; white-space:nowrap; line-height:1; margin:0.15em 0 0 ${Math.round(R(90, 200))}px; transform:rotate(${R(-14, -4).toFixed(1)}deg); transform-origin:0 50%; opacity:0.85`;
       words('Woo!', woo); el.appendChild(woo); put(el, R(-0.1, 0.1), false, 10, 400); }
-    JOKES.forEach(t => put(joke(t), rand() < 0.3 ? R(-0.35, 0.35) : R(-0.12, 0.12), false, 10, 300));
+    JOKES.forEach(t => put(joke(t), rand() < 0.3 ? R(-0.35, 0.35) : R(-0.12, 0.12), false, 10, 400, [0, 0.72]));
+    BRAGS.forEach(t => put(joke(t), R(-0.2, 0.2), false, 10, 500, [0.35, 0.95]));
+    STRANGE.forEach(t => { const el = joke(t); if (rand() < 0.35) el.style.color = pick(['#7a1410', '#3b0f0a', '#122a1c']); put(el, rand() < 0.3 ? (rand() < 0.5 ? -1 : 1) * R(0.4, 1.3) : R(-0.3, 0.3), false, 10, 800, [0.72, 2]); });
+    BACKWARDS.forEach(t => { const el = joke(t), inner = document.createElement('div'); while (el.firstChild) inner.appendChild(el.firstChild); inner.style.transform = 'scaleX(-1)'; el.appendChild(inner); put(el, R(-0.2, 0.2), false, 10, 800, [0.8, 2]); });
+    { const el = joke('this way up'); const inner = document.createElement('div'); while (el.firstChild) inner.appendChild(el.firstChild); inner.style.transform = 'rotate(180deg)'; el.appendChild(inner); put(el, 0, false, 10, 800, [0.8, 2]); }
+    { const el = scrawl('turn back turn back turn back turn back'); el.style.whiteSpace = 'normal'; el.style.width = '150px'; el.style.fontSize = '20px'; el.style.lineHeight = '1'; put(el, R(-0.1, 0.1), false, 8, 800, [1.05, 2]); }
+    { const el = scrawl("you found the smallest joke on the wall. it's this one."); el.style.fontSize = '11px'; el.style.opacity = '0.8'; put(el, R(-0.1, 0.1), false, 4, 1200, [1.1, 2]); }
+    for (let i = 0; i < 9; i++) put(doodle(pick(['eye', 'eye', 'peek', 'spiral'])), R(-0.6, 0.6), false, 6, 200, [0.85, 2]);
     for (let i = 0; i < Math.round(n * 1.6); i++) put(sticker(), R(-0.45, 0.45), false, 4, 40);
     const kinds = Object.keys(DOODLES); for (let i = 0; i < Math.round(n * 2.6); i++) put(doodle(kinds[i % kinds.length]), R(-0.5, 0.5), false, 6, 30);
     for (let i = 0; i < Math.round(n * 2.4); i++) put(scratched(pick(SCRATCHED)), tilt(), false, 6, 30);
