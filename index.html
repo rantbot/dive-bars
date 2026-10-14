@@ -2259,7 +2259,7 @@ const Sound = (() => {
   <button type="button" id="rotOk">Watch upright instead</button>
 </div>
 <div class="film-toast" id="filmToast" role="status" aria-live="polite"></div>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rock+Salt&family=Zeyada&family=Caveat+Brush&family=Covered+By+Your+Grace&family=Reenie+Beanie&family=Sedgwick+Ave&family=Just+Another+Hand&family=Nanum+Pen+Script&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rock+Salt&family=Zeyada&family=Caveat+Brush&family=Covered+By+Your+Grace&family=Reenie+Beanie&family=Sedgwick+Ave&family=Just+Another+Hand&family=Nanum+Pen+Script&family=Shrikhand&family=Special+Elite&family=UnifrakturMaguntia&family=Bungee&display=swap">
 <div class="bw" id="barWall" hidden role="dialog" aria-modal="true" aria-labelledby="bwTitle">
   <div class="bw-view" id="bwView"><div class="bw-world" id="bwWorld"><canvas id="bwPaint" aria-hidden="true"></canvas><div class="bw-ink" id="bwInk"></div></div></div>
   <div class="bw-shade" aria-hidden="true"></div>
@@ -3127,10 +3127,9 @@ const Sound = (() => {
     { bg: '#6c3793', fg: '#fff', f: 'Inter', w: 800 }, { bg: '#e2602b', fg: '#fff', f: 'Sedgwick Ave', w: 400 },
   ];
   let stickerI = 0, peelN = 0;
-  function sticker() {
-    const [a, b, city] = STICKERS[stickerI++ % STICKERS.length], st = pick(STYLES), NS = 'http://www.w3.org/2000/svg';
+  function barDesign() {
+    const [a, b, city] = STICKERS[stickerI++ % STICKERS.length], st = pick(STYLES);
     const shape = pick(['rect', 'rect', 'circle', 'oval', 'burst']), w = shape === 'circle' ? 180 : shape === 'burst' ? 200 : Math.round(R(230, 300)), h = shape === 'circle' ? 180 : shape === 'burst' ? 200 : Math.round(R(120, 150));
-    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.setAttribute('width', w); svg.setAttribute('height', h);
     let body, rx = 0;
     if (shape === 'circle') body = `<circle cx="${w / 2}" cy="${h / 2}" r="${w / 2 - 5}"/>`;
     else if (shape === 'oval') body = `<ellipse cx="${w / 2}" cy="${h / 2}" rx="${w / 2 - 5}" ry="${h / 2 - 5}"/>`;
@@ -3142,8 +3141,88 @@ const Sound = (() => {
     lines.forEach(l => { l[1] = Math.min(l[1], (w * (shape === 'circle' || shape === 'burst' ? 0.66 : 0.84)) / (l[0].length * (l[1] > 14 ? (/Rock|Sedgwick|Marker/.test(st.f) ? 0.74 : 0.56) : 0.75))); });
     y = h / 2 - lines.reduce((s2, l) => s2 + l[1] + gap, -gap) / 2;
     lines.forEach(([t, fs], i) => { y += fs; txt += `<text x="${w / 2}" y="${(y - fs * 0.18).toFixed(1)}" text-anchor="middle" font-family="${st.f}, sans-serif" font-weight="${i === 2 ? 600 : st.w}" font-size="${fs}" letter-spacing="${i === 2 ? 3 : 0}" fill="${st.fg}">${esc(t)}</text>`; y += gap; });
-    let face = `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${st.bg}">${body}</g>` +
+    const face = `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${st.bg}">${body}</g>` +
       `<g fill="none" stroke="${st.fg}" stroke-opacity="0.5" stroke-width="2" transform="translate(${w / 2} ${h / 2}) scale(0.9) translate(${-w / 2} ${-h / 2})">${body}</g>` + txt;
+    return { w, h, shape, body, rx, face };
+  }
+  // Stickers from local bands that played here once. All invented, in the styles every bar door collects:
+  // black-and-white punk, blackletter metal, '70s bubble letters, a round tour sticker, a loud red slab.
+  const BANDS = ['The Flat Tires', 'Sorry Mom', 'Last Call Lizards', 'Dead Battery Club', 'Wet Napkins', 'Sticky Floors', 'Two Drink Minimum',
+    'The Bar Tabs', 'Neon Ghosts', 'Tuesday Night Riot', 'Busted Clock', 'Pull Tab', 'Gary’s Seat', 'Coin Op', 'Velvet Lotto', 'Warm Beer Choir',
+    'Fake ID', 'The Stool Pigeons', 'Ice Machine', 'Mildew'];
+  const TAGS = ['LIVE THURSDAYS', 'TOUR ’96', 'NO COVER', 'EST. 1998', 'LOUD AS HELL', 'ALL AGES', 'DEMO OUT NOW', 'FREE SHOW', 'NOT SORRY', 'SIDE B'];
+  let bandI = 0, localDone = false;
+  function bandDesign() {
+    const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    const fit = (t, size, room, k) => Math.min(size, room / (t.length * k));
+    const name = BANDS[bandI++ % BANDS.length], tag = pick(TAGS);
+    const kind = !localDone && rand() < 0.35 ? 'local' : pick(['punk', 'punk', 'metal', 'bubble', 'tour', 'slab', 'advisory']);
+    let w, h, shape = 'rect', rx = 3, body, art = '';
+    if (kind === 'local') {   // our own Support Local Bands, stacked bubble letters, die-cut around the words
+      localDone = true; const fs = 46; w = 300; h = Math.round(fs * 3.15 + 34);
+      const rows = [['SUPPORT', '#f2b42c'], ['LOCAL', '#e8971f'], ['BANDS', '#d9583a']];
+      const t = rows.map(([word, c], i) => `<text x="${w / 2}" y="${(22 + fs * 0.86 + i * fs * 1.04).toFixed(1)}" text-anchor="middle" font-family="Shrikhand, Georgia, serif" font-size="${fs}" textLength="${(w - 44 - (i === 1 ? 40 : 0)).toFixed(0)}" lengthAdjust="spacingAndGlyphs" fill="${c}">${word}</text>`).join('');
+      body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="40"/>`;
+      return { w, h, shape: 'rect', body, rx: 40, cut: true,
+        face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="30" stroke-linejoin="round">${t}</g><g fill="#2b2418" stroke="#2b2418" stroke-width="12" stroke-linejoin="round">${t}</g>${t}` };
+    }
+    if (kind === 'punk') {    // black slab, white blocky type, a rough white rule, the tag in a typewriter face
+      w = Math.round(R(240, 300)); h = Math.round(R(90, 120));
+      const fs = fit(name.toUpperCase(), 40, w - 34, 0.76), up = rand() < 0.5;
+      art = `<text x="${w / 2}" y="${h / 2 + fs * 0.2}" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="${fs.toFixed(1)}" fill="#f2efe6" transform="rotate(${up ? -2 : 1.5} ${w / 2} ${h / 2})">${esc(name.toUpperCase())}</text>` +
+        `<path d="M18,${h - 22} L${w - 18},${h - 24}" stroke="#f2efe6" stroke-width="2" stroke-dasharray="${R(14, 30).toFixed(0)} 4 3 4"/>` +
+        `<text x="${w / 2}" y="${h - 9}" text-anchor="middle" font-family="'Special Elite', monospace" font-size="11" letter-spacing="3" fill="#f2efe6">${tag}</text>`;
+      body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="${rx}"/>`;
+      return { w, h, shape, body, rx, face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="#141313">${body}</g>${art}` };
+    }
+    if (kind === 'metal') {   // blackletter on black, thin white frame
+      w = Math.round(R(240, 290)); h = Math.round(R(110, 130));
+      const fs = fit(name, 44, w - 40, 0.5);
+      art = `<rect x="14" y="14" width="${w - 28}" height="${h - 28}" fill="none" stroke="#e9e4d8" stroke-width="1.5"/>` +
+        `<text x="${w / 2}" y="${h / 2 + fs * 0.32}" text-anchor="middle" font-family="UnifrakturMaguntia, serif" font-size="${fs.toFixed(1)}" fill="#e9e4d8">${esc(name)}</text>`;
+      body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="2"/>`;
+      return { w, h, shape, body, rx: 2, face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10">${body}</g><g fill="#0f0e0e">${body}</g>${art}` };
+    }
+    if (kind === 'bubble') {  // '70s bubble letters with a dark outline, die-cut around the words
+      const word = name.replace(/^The /, ''), c = pick([['#f2b42c', '#2b2418'], ['#e8664a', '#2b2418'], ['#7cc4b4', '#22303a'], ['#f4e2b8', '#7a2e1c']]);
+      const fs = Math.min(50, 290 / (word.length * 0.66)); w = Math.round(Math.min(320, word.length * fs * 0.66 + 40)); h = Math.round(fs * 1.25 + 30);
+      const t = `<text x="${w / 2}" y="${(h / 2 + fs * 0.32).toFixed(1)}" text-anchor="middle" font-family="Shrikhand, Georgia, serif" font-size="${fs.toFixed(1)}" textLength="${w - 40}" lengthAdjust="spacingAndGlyphs">${esc(word)}</text>`;
+      body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="${Math.round(h / 2 - 5)}"/>`;
+      return { w, h, shape: 'rect', body, rx: Math.round(h / 2 - 5), cut: true,
+        face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="26" stroke-linejoin="round">${t}</g><g fill="${c[1]}" stroke="${c[1]}" stroke-width="9" stroke-linejoin="round">${t}</g><g fill="${c[0]}">${t}</g>` };
+    }
+    if (kind === 'tour') {    // round sticker, name around the rim, tag in the middle
+      w = h = 180; shape = 'circle'; const r = 62, id2 = 'rim' + (++peelN);
+      body = `<circle cx="90" cy="90" r="85"/>`;
+      const bg = pick(['#141313', '#8e1b18', '#1f3a68']);
+      art = `<defs><path id="${id2}" d="M90,90 m-${r},0 a${r},${r} 0 1,1 ${2 * r},0 a${r},${r} 0 1,1 -${2 * r},0"/></defs>` +
+        `<text font-family="Bungee, Impact, sans-serif" font-size="${fit(name.toUpperCase() + ' • ', 22, 370, 0.7).toFixed(1)}" fill="#f2efe6" letter-spacing="1"><textPath href="#${id2}" startOffset="0">${esc(name.toUpperCase())} • ${esc(name.toUpperCase())} •</textPath></text>` +
+        `<circle cx="90" cy="90" r="38" fill="none" stroke="#f2efe6" stroke-width="2"/>` +
+        `<text x="90" y="86" text-anchor="middle" font-family="'Special Elite', monospace" font-size="${fit(tag.split(' ')[0], 15, 64, 0.62).toFixed(1)}" fill="#f2efe6">${esc(tag.split(' ')[0])}</text>` +
+        `<text x="90" y="104" text-anchor="middle" font-family="'Special Elite', monospace" font-size="${fit(tag.split(' ').slice(1).join(' ') || '★', 15, 64, 0.62).toFixed(1)}" fill="#f2efe6">${esc(tag.split(' ').slice(1).join(' ') || '★')}</text>`;
+      return { w, h, shape, body, rx: 0, face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10">${body}</g><g fill="${bg}">${body}</g>${art}` };
+    }
+    if (kind === 'slab') {    // loud slanted slab, white type
+      w = Math.round(R(220, 280)); h = Math.round(R(80, 100)); const bg = pick(['#c7261e', '#e2602b', '#6c3793', '#2e7a4c']);
+      const fs = fit(name.toUpperCase(), 40, w - 30, 0.78);
+      body = `<polygon points="14,5 ${w - 5},5 ${w - 14},${h - 5} 5,${h - 5}"/>`;
+      art = `<text x="${w / 2}" y="${h / 2 + fs * 0.36}" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="${fs.toFixed(1)}" fill="#fff" transform="skewX(-8) translate(${(h / 2 * 0.14).toFixed(1)} 0)">${esc(name.toUpperCase())}</text>`;
+      return { w, h, shape: 'rect', body, rx: 0, face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${bg}">${body}</g>${art}` };
+    }
+    // advisory: white sticker, band name, and a made-up warning box
+    w = Math.round(R(230, 280)); h = Math.round(R(120, 140));
+    const fs = fit(name, 34, w - 36, 0.56);
+    body = `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="4"/>`;
+    art = `<text x="${w / 2}" y="${(h * 0.42).toFixed(1)}" text-anchor="middle" font-family="Permanent Marker, cursive" font-size="${fs.toFixed(1)}" fill="#141313">${esc(name)}</text>` +
+      `<g transform="translate(${w / 2 - 58} ${h - 46})"><rect width="116" height="32" fill="#141313"/><rect x="3" y="11" width="110" height="18" fill="#f7f3ea"/>` +
+      `<text x="58" y="9" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="8" letter-spacing="1.2" fill="#f7f3ea">BARROOM ADVISORY</text>` +
+      `<text x="58" y="24.5" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="10" letter-spacing="0.6" fill="#141313">EXPLICIT VOLUME</text></g>`;
+    return { w, h, shape, body, rx: 4, face: `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10">${body}</g><g fill="#f4f1ea">${body}</g>${art}` };
+  }
+  function sticker() {
+    const NS = 'http://www.w3.org/2000/svg', d = rand() < 0.55 ? bandDesign() : barDesign();
+    const { w, h, shape, body, rx, face, cut } = d;
+    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.setAttribute('width', w); svg.setAttribute('height', h);
     // Stickers age. A few are fresh, most are faded and scuffed, some have been half torn away (sometimes
     // leaving the white paper behind), and a few are just starting to lift at one corner. The tear and the
     // fold both follow the sticker's real edge, so a circle peels as a round flap.
@@ -3163,7 +3242,8 @@ const Sound = (() => {
       defs.push(`<clipPath id="${id}b">${body}</clipPath>`);
       art = `<g opacity="${R(0.88, 0.96).toFixed(2)}">${art}</g><g clip-path="url(#${id}b)" fill="none">${sc}</g>`;
     }
-    if (age > 0.85) {  // torn: a ragged line across the sticker, the far side ripped off
+    if (cut) { /* shaped like its letters, so it only fades */ }
+    else if (age > 0.85) {  // torn: a ragged line across the sticker, the far side ripped off
       const ang = R(0, T), ux = Math.cos(ang), uy = Math.sin(ang), far = reach(ux, uy) + 5, cut = far - R(0.18, 0.38) * (2 * far);
       const px = cx + ux * cut, py = cy + uy * cut;
       defs.push(`<clipPath id="${id}t"><polygon points="${side(px, py, ux, uy, -1, 4)}"/></clipPath><clipPath id="${id}r"><polygon points="${side(px, py, ux, uy, 1, 4)}"/></clipPath>`);
@@ -3284,7 +3364,7 @@ const Sound = (() => {
       if (!r.ok) throw new Error(r.status); const rows = await r.json(); return Array.isArray(rows) ? rows : [];
     } catch (e) { return null; }
   }
-  const fontsReady = () => Promise.race([Promise.all(PENS.map(p => document.fonts.load(`40px "${p.f}"`))).catch(() => {}), new Promise(r => setTimeout(r, 2500))]);
+  const fontsReady = () => Promise.race([Promise.all(PENS.map(p => p.f).concat(['Shrikhand', 'Special Elite', 'UnifrakturMaguntia', 'Bungee']).map(f => document.fonts.load(`40px "${f}"`))).catch(() => {}), new Promise(r => setTimeout(r, 2500))]);
 
   // ---------- open and close ----------
   let opener = null;
