@@ -356,7 +356,7 @@ body.rot-ask .film-rotate { display: flex; }
 /* stickers: dimmed by the same bulb, a little faded, some peeling at a corner */
 .bw-k { position: absolute; left: 0; top: 0; transform-origin: 0 0; filter: brightness(0.8) saturate(0.78) sepia(0.12) drop-shadow(0 2px 2px rgba(40,25,5,0.35)); }
 .bw-k svg { display: block; }
-.bw-k.worn svg { opacity: 0.86; filter: contrast(0.92); }
+.bw-k svg.aged { filter: saturate(0.72) sepia(0.22) contrast(0.94) brightness(1.03); }
 </style>
 <title>The American Dive Bar</title>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
@@ -3112,27 +3112,45 @@ const Sound = (() => {
     lines.forEach(([t, fs], i) => { y += fs; txt += `<text x="${w / 2}" y="${(y - fs * 0.18).toFixed(1)}" text-anchor="middle" font-family="${st.f}, sans-serif" font-weight="${i === 2 ? 600 : st.w}" font-size="${fs}" letter-spacing="${i === 2 ? 3 : 0}" fill="${st.fg}">${esc(t)}</text>`; y += gap; });
     let face = `<g fill="#f7f3ea" stroke="#f7f3ea" stroke-width="10" stroke-linejoin="round">${body}</g><g fill="${st.bg}">${body}</g>` +
       `<g fill="none" stroke="${st.fg}" stroke-opacity="0.5" stroke-width="2" transform="translate(${w / 2} ${h / 2}) scale(0.9) translate(${-w / 2} ${-h / 2})">${body}</g>` + txt;
-    // Some are peeling. The fold follows the sticker's real edge: a line cuts across one corner of the shape,
-    // the part beyond it lifts away, and its paper back folds over onto the face, so a circle peels as a round flap.
-    if (rand() < 0.4) {
+    // Stickers age. A few are fresh, most are faded and scuffed, some have been half torn away (sometimes
+    // leaving the white paper behind), and a few are just starting to lift at one corner. The tear and the
+    // fold both follow the sticker's real edge, so a circle peels as a round flap.
+    const id = 'pk' + (++peelN), cx = w / 2, cy = h / 2, hw = w / 2 - 5, hh = h / 2 - 5, L = w + h;
+    const reach = (ux, uy) => (shape === 'circle' || shape === 'burst') ? hw : shape === 'oval' ? Math.hypot(hw * ux, hh * uy) : Math.abs(ux) * (hw - rx) + Math.abs(uy) * (hh - rx) + rx;
+    // the part of the plane on one side of a line through (px, py) facing (ux, uy), with an optional ragged edge
+    const side = (px, py, ux, uy, dir, rag) => {
+      const vx = -uy, vy = ux, pts = [];
+      for (let t = -L; t <= L; t += rag ? 7 : 2 * L) { const j = rag ? R(-rag, rag) : 0; pts.push([px + vx * t + ux * j, py + vy * t + uy * j]); }
+      pts.push([pts[pts.length - 1][0] + ux * L * dir, pts[pts.length - 1][1] + uy * L * dir], [pts[0][0] + ux * L * dir, pts[0][1] + uy * L * dir]);
+      return pts.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ');
+    };
+    const age = rand(), defs = [];
+    let art = face;
+    if (age > 0.45) {   // old: sun-faded, with scuffs where people brushed past
+      let sc = ''; for (let i = 0; i < Math.round(R(3, 9)); i++) { const x1 = R(0, w), y1 = R(0, h), a2 = R(0, T), l = R(10, 50); sc += `<path d="M${x1.toFixed(1)},${y1.toFixed(1)} l${(Math.cos(a2) * l).toFixed(1)},${(Math.sin(a2) * l).toFixed(1)}" stroke="#f4eee0" stroke-width="${R(0.6, 2).toFixed(1)}" stroke-linecap="round" opacity="${R(0.25, 0.6).toFixed(2)}"/>`; }
+      defs.push(`<clipPath id="${id}b">${body}</clipPath>`);
+      art = `<g opacity="${R(0.88, 0.96).toFixed(2)}">${art}</g><g clip-path="url(#${id}b)" fill="none">${sc}</g>`;
+    }
+    if (age > 0.85) {  // torn: a ragged line across the sticker, the far side ripped off
+      const ang = R(0, T), ux = Math.cos(ang), uy = Math.sin(ang), far = reach(ux, uy) + 5, cut = far - R(0.18, 0.38) * (2 * far);
+      const px = cx + ux * cut, py = cy + uy * cut;
+      defs.push(`<clipPath id="${id}t"><polygon points="${side(px, py, ux, uy, -1, 4)}"/></clipPath><clipPath id="${id}r"><polygon points="${side(px, py, ux, uy, 1, 4)}"/></clipPath>`);
+      const residue = rand() < 0.6 ? `<g clip-path="url(#${id}r)"><g fill="#efe8d8" stroke="#efe8d8" stroke-width="10" stroke-linejoin="round" opacity="${R(0.35, 0.7).toFixed(2)}">${body}</g></g>` : '';
+      art = residue + `<g clip-path="url(#${id}t)">${art}</g>`;
+    } else if (rand() < 0.22) {  // lifting a little at one corner
       const corner = pick([[1, -1], [-1, 1], [-1, -1], [1, 1]]), ang = Math.atan2(corner[1], corner[0]) + R(-0.3, 0.3);
-      const ux = Math.cos(ang), uy = Math.sin(ang), hw = w / 2 - 5, hh = h / 2 - 5, cx = w / 2, cy = h / 2;
-      const reach = (shape === 'circle' || shape === 'burst') ? hw : shape === 'oval' ? Math.hypot(hw * ux, hh * uy) : Math.abs(ux) * (hw - rx) + Math.abs(uy) * (hh - rx) + rx;
-      const far = reach + 5, fold = far - R(0.12, 0.2) * Math.min(w, h), L = w + h;
-      const px = cx + ux * fold, py = cy + uy * fold, vx = -uy, vy = ux;
-      const half = dir => [[px + vx * L, py + vy * L], [px + vx * L + ux * L * dir, py + vy * L + uy * L * dir], [px - vx * L + ux * L * dir, py - vy * L + uy * L * dir], [px - vx * L, py - vy * L]].map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ');
-      const k = px * ux + py * uy, m = [1 - 2 * ux * ux, -2 * ux * uy, -2 * ux * uy, 1 - 2 * uy * uy, 2 * k * ux, 2 * k * uy].map(n => n.toFixed(4)).join(' ');
-      const id = 'pk' + (++peelN);
-      const flap = `<g transform="matrix(${m})" clip-path="url(#${id}c)" stroke-linejoin="round">` +
-        `<g fill="rgba(30,18,4,0.35)" stroke="rgba(30,18,4,0.35)" stroke-width="10" transform="translate(${(ux * 3).toFixed(1)} ${(uy * 3).toFixed(1)})">${body}</g>` +
+      const ux = Math.cos(ang), uy = Math.sin(ang), far = reach(ux, uy) + 5, fold = far - R(0.06, 0.11) * Math.min(w, h);
+      const px = cx + ux * fold, py = cy + uy * fold, k = px * ux + py * uy;
+      const m = [1 - 2 * ux * ux, -2 * ux * uy, -2 * ux * uy, 1 - 2 * uy * uy, 2 * k * ux, 2 * k * uy].map(n => n.toFixed(4)).join(' ');
+      defs.push(`<clipPath id="${id}k"><polygon points="${side(px, py, ux, uy, -1, 0)}"/></clipPath><clipPath id="${id}c"><polygon points="${side(px, py, ux, uy, 1, 0)}"/></clipPath>` +
+        `<linearGradient id="${id}g" gradientUnits="userSpaceOnUse" x1="${px.toFixed(1)}" y1="${py.toFixed(1)}" x2="${(px + ux * (far - fold)).toFixed(1)}" y2="${(py + uy * (far - fold)).toFixed(1)}"><stop offset="0" stop-color="#bdb4a1"/><stop offset="0.6" stop-color="#f4efe4"/><stop offset="1" stop-color="#d9d2c2"/></linearGradient>`);
+      art = `<g clip-path="url(#${id}k)">${art}</g><g transform="matrix(${m})" clip-path="url(#${id}c)" stroke-linejoin="round">` +
+        `<g fill="rgba(30,18,4,0.35)" stroke="rgba(30,18,4,0.35)" stroke-width="10" transform="translate(${(ux * 2).toFixed(1)} ${(uy * 2).toFixed(1)})">${body}</g>` +
         `<g fill="url(#${id}g)" stroke="url(#${id}g)" stroke-width="10">${body}</g></g>`;
-      svg.innerHTML = `<defs><clipPath id="${id}k" clipPathUnits="userSpaceOnUse"><polygon points="${half(-1)}"/></clipPath>` +
-        `<clipPath id="${id}c" clipPathUnits="userSpaceOnUse"><polygon points="${half(1)}"/></clipPath>` +
-        `<linearGradient id="${id}g" gradientUnits="userSpaceOnUse" x1="${px}" y1="${py}" x2="${(px + ux * (far - fold)).toFixed(1)}" y2="${(py + uy * (far - fold)).toFixed(1)}"><stop offset="0" stop-color="#bdb4a1"/><stop offset="0.6" stop-color="#f4efe4"/><stop offset="1" stop-color="#d9d2c2"/></linearGradient></defs>` +
-        `<g clip-path="url(#${id}k)">${face}</g>${flap}`;
-    } else svg.innerHTML = face;
+    }
+    svg.innerHTML = (defs.length ? `<defs>${defs.join('')}</defs>` : '') + art;
+    if (age > 0.45) svg.classList.add('aged');
     const el = document.createElement('div'); el.className = 'bw-k'; el.setAttribute('aria-hidden', 'true'); el.appendChild(svg);
-    if (rand() < 0.3) el.classList.add('worn');
     return el;
   }
 
