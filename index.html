@@ -2435,11 +2435,28 @@ const Sound = (() => {
     at(0.1, () => D.next());           // the screen fades to black
     at(3.6, () => endCard(true));
   }
-  function endCard(on) { const e = $('filmEnd'); e.classList.toggle('on', on); document.body.classList.toggle('film-ended', on); e.setAttribute('aria-hidden', String(!on)); if (on) { setIdle(false); $('feAgain').focus({ preventScroll: true }); } }
+  function endCard(on) { const e = $('filmEnd'); e.classList.toggle('on', on); document.body.classList.toggle('film-ended', on); e.setAttribute('aria-hidden', String(!on)); keepAwake(!on && playing); if (on) { setIdle(false); $('feAgain').focus({ preventScroll: true }); } }
 
   // ---------- transport ----------
+  // ---------- keep the screen on ----------
+  // Phones dim and lock after a minute or two without a touch. While the film plays, hold a screen wake lock,
+  // let it go on pause, and take it again when the tab comes back, since the phone drops it whenever the tab is hidden.
+  let wakeLock = null, wantAwake = false, asking = false;
+  async function keepAwake(on) {
+    wantAwake = on;
+    if (!('wakeLock' in navigator) || asking) return;
+    asking = true;
+    try {
+      while (wantAwake !== !!wakeLock) {
+        if (wantAwake) { const l = await navigator.wakeLock.request('screen'); l.addEventListener('release', () => { if (wakeLock === l) wakeLock = null; }); wakeLock = l; }
+        else { const l = wakeLock; wakeLock = null; await l.release(); }
+      }
+    } catch (e) {} finally { asking = false; }
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && wantAwake) keepAwake(true); });
   function setPlaying(p) {
     playing = p; document.body.classList.toggle('film-paused', !p);
+    keepAwake(p);
     if (p) { Sound.resumeAll(); if (cur === -1 && gate.classList.contains('intro')) video.play().catch(() => {}); }
     else { Sound.pauseAll(); video.pause(); }
     const b = $('fbPlay'); b.setAttribute('aria-label', p ? 'Pause' : 'Play');
