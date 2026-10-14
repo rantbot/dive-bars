@@ -366,7 +366,7 @@ body.rot-ask .film-rotate { display: flex; }
 .bw-k { position: absolute; left: 0; top: 0; transform-origin: 0 0; filter: brightness(0.8) saturate(0.78) sepia(0.12) drop-shadow(0 2px 2px rgba(40,25,5,0.35)); }
 .bw-k svg { display: block; }
 .bw-k svg.aged { filter: saturate(0.72) sepia(0.22) contrast(0.94) brightness(1.03); }
-.bw-k svg.faded { filter: saturate(0.35) sepia(0.4) contrast(0.78) brightness(1.12); opacity: 0.72; }
+.bw-k svg.faded { filter: saturate(0.35) sepia(0.4) contrast(0.78) brightness(1.12); }
 </style>
 <title>The American Dive Bar</title>
 <script>window.FILM = true; document.documentElement.classList.add('film'); try { sessionStorage.removeItem('dive-bar-pos'); } catch (e) {}</script>
@@ -3390,14 +3390,14 @@ const Sound = (() => {
     if (age > 0.45) {   // old: sun-faded, with scuffs where people brushed past
       let sc = ''; for (let i = 0; i < Math.round(R(3, 9)); i++) { const x1 = R(0, w), y1 = R(0, h), a2 = R(0, T), l = R(10, 50); sc += `<path d="M${x1.toFixed(1)},${y1.toFixed(1)} l${(Math.cos(a2) * l).toFixed(1)},${(Math.sin(a2) * l).toFixed(1)}" stroke="#f4eee0" stroke-width="${R(0.6, 2).toFixed(1)}" stroke-linecap="round" opacity="${R(0.25, 0.6).toFixed(2)}"/>`; }
       defs.push(`<clipPath id="${id}b">${body}</clipPath>`);
-      art = `<g opacity="${R(0.88, 0.96).toFixed(2)}">${art}</g><g clip-path="url(#${id}b)" fill="none">${sc}</g>`;
+      art = `${art}<g clip-path="url(#${id}b)" fill="none">${sc}</g>`;
     }
     if (cut) { /* shaped like its letters, so it only fades */ }
     else if (age > 0.8) {  // torn: a ragged line across the sticker, the far side ripped off
       const ang = R(0, T), ux = Math.cos(ang), uy = Math.sin(ang), far = reach(ux, uy) + 5, cut = far - R(0.18, 0.38) * (2 * far);
       const px = cx + ux * cut, py = cy + uy * cut;
       defs.push(`<clipPath id="${id}t"><polygon points="${side(px, py, ux, uy, -1, 4)}"/></clipPath><clipPath id="${id}r"><polygon points="${side(px, py, ux, uy, 1, 4)}"/></clipPath>`);
-      const residue = rand() < 0.6 ? `<g clip-path="url(#${id}r)"><g fill="#efe8d8" stroke="#efe8d8" stroke-width="10" stroke-linejoin="round" opacity="${R(0.35, 0.7).toFixed(2)}">${body}</g></g>` : '';
+      const residue = rand() < 0.6 ? `<g clip-path="url(#${id}r)"><g fill="#e4dac4" stroke="#e4dac4" stroke-width="10" stroke-linejoin="round">${body}</g></g>` : '';
       art = residue + `<g clip-path="url(#${id}t)">${art}</g>`;
     } else if (rand() < 0.22) {  // lifting a little at one corner
       const corner = pick([[1, -1], [-1, 1], [-1, -1], [1, 1]]), ang = Math.atan2(corner[1], corner[0]) + R(-0.3, 0.3);
