@@ -2580,6 +2580,28 @@ const Sound = (() => {
     if (k == null || k < 0) playIntro(); else startScene(k);
   }
   $('filmBegin').addEventListener('click', () => start(-1));
+  // ---------- sound on phones ----------
+  // iPhones play Web Audio through the ringer channel, so the silent switch mutes the whole film, and a context
+  // paused while the phone is held upright can stay paused after it turns sideways. So on the first tap, ask for
+  // media playback, play a moment of silence through an audio element (which moves older iPhones onto the media
+  // channel), and wake the sound again on any later tap or turn of the phone.
+  let unlocked = false;
+  function unlockAudio() {
+    if (unlocked) return; unlocked = true;
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    try {
+      const n = 800, b = new Uint8Array(44 + n), v = new DataView(b.buffer), w = (o, t) => [...t].forEach((c, k) => b[o + k] = c.charCodeAt(0));
+      w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+      v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, n, true); b.fill(128, 44);
+      const a = new Audio(URL.createObjectURL(new Blob([b], { type: 'audio/wav' }))); a.setAttribute('playsinline', ''); a.play().catch(() => {});
+    } catch (e) {}
+  }
+  function wakeSound() { if (started && playing) Sound.resumeAll(); }
+  $('filmBegin').addEventListener('pointerdown', unlockAudio, { capture: true });
+  $('filmBegin').addEventListener('click', unlockAudio, { capture: true });
+  ['pointerdown', 'touchend', 'click'].forEach(t => document.addEventListener(t, () => { unlockAudio(); wakeSound(); }, { capture: true, passive: true }));
+  addEventListener('orientationchange', () => setTimeout(wakeSound, 300));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) wakeSound(); });
   // ---------- turn the phone sideways ----------
   // Held upright, the film pauses and asks to be turned. Turning it plays on. "Watch upright" keeps going as is.
   const upright = matchMedia('(orientation: portrait) and (max-width: 900px)');
